@@ -29,7 +29,7 @@ class ProductoPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return strtolower($user->name) === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class ProductoPolicy
      */
     public function update(User $user, Producto $producto): bool
     {
-        return false;
+        return strtolower($user->name) === 'admin';
     }
 
     /**
@@ -45,9 +45,8 @@ class ProductoPolicy
      */
     public function delete(User $user, Producto $producto): bool
     {
-        return false;
+        return strtolower($user->name) === 'admin';
     }
-
     /**
      * Determine whether the user can restore the model.
      */

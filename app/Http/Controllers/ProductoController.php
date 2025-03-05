@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
+use App\Models\Categoria;
 use App\Models\Producto;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ProductoController extends Controller
 {
@@ -13,7 +16,10 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Productos/Index', [
+            'productos' => Producto::with('categoria')->get(),
+            'categorias' => Categoria::all(),
+        ]);
     }
 
     /**
@@ -21,7 +27,9 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Productos/Create', [
+            'categorias' => Categoria::all(),
+        ]);
     }
 
     /**
@@ -29,7 +37,27 @@ class ProductoController extends Controller
      */
     public function store(StoreProductoRequest $request)
     {
-        //
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|max:2048',
+        ]);
+
+        $imagePath = $request->file('imagen') ? $request->file('imagen')->store('productos', 'public') : null;
+
+        Producto::create([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'precio' => $request->precio,
+            'stock' => $request->stock,
+            'categoria_id' => $request->categoria_id,
+            'imagen_url' => $imagePath,
+        ]);
+
+        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
     }
 
     /**
@@ -45,7 +73,10 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        //
+        return Inertia::render('Productos/Edit', [
+            'producto' => $producto->load('categoria'),
+            'categorias' => Categoria::all(),
+        ]);
     }
 
     /**
@@ -53,7 +84,28 @@ class ProductoController extends Controller
      */
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
-        //
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|max:2048', // La imagen es opcional
+        ]);
+
+        // Si se sube una nueva imagen, eliminamos la anterior y guardamos la nueva
+        if ($request->hasFile('imagen')) {
+            if ($producto->imagen_url) {
+                Storage::disk('public')->delete($producto->imagen_url);
+            }
+            $validated['imagen_url'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        // Actualizar el producto
+        $producto->update($validated);
+
+        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
     }
 
     /**
@@ -61,6 +113,11 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        //
+        if ($producto->imagen_url) {
+            Storage::disk('public')->delete($producto->imagen_url);
+        }
+        $producto->delete();
+
+        return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
 }

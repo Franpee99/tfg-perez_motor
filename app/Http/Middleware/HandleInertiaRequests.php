@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Producto;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,11 +30,16 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()
+                    ? array_merge($request->user()->toArray(), [
+                        'can' => [
+                            'create_productos' => $request->user()->can('create', Producto::class),
+                        ],
+                    ])
+                    : null,
             ],
-        ];
+        ]);
     }
 }
