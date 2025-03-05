@@ -193,7 +193,7 @@ El proyecto consiste en el desarrollo de una tienda online especializada en la v
 
     - `cd /tfg-perez_motor`
 
-2. Añadir archivo `.env` (solicitarlo por correo a marcoantonio.sanchez.monge@iesdonana.org).
+2. Añadir archivo `.env` (solicitarlo por correo a franciscojose.perez@iesdonana.org).
 
 ## Instalación Final
 
