@@ -33,28 +33,28 @@ El proyecto consiste en el desarrollo de una tienda online especializada en la v
 
 | Requisito | Prioridad | Tipo | Complejidad | Entrega |
 |-----------|-----------|------|-------------|---------|
-| (R1) Requisitos como | Mínimo | Técnico | Fácil | v1 |
+| (R1) Requisitos como incidencias | Mínimo | Técnico | Fácil | v1 |
 | (R2) Código fuente | Mínimo | Técnico | Fácil | v1 |
 | (R3) Estilo del código | Mínimo | Técnico | Fácil | v1 |
-| (R4) Tres | Mínimo | Técnico | Fácil | v1 |
+| (R4) Tres lanzamientos | Mínimo | Técnico | Fácil | v1 |
 | (R5) README.md | Mínimo | Técnico | Fácil | v1 |
 | (R6) Documentación | Mínimo | Técnico | Fácil | v1 |
-| (R7) Incidencias | Mínimo | Técnico | Fácil | v1 |
+| (R7) Incidencias en GitHub | Mínimo | Técnico | Fácil | v1 |
 | (R8) Etiquetas e hitos | Mínimo | Técnico | Fácil | v1 |
 | (R9) Rama master | Mínimo | Técnico | Fácil | v1 |
-| (R10) Gestión del código | Mínimo | Técnico | Fácil | v1 |
+| (R10) Gestión del proyecto | Mínimo | Técnico | Fácil | v1 |
 | (R11) Final de cada iteración | Mínimo | Técnico | Fácil | v1 |
 | (R12) Validación de formularios | Mínimo | Técnico | Fácil | v1 |
 | (R13) Gestión de ventanas | Mínimo | Técnico | Fácil | v1 |
 | (R14) Manejo de eventos | Mínimo | Técnico | Fácil | v1 |
 | (R15) DOM | Mínimo | Técnico | Fácil | v1 |
-| (R16) Incidencias | Mínimo | Técnico | Fácil | v1 |
-| (R17) Utilización de AJAX | Mínimo | Técnico | Fácil | v1 |
-| (R18) Plugin | Mínimo | Técnico | Fácil | v1 |
-| (R19) ECMAScript2015 (ES6) | Mínimo | Técnico | Fácil | v1 |
-| (R20) Framework | Mínimo | Técnico | Fácil | v1 |
+| (R16) Almacenamiento en el lado del cliente | Mínimo | Técnico | Fácil | v1 |
+| (R17) Alpine.js | Mínimo | Técnico | Fácil | v1 |
+| (R18) Plugin no trabajado en clase | Mínimo | Técnico | Fácil | v1 |
+| (R19) Utilización de AJAX | Mínimo | Técnico | Fácil | v1 |
+| (R20) ECMAScript2015 (ES6) | Mínimo | Técnico | Fácil | v1 |
 | (R21) PHP | Mínimo | Técnico | Fácil | v1 |
-| (R22) Laravel | Mínimo | Técnico | Fácil | v1 |
+| (R22) Laravel Framework | Mínimo | Técnico | Fácil | v1 |
 | (R23) PostgreSQL | Mínimo | Técnico | Fácil | v1 |
 | (R24) Cloud computing | Mínimo | Técnico | Fácil | v1 |
 | (R25) Pruebas funcionales | Mínimo | Técnico | Fácil | v1 |
@@ -62,44 +62,44 @@ El proyecto consiste en el desarrollo de una tienda online especializada en la v
 | (R27) Etiquetas semánticas de HTML5 | Mínimo | Técnico | Fácil | v1 |
 | (R28) Presentación mediante CSS | Mínimo | Técnico | Fácil | v1 |
 | (R29) Diseño flexible | Mínimo | Técnico | Fácil | v1 |
-| (R30) Animaciones, transiciones y contenido multimedia | Mínimo | Técnico | Fácil | v1 |
+| (R30) Transiciones, transformaciones, animaciones y contenido multimedia | Mínimo | Técnico | Fácil | v1 |
 | (R31) Uso de microdatos | Mínimo | Técnico | Fácil | v1 |
 | (R32) Validación HTML5, CSS3 y accesibilidad | Mínimo | Técnico | Fácil | v1 |
-| (R33) Diseño responsivo | Mínimo | Técnico | Fácil | v1 |
-| (R34) Compatibilidad con varios navegadores | Mínimo | Técnico | Fácil | v1 |
+| (R33) Diseño para varias resoluciones | Mínimo | Técnico | Fácil | v1 |
+| (R34) Varios navegadores | Mínimo | Técnico | Fácil | v1 |
 | (R35) Despliegue en un Host | Mínimo | Técnico | Fácil | v1 |
-| (R36) Despliegue en servidor local | Importante | Funcional | Fácil | v1 |
-| (R37) Registro e inicio de sesión | Importante | Funcional | Fácil | v1 |
-| (R38) Modificar usuario | Importante | Funcional | Fácil | v1 |
-| (R39) Eliminar usuario | Importante | Funcional | Fácil | v1 |
-| (R40) Cerrar sesión | Importante | Funcional | Fácil | v1 |
-| (R41) Crear productos (Panel de administración) | Importante | Funcional | Medio | v2 |
-| (R42) Editar productos (Panel de administración) | Importante | Funcional | Medio | v2 |
-| (R43) Eliminar productos (Panel de administración) | Importante | Funcional | Medio | v2 |
-| (R44) Catálogo de productos | Importante | Funcional | Medio | v2 |
-| (R45) Paginación de productos | Importante | Funcional | Medio | v2 |
-| (R46) Detalle de productos | Importante | Funcional | Medio | v2 |
-| (R47) Carrito de compras | Importante | Funcional | Medio | v2 |
-| (R48) Sistema de favoritos | Importante | Funcional | Medio | v2 |
-| (R49) Búsqueda y filtrado de productos | Importante | Funcional | Medio | v2 |
-| (R50) Página de Quiénes Somos | Importante | Funcional | Fácil | v2 |
-| (R51) Formulario de contacto | Importante | Funcional | Fácil | v2 |
-| (R52) Métodos de pago seguros | Importante | Funcional | Medio | v2 |
+| (R36) Despliegue en un servidor local | Mínimo | Técnico | Fácil | v1 |
+| (R37) Dar de alta un usuario e iniciar sesión | Importante | Funcional | Fácil | v1 |
+| (R38) Modificar un usuario | Importante | Funcional | Fácil | v1 |
+| (R39) Eliminar un usuario | Importante | Funcional | Fácil | v1 |
+| (R40) Opción de cerrar sesión | Importante | Funcional | Fácil | v1 |
+| (R41) Crear productos (Panel de administración) | Importante | Funcional | Media | v1 |
+| (R42) Editar productos (Panel de administración) | Importante | Funcional | Media | v1 |
+| (R43) Eliminar productos (Panel de administración) | Importante | Funcional | Media | v1 |
+| (R44) Catálogo de productos | Importante | Funcional | Fácil | v1 |
+| (R45) Paginación de productos | Importante | Funcional | Fácil | v1 |
+| (R46) Detalle de productos | Importante | Funcional | Fácil | v1 |
+| (R47) Carrito de compras | Importante | Funcional | Media | v1 |
+| (R48) Sistema de favoritos | Opcional | Funcional | Fácil | v1 |
+| (R49) Búsqueda y filtrado de productos | Importante | Funcional | Media | v1 |
+| (R50) Página de Quiénes Somos | Importante | Funcional | Fácil | v1 |
+| (R51) Formulario de contacto | Importante | Funcional | Fácil | v1 |
+| (R52) Métodos de pago seguros | Importante | Funcional | Difícil | v2 |
 | (R53) Gestión de stock | Importante | Funcional | Fácil | v2 |
-| (R54) Envíos y tracking | Importante | Funcional | Medio | v3 |
-| (R55) Sistema de notificaciones | Importante | Funcional | Medio | v3 |
-| (R56) Panel de administración avanzado | Importante | Funcional | Difícil | v3 |
-| (R57) Reportes y estadísticas de ventas | Importante | Funcional | Difícil | v3 |
-| (R58) Soporte multi-idioma | Opcional | Funcional | Medio | v3 |
-| (R59) Soporte multi-moneda | Opcional | Funcional | Medio | v3 |
-| (R60) Blog y contenido interactivo | Opcional | Funcional | Medio | v3 |
-| (R61) Autenticación de usuarios (OAuth, 2FA) | Importante | Funcional | Medio | v3 |
-| (R62) Integración con API de envío | Importante | Funcional | Difícil | v3 |
-| (R63) Historial de pedidos del usuario | Importante | Funcional | Medio | v3 |
-| (R64) Valoraciones y comentarios de productos | Importante | Funcional | Medio | v3 |
-| (R65) Carga de imágenes de productos | Importante | Funcional | Fácil | v3 |
-| (R66) Optimización para móviles | Importante | Funcional | Fácil | v3 |
-| (R67) Accesibilidad mejorada | Importante | Funcional | Difícil | v3 |
+| (R54) Historial de pedidos | Importante | Funcional | Fácil | v2 |
+| (R55) Descarga de tickets de compra | Importante | Funcional | Media | v2 |
+| (R56) Comentarios y valoraciones en productos | Importante | Funcional | Media | v2 |
+| (R57) Mostrar puntuación media de clientes en los productos | Importante | Funcional | Fácil | v2 |
+| (R58) Estado de la compra | Opcional | Funcional | Media | v2 |
+| (R59) Sistema de devoluciones | Importante | Funcional | Media | v2 |
+| (R60) Panel de administración (Taller) | Importante | Funcional | Difícil | v3 |
+| (R61) Reserva de citas en el taller | Importante | Funcional | Difícil | v3 |
+| (R62) Zona de usuario para ver citas programadas | Importante | Funcional | Difícil | v3 |
+| (R63) Búsqueda y filtrado de citas en el panel del taller | Importante | Funcional | Media | v3 |
+| (R64) Confirmación de citas | Opcional | Funcional | Media | v3 |
+| (R65) Confirmación de pedido por correo | Opcional | Funcional | Media | v3 |
+| (R66) Redirección después de compra | Opcional | Funcional | Fácil | v3 |
+| (R67) Correo de recogida del vehículo | Opcional | Funcional | Media | v3 |
 
 ---
 
