@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
 use App\Models\Categoria;
+use App\Models\Marca;
 use App\Models\Producto;
+use App\Models\Talla;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -16,13 +18,17 @@ class ProductoController extends Controller
      */
     public function index()
     {
+        $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
+        ->get()
+        ->map(function ($producto) {
+            $producto->stock_total = $producto->tallas->sum(function ($talla) {
+                return $talla->pivot->stock;
+            });
+            return $producto;
+        })->toArray();
+
         return Inertia::render('Productos/Index', [
-            'productos' => Producto::with(['categoria', 'subcategoria', 'tallas'])
-                ->get()
-                ->map(function ($producto) {
-                    $producto->stock_total = $producto->tallas->sum('stock');
-                    return $producto;
-                }),
+            'productos' => $productos,
             'categorias' => Categoria::with('subcategorias')->get(),
         ]);
     }
@@ -33,7 +39,8 @@ class ProductoController extends Controller
     public function create()
     {
         return Inertia::render('Productos/Create', [
-            'categorias' => Categoria::all(),
+            'categorias' => Categoria::with('subcategorias')->get(),
+            'marcas' => Marca::all(),
         ]);
     }
 
@@ -42,25 +49,56 @@ class ProductoController extends Controller
      */
     public function store(StoreProductoRequest $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'categoria_id' => 'required|exists:categorias,id',
-            'imagen' => 'nullable|image|max:2048',
+        $validated = $request->validate([
+            'nombre'           => 'required|string|max:255',
+            'descripcion'      => 'nullable|string',
+            'precio'           => 'required|numeric|min:0',
+            'subcategoria_id'  => 'required|exists:subcategorias,id',
+            'imagen'           => 'nullable|image|max:2048',
+            'marca_id'         => 'nullable|exists:marcas,id',
+            'nueva_marca'      => 'nullable|string|max:255',
+            'tallas'           => 'required|array|min:1',
+            'tallas.*.id'      => 'nullable|exists:tallas,id',
+            'tallas.*.nombre'  => 'required|string|max:50',
+            'tallas.*.stock'   => 'required|integer|min:0',
         ]);
 
-        $imagePath = $request->file('imagen') ? $request->file('imagen')->store('productos', 'public') : null;
+        // Si se proporciona una nueva marca, la creamos; de lo contrario usamos la seleccionada
+        $marca_id = $request->filled('nueva_marca')
+            ? Marca::create(['nombre' => $request->nueva_marca])->id
+            : (int) $request->marca_id;
 
-        Producto::create([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'precio' => $request->precio,
-            'stock' => $request->stock,
-            'categoria_id' => $request->categoria_id,
-            'imagen_url' => $imagePath,
+        if (!$marca_id) {
+            return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
+        }
+
+        // Guardar imagen
+        $imagePath = $request->file('imagen')
+            ? $request->file('imagen')->store('productos', 'public')
+            : null;
+
+        // Crear el producto
+        $producto = Producto::create([
+            'nombre'          => $validated['nombre'],
+            'descripcion'     => $validated['descripcion'] ?? null,
+            'precio'          => $validated['precio'],
+            'subcategoria_id' => $validated['subcategoria_id'],
+            'marca_id'        => $marca_id,
+            'imagen_url'      => $imagePath,
         ]);
+
+        // Recorrer las tallas y adjuntarlas al producto con su stock en el pivot
+        foreach ($validated['tallas'] as $tallaData) {
+            // Si se envía un id, usamos esa talla; de lo contrario, la creamos (o usamos firstOrCreate para evitar duplicados)
+            if (!empty($tallaData['id'])) {
+                $talla_id = $tallaData['id'];
+            } else {
+                $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
+                $talla_id = $talla->id;
+            }
+            // Adjuntar la talla con el stock a la tabla pivote
+            $producto->tallas()->attach($talla_id, ['stock' => $tallaData['stock']]);
+        }
 
         return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
     }

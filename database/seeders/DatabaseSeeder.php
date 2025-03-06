@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategoriaSeeder::class,
             SubcategoriaSeeder::class,
+            MarcaSeeder::class,
         ]);
     }
 }
