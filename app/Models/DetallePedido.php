@@ -11,7 +11,7 @@ class DetallePedido extends Model
     /** @use HasFactory<\Database\Factories\DetallePedidoFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['pedido_id', 'producto_id', 'cantidad', 'precio'];
+    protected $fillable = ['pedido_id', 'producto_id', 'talla_id', 'cantidad', 'precio'];
 
     public function pedido()
     {
@@ -21,5 +21,10 @@ class DetallePedido extends Model
     public function producto()
     {
         return $this->belongsTo(Producto::class);
+    }
+
+    public function talla()
+    {
+        return $this->belongsTo(Talla::class);
     }
 }

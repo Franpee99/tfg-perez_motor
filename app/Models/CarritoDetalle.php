@@ -11,7 +11,7 @@ class CarritoDetalle extends Model
     /** @use HasFactory<\Database\Factories\CarritoDetalleFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['carrito_id', 'producto_id', 'cantidad'];
+    protected $fillable = ['carrito_id', 'producto_id', 'talla_id', 'cantidad'];
 
     public function carrito()
     {
@@ -21,5 +21,10 @@ class CarritoDetalle extends Model
     public function producto()
     {
         return $this->belongsTo(Producto::class);
+    }
+
+    public function talla()
+    {
+        return $this->belongsTo(Talla::class);
     }
 }

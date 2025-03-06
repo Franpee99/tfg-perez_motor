@@ -13,9 +13,19 @@ class Producto extends Model
 
     protected $fillable = ['nombre', 'descripcion', 'precio', 'stock', 'categoria_id', 'imagen_url'];
 
-    public function categoria()
+    public function subcategoria()
     {
-        return $this->belongsTo(Categoria::class);
+        return $this->belongsTo(Subcategoria::class);
+    }
+
+    public function marca()
+    {
+        return $this->belongsTo(Marca::class);
+    }
+
+    public function tallas()
+    {
+        return $this->belongsToMany(Talla::class)->withPivot('stock');
     }
 
     public function detallesPedido()
