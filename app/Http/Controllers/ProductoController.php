@@ -8,11 +8,14 @@ use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\Talla;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProductoController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -161,6 +164,8 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
+        $this->authorize('delete', $producto);
+
         if ($producto->imagen_url) {
             Storage::disk('public')->delete($producto->imagen_url);
         }
