@@ -11,7 +11,7 @@ class Producto extends Model
     /** @use HasFactory<\Database\Factories\ProductoFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['nombre', 'descripcion', 'precio', 'stock', 'categoria_id', 'imagen_url'];
+    protected $fillable = ['nombre', 'descripcion', 'precio', 'stock', 'subcategoria_id', 'imagen_url'];
 
     public function subcategoria()
     {
