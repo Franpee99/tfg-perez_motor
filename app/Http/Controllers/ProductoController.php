@@ -17,8 +17,13 @@ class ProductoController extends Controller
     public function index()
     {
         return Inertia::render('Productos/Index', [
-            'productos' => Producto::with('categoria')->get(),
-            'categorias' => Categoria::all(),
+            'productos' => Producto::with(['categoria', 'subcategoria', 'tallas'])
+                ->get()
+                ->map(function ($producto) {
+                    $producto->stock_total = $producto->tallas->sum('stock');
+                    return $producto;
+                }),
+            'categorias' => Categoria::with('subcategorias')->get(),
         ]);
     }
 

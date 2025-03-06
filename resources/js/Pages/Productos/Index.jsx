@@ -26,8 +26,9 @@ export default function Index({ productos }) {
                                 <th className="py-3 px-4 text-left border-b">Nombre</th>
                                 <th className="py-3 px-4 text-left border-b">Descripción</th>
                                 <th className="py-3 px-4 text-left border-b">Precio</th>
-                                <th className="py-3 px-4 text-left border-b">Stock</th>
+                                <th className="py-3 px-4 text-left border-b">Stock Total</th>
                                 <th className="py-3 px-4 text-left border-b">Categoría</th>
+                                <th className="py-3 px-4 text-left border-b">Subcategoría</th>
                                 <th className="py-3 px-4 text-center border-b">Acciones</th>
                             </tr>
                         </thead>
@@ -48,8 +49,9 @@ export default function Index({ productos }) {
                                     <td className="py-3 px-4 border-b">{producto.nombre}</td>
                                     <td className="py-3 px-4 border-b">{producto.descripcion}</td>
                                     <td className="py-3 px-4 border-b">€{producto.precio}</td>
-                                    <td className="py-3 px-4 border-b">{producto.stock}</td>
+                                    <td className="py-3 px-4 border-b">{producto.stock_total}</td>
                                     <td className="py-3 px-4 border-b">{producto.categoria?.nombre || "N/A"}</td>
+                                    <td className="py-3 px-4 border-b">{producto.subcategoria?.nombre || "N/A"}</td>
                                     <td className="py-3 px-4 border-b text-center flex justify-center gap-2">
                                         {/* Botón Editar */}
                                         <Link
