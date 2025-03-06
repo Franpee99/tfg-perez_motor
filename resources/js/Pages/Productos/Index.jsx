@@ -46,12 +46,25 @@ export default function Index({ productos }) {
                                             <span className="text-gray-400">Sin imagen</span>
                                         )}
                                     </td>
-                                    <td className="py-2 px-3 border-b">{producto.nombre}</td>
+                                    <td className="py-2 px-3 border-b">
+                                        <Link
+                                            href={`/productos/${producto.id}`}
+                                            className="text-blue-500 hover:underline"
+                                        >
+                                            {producto.nombre}
+                                        </Link>
+                                    </td>
                                     <td className="py-2 px-3 border-b">€{producto.precio}</td>
                                     <td className="py-2 px-3 border-b">{producto.stock_total}</td>
-                                    <td className="py-2 px-3 border-b">{producto.subcategoria?.categoria?.nombre || "N/A"}</td>
-                                    <td className="py-2 px-3 border-b">{producto.subcategoria?.nombre || "N/A"}</td>
-                                    <td className="py-2 px-3 border-b">{producto.marca?.nombre || "N/A"}</td> {/* Mostrar la marca */}
+                                    <td className="py-2 px-3 border-b">
+                                        {producto.subcategoria?.categoria?.nombre || "N/A"}
+                                    </td>
+                                    <td className="py-2 px-3 border-b">
+                                        {producto.subcategoria?.nombre || "N/A"}
+                                    </td>
+                                    <td className="py-2 px-3 border-b">
+                                        {producto.marca?.nombre || "N/A"}
+                                    </td>
                                     <td className="py-2 px-3 border-b text-center">
                                         <div className="flex flex-col sm:flex-row justify-center gap-2">
                                             {/* Botón Editar */}

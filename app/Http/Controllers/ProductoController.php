@@ -104,7 +104,16 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        //
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
+
+        // Calcula el stock total a partir de las tallas (usando el stock del pivot)
+        $producto->stock_total = $producto->tallas->sum(function ($talla) {
+            return $talla->pivot->stock;
+        });
+
+        return Inertia::render('Productos/Show', [
+            'producto' => $producto,
+        ]);
     }
 
     /**
