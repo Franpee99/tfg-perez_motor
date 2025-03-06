@@ -13,6 +13,7 @@ export default function Create({ categorias = [], marcas = [] }) {
         nueva_marca: "",
         imagen: null,
         tallas: [],
+        ficha_tecnica: [] // Array para características dinámicas
     });
 
     const [preview, setPreview] = useState(null);
@@ -56,6 +57,26 @@ export default function Create({ categorias = [], marcas = [] }) {
         const newTallas = [...data.tallas];
         newTallas.splice(index, 1);
         setData("tallas", newTallas);
+    };
+
+    // Manejadores para las características dinámicas
+    const addCaracteristica = () => {
+        setData("ficha_tecnica", [
+            ...data.ficha_tecnica,
+            { key: "", value: "" },
+        ]);
+    };
+
+    const updateCaracteristica = (index, field, value) => {
+        const nuevas = [...data.ficha_tecnica];
+        nuevas[index][field] = value;
+        setData("ficha_tecnica", nuevas);
+    };
+
+    const removeCaracteristica = (index) => {
+        const nuevas = [...data.ficha_tecnica];
+        nuevas.splice(index, 1);
+        setData("ficha_tecnica", nuevas);
     };
 
     return (
@@ -290,6 +311,68 @@ export default function Create({ categorias = [], marcas = [] }) {
                             className="mt-2 bg-green-500 text-white p-2 rounded"
                         >
                             + Agregar Talla
+                        </button>
+                    </div>
+
+                    {/* Características (Ficha Técnica) */}
+                    <div>
+                        <label className="block text-gray-700 font-semibold mb-2">
+                            Características (Ficha Técnica)
+                        </label>
+                        {data.ficha_tecnica.map((carac, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center gap-2 mb-2"
+                            >
+                                <input
+                                    type="text"
+                                    placeholder="Ej: Identificador"
+                                    value={carac.key}
+                                    onChange={(e) =>
+                                        updateCaracteristica(
+                                            index,
+                                            "key",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="border p-2 rounded w-1/3"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Ej: 5114552"
+                                    value={carac.value}
+                                    onChange={(e) =>
+                                        updateCaracteristica(
+                                            index,
+                                            "value",
+                                            e.target.value
+                                        )
+                                    }
+                                    className="border p-2 rounded w-1/2"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        removeCaracteristica(index)
+                                    }
+                                    className="bg-red-500 text-white px-2 py-1 rounded"
+                                >
+                                    ❌
+                                </button>
+                            </div>
+                        ))}
+                        {errors.ficha_tecnica &&
+                            typeof errors.ficha_tecnica === "string" && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.ficha_tecnica}
+                                </p>
+                            )}
+                        <button
+                            type="button"
+                            onClick={addCaracteristica}
+                            className="bg-green-500 text-white p-2 rounded"
+                        >
+                            + Agregar característica
                         </button>
                     </div>
 

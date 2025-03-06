@@ -11,7 +11,11 @@ class Producto extends Model
     /** @use HasFactory<\Database\Factories\ProductoFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['nombre', 'descripcion', 'precio', 'stock', 'subcategoria_id', 'marca_id', 'imagen_url'];
+    protected $fillable = ['nombre', 'descripcion', 'precio', 'stock', 'subcategoria_id', 'marca_id', 'ficha_tecnica', 'imagen_url'];
+
+    protected $casts = [
+        'ficha_tecnica' => 'array', // Para manejarlo como array en Laravel
+    ];
 
     public function subcategoria()
     {
