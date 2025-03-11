@@ -45,4 +45,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function carrito()
+    {
+        return $this->hasOne(Carrito::class);
+    }
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class);
+    }
+
+
 }

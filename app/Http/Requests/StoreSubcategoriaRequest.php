@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProductoRequest extends FormRequest
+class StoreSubcategoriaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return strtolower($this->user()->name) === 'admin';
+        return false;
     }
 
     /**

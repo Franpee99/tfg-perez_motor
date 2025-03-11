@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Producto;
+use App\Models\Subcategoria;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ProductoPolicy
+class SubcategoriaPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class ProductoPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Producto $producto): bool
+    public function view(User $user, Subcategoria $subcategoria): bool
     {
         return false;
     }
@@ -29,28 +29,29 @@ class ProductoPolicy
      */
     public function create(User $user): bool
     {
-        return strtolower($user->name) === 'admin';
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Producto $producto): bool
+    public function update(User $user, Subcategoria $subcategoria): bool
     {
-        return strtolower($user->name) === 'admin';
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Producto $producto): bool
+    public function delete(User $user, Subcategoria $subcategoria): bool
     {
-        return strtolower($user->name) === 'admin';
+        return false;
     }
+
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Producto $producto): bool
+    public function restore(User $user, Subcategoria $subcategoria): bool
     {
         return false;
     }
@@ -58,7 +59,7 @@ class ProductoPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Producto $producto): bool
+    public function forceDelete(User $user, Subcategoria $subcategoria): bool
     {
         return false;
     }
