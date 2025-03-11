@@ -4,9 +4,6 @@ import { Link, useForm } from "@inertiajs/react";
 export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
 
-  // Para depurar, imprime en consola los productos
-  console.log("Productos recibidos:", productos);
-
   const handleDelete = (id) => {
     if (confirm("¿Seguro que quieres eliminar este producto?")) {
       destroy(`/productos/${id}`);

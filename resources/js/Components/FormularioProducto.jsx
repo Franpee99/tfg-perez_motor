@@ -12,7 +12,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
     subcategoria_id: "",
     marca_id: "",
     nueva_marca: "",
-    imagenes: [], // Array para hasta 3 imágenes
+    imagenes: [],
     tallas: [],
     ficha_tecnica: [],
   });
@@ -34,10 +34,10 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
   const handleImagesChange = (e) => {
     // Obtener los nuevos archivos seleccionados y limitar a 3
     const newFiles = Array.from(e.target.files).slice(0, 3);
-    // Combinar con los que ya se hayan seleccionado (si se permite acumulación)
+    // Combinar con los que ya se hayan seleccionado
     const allFiles = [...data.imagenes, ...newFiles].slice(0, 3);
     setData("imagenes", allFiles);
-    // Mostrar el nombre de cada archivo (o si prefieres, usar URL.createObjectURL para vista previa)
+    // Mostrar el nombre de cada archivo
     setPreviews(allFiles.map((file) => file.name));
   };
 
