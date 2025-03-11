@@ -28,7 +28,7 @@ class ProductoController extends Controller
                 return $talla->pivot->stock;
             });
             return $producto;
-        })->toArray();
+        })->toArray(); //A array para asegurarnos que los datos se envien correctamnete a la vista Inertia.
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
@@ -59,7 +59,8 @@ class ProductoController extends Controller
             'subcategoria_id'  => 'required|exists:subcategorias,id',
             'marca_id'         => 'nullable|exists:marcas,id',
             'nueva_marca'      => 'nullable|string|max:255',
-            'imagen'           => 'nullable|image|max:2048',
+            'imagenes'         => 'nullable|array|max:3',
+            'imagenes.*'       => 'image|max:2048', // Validar cada imagen
             'tallas'           => 'required|array|min:1',
             'tallas.*.nombre'  => 'required|string|max:50',
             'tallas.*.stock'   => 'required|integer|min:0',
@@ -77,9 +78,13 @@ class ProductoController extends Controller
         }
 
         // Guardar imagen si se proporciona.
-        $imagePath = $request->file('imagen')
-            ? $request->file('imagen')->store('productos', 'public')
-            : null;
+        $imagenes = [];
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('productos', 'public');
+                $imagenes[] = $path;
+            }
+        }
 
         // Crear el producto, incluyendo la ficha técnica que se almacenará como JSON.
         $producto = Producto::create([
@@ -88,11 +93,10 @@ class ProductoController extends Controller
             'precio'           => $validated['precio'],
             'subcategoria_id'  => $validated['subcategoria_id'],
             'marca_id'         => $marca_id,
-            'imagen_url'       => $imagePath,
             'ficha_tecnica'    => $validated['ficha_tecnica'] ?? [],
+            'imagenes'       => $imagenes,
         ]);
 
-        // Procesar las tallas: usamos attach() para llenar la tabla pivote con el stock correspondiente.
         foreach ($validated['tallas'] as $tallaData) {
             // Buscamos la talla por nombre o la creamos para evitar duplicados.
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);

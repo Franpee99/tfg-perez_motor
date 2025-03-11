@@ -1,9 +1,9 @@
-// Pages/Productos/Show.jsx
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import { Link } from "@inertiajs/react";
 import TarjetaProducto from "@/Components/TarjetaProducto";
 import TablaStock from "@/Components/TablaStock";
 import FichaTecnica from "@/Components/FichaTecnica";
+import Imagenes from "@/Components/Imagenes";
 
 export default function Show({ producto }) {
   // Aseguramos que ficha_tecnica y tallas sean arrays
@@ -16,12 +16,15 @@ export default function Show({ producto }) {
         {/* Tarjeta del Producto */}
         <TarjetaProducto producto={producto} />
 
+        {/* Sección de Imágenes */}
+        <h2 className="text-2xl font-semibold mb-2 mt-8">Imágenes</h2>
+        <Imagenes imagenes={producto.imagenes} />
+
         {/* Tabla de Stock por Tallas */}
         <TablaStock tallas={tallas} />
 
         {/* Ficha Técnica */}
         <FichaTecnica fichaTecnica={fichaTecnica} />
-
       </div>
     </AppLayout>
   );

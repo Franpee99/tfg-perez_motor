@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('subcategoria_id')->constrained();
             $table->foreignId('marca_id')->constrained();
             $table->json('ficha_tecnica')->nullable();
-            $table->string('imagen_url')->nullable();
+            $table->json('imagenes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

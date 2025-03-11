@@ -12,12 +12,12 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
     subcategoria_id: "",
     marca_id: "",
     nueva_marca: "",
-    imagen: null,
+    imagenes: [], // Array para hasta 3 imágenes
     tallas: [],
     ficha_tecnica: [],
   });
 
-  const [preview, setPreview] = useState(null);
+  const [previews, setPreviews] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
 
   useEffect(() => {
@@ -31,12 +31,14 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
     }
   }, [data.categoria_id, categorias]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setData("imagen", file);
-      setPreview(URL.createObjectURL(file));
-    }
+  const handleImagesChange = (e) => {
+    // Obtener los nuevos archivos seleccionados y limitar a 3
+    const newFiles = Array.from(e.target.files).slice(0, 3);
+    // Combinar con los que ya se hayan seleccionado (si se permite acumulación)
+    const allFiles = [...data.imagenes, ...newFiles].slice(0, 3);
+    setData("imagenes", allFiles);
+    // Mostrar el nombre de cada archivo (o si prefieres, usar URL.createObjectURL para vista previa)
+    setPreviews(allFiles.map((file) => file.name));
   };
 
   const addTalla = () => {
@@ -87,6 +89,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
         <label className="block text-gray-700 font-semibold">Nombre</label>
         <input
           type="text"
+          name="nombre"
           value={data.nombre}
           onChange={(e) => setData("nombre", e.target.value)}
           className="w-full p-3 border rounded-lg"
@@ -99,6 +102,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
       <div>
         <label className="block text-gray-700 font-semibold">Descripción</label>
         <textarea
+          name="descripcion"
           value={data.descripcion}
           onChange={(e) => setData("descripcion", e.target.value)}
           className="w-full p-3 border rounded-lg"
@@ -112,6 +116,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
         <label className="block text-gray-700 font-semibold">Precio (€)</label>
         <input
           type="number"
+          name="precio"
           value={data.precio}
           onChange={(e) => setData("precio", e.target.value)}
           className="w-full p-3 border rounded-lg"
@@ -124,6 +129,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
       <div>
         <label className="block text-gray-700 font-semibold">Categoría</label>
         <select
+          name="categoria_id"
           value={data.categoria_id}
           onChange={(e) => setData("categoria_id", e.target.value)}
           className="w-full p-3 border rounded-lg"
@@ -143,6 +149,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
       <div>
         <label className="block text-gray-700 font-semibold">Subcategoría</label>
         <select
+          name="subcategoria_id"
           value={data.subcategoria_id}
           onChange={(e) => setData("subcategoria_id", e.target.value)}
           className="w-full p-3 border rounded-lg"
@@ -163,6 +170,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
       <div>
         <label className="block text-gray-700 font-semibold">Marca</label>
         <select
+          name="marca_id"
           value={data.marca_id || ""}
           onChange={(e) => setData("marca_id", e.target.value || null)}
           className="w-full p-3 border rounded-lg"
@@ -189,6 +197,7 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
         </label>
         <input
           type="text"
+          name="nueva_marca"
           value={data.nueva_marca}
           onChange={(e) => setData("nueva_marca", e.target.value)}
           className="w-full p-3 border rounded-lg"
@@ -213,26 +222,30 @@ export default function FormularioProducto({ categorias = [], marcas = [] }) {
         removeCaracteristica={removeCaracteristica}
         errorFichaTecnica={errors.ficha_tecnica}
       />
-      {/* Imagen */}
+      {/* Imágenes */}
       <div>
         <label className="block text-gray-700 font-semibold">
-          Imagen del Producto
+          Imágenes del Producto (Máx 3)
         </label>
         <input
           type="file"
+          name="imagenes"
           accept="image/*"
-          onChange={handleImageChange}
+          multiple
+          onChange={handleImagesChange}
           className="w-full p-2 border rounded-lg"
         />
-        {preview && (
-          <img
-            src={preview}
-            alt="Vista previa"
-            className="mt-3 w-48 h-48 object-cover rounded-lg shadow"
-          />
+        {previews.length > 0 && (
+          <div className="mt-2">
+            {previews.map((nombre, index) => (
+              <p key={index} className="text-sm text-gray-700">
+                {nombre}
+              </p>
+            ))}
+          </div>
         )}
-        {errors.imagen && (
-          <p className="text-red-500 text-sm mt-1">{errors.imagen}</p>
+        {errors.imagenes && (
+          <p className="text-red-500 text-sm mt-1">{errors.imagenes}</p>
         )}
       </div>
       {/* Botón de Guardar */}
