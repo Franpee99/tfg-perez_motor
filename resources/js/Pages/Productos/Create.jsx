@@ -1,5 +1,5 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import FormularioProducto from "@/Components/FormularioProducto";
+import FormularioCrearProducto from "@/Components/FormularioCrearProducto";
 
 export default function Create({ categorias = [], marcas = [] }) {
   return (
@@ -8,7 +8,7 @@ export default function Create({ categorias = [], marcas = [] }) {
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
           Crear Producto
         </h1>
-        <FormularioProducto categorias={categorias} marcas={marcas} />
+        <FormularioCrearProducto categorias={categorias} marcas={marcas} />
       </div>
     </AppLayout>
   );

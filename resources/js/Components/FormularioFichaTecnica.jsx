@@ -1,46 +1,48 @@
 import React from "react";
+import Boton from "./Boton";
 
-export default function FormularioFichaTecnica({ fichaTecnica, addCaracteristica, updateCaracteristica, removeCaracteristica, errorFichaTecnica }) {
+
+export default function FormularioFichaTecnica({ listaFichaTecnica, agregarCaracteristica, actualizarCaracteristica, eliminarCaracteristica, errorFichaTecnica }) {
   return (
     <div>
       <label className="block text-gray-700 font-semibold mb-2">
-        Características (Ficha Técnica)
+        Características del Producto (Ficha Técnica)
       </label>
-      {fichaTecnica.map((carac, index) => (
+      {listaFichaTecnica.map((caracteristica, index) => (
         <div key={index} className="flex items-center gap-2 mb-2">
           <input
             type="text"
-            placeholder="Ej: Identificador"
-            value={carac.key}
-            onChange={(e) => updateCaracteristica(index, "key", e.target.value)}
+            placeholder="Ej: Color, Material"
+            value={caracteristica.key}
+            onChange={(e) => actualizarCaracteristica(index, "key", e.target.value)}
             className="border p-2 rounded w-1/3"
           />
           <input
             type="text"
-            placeholder="Ej: 5114552"
-            value={carac.value}
-            onChange={(e) => updateCaracteristica(index, "value", e.target.value)}
+            placeholder="Ej: Rojo, Cuero"
+            value={caracteristica.value}
+            onChange={(e) => actualizarCaracteristica(index, "value", e.target.value)}
             className="border p-2 rounded w-1/2"
           />
-          <button
-            type="button"
-            onClick={() => removeCaracteristica(index)}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            ❌
-          </button>
+           <Boton
+            texto="X"
+            onClick={() => eliminarCaracteristica(index)}
+            color="red"
+            tamaño="sm"
+            titulo="Eliminar Característica"
+          />
         </div>
       ))}
       {errorFichaTecnica && typeof errorFichaTecnica === "string" && (
         <p className="text-red-500 text-sm mt-1">{errorFichaTecnica}</p>
       )}
-      <button
-        type="button"
-        onClick={addCaracteristica}
-        className="bg-green-500 text-white p-2 rounded"
-      >
-        + Agregar característica
-      </button>
+        <Boton
+        texto="+ Agregar Característica"
+        onClick={agregarCaracteristica}
+        color="green"
+        tamaño="md"
+        titulo="Agregar una nueva característica"
+      />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import { Link, useForm } from "@inertiajs/react";
+import Boton from "@/Components/Boton";
+
 
 export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
@@ -66,19 +68,20 @@ export default function Index({ productos }) {
                   </td>
                   <td className="py-2 px-3 border-b text-center">
                     <div className="flex flex-col sm:flex-row justify-center gap-2">
-                      <Link
-                        href={`/productos/${producto.id}/edit`}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition text-sm"
-                      >
-                        Editar
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(producto.id)}
-                        disabled={processing}
-                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition text-sm"
-                      >
-                        Eliminar
-                      </button>
+                    <Boton
+                      texto="Editar"
+                      href={`/productos/${producto.id}/edit`}
+                      color="blue"
+                      tamaño="sm"
+                    />
+
+                    <Boton
+                      texto="Eliminar"
+                      onClick={() => handleDelete(producto.id)}
+                      color="red"
+                      tamaño="sm"
+                      disabled={processing}
+                    />
                     </div>
                   </td>
                 </tr>

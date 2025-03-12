@@ -1,44 +1,45 @@
 import React from "react";
+import Boton from "./Boton";
 
-export default function FormularioTallas({ tallas, addTalla, updateTalla, removeTalla, errorTallas }) {
+export default function FormularioTallas({ listaTallas, agregarTalla, actualizarTalla, eliminarTalla, errorTallas }) {
   return (
     <div>
-      <label className="block text-gray-700 font-semibold">Tallas y Stock</label>
-      {tallas.map((talla, index) => (
+      <label className="block text-gray-700 font-semibold">Tallas y Cantidad en Stock</label>
+      {listaTallas.map((talla, index) => (
         <div key={index} className="flex gap-2 items-center mb-2">
           <input
             type="text"
-            placeholder="Talla"
+            placeholder="Ej: M, L, XL"
             value={talla.nombre}
-            onChange={(e) => updateTalla(index, "nombre", e.target.value)}
+            onChange={(e) => actualizarTalla(index, "nombre", e.target.value)}
             className="border p-2 rounded w-1/2"
           />
           <input
             type="number"
-            placeholder="Stock"
+            placeholder="Cantidad"
             value={talla.stock}
-            onChange={(e) => updateTalla(index, "stock", e.target.value)}
+            onChange={(e) => actualizarTalla(index, "stock", e.target.value)}
             className="border p-2 rounded w-1/2"
           />
-          <button
-            type="button"
-            onClick={() => removeTalla(index)}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            ❌
-          </button>
+          <Boton
+            texto="X"
+            onClick={() => eliminarTalla(index)}
+            color="red"
+            tamaño="sm"
+            titulo="Eliminar talla"
+          />
         </div>
       ))}
       {errorTallas && typeof errorTallas === "string" && (
         <p className="text-red-500 text-sm mt-1">{errorTallas}</p>
       )}
-      <button
-        type="button"
-        onClick={addTalla}
-        className="mt-2 bg-green-500 text-white p-2 rounded"
-      >
-        + Agregar Talla
-      </button>
+      <Boton
+        texto="+ Agregar Talla"
+        onClick={agregarTalla}
+        color="green"
+        tamaño="md"
+        titulo="Agregar una nueva talla"
+      />
     </div>
   );
 }
