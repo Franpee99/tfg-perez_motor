@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProductoSeccionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +28,8 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-
+/*Productos*/
 Route::resource('productos', ProductoController::class)->middleware('auth');
+
+/*Secciones de los productos*/
+Route::get('/seccion/{categoria}', [ProductoSeccionController::class, 'index']);
