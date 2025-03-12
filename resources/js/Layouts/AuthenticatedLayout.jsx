@@ -30,6 +30,39 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                <NavLink
+                                    href={route('productos.seccion', 'cascos')}
+                                    active={route().current('productos.seccion', { categoria: 'cascos' })}
+                                >
+                                    Cascos
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'chaquetas')}
+                                    active={route().current('productos.seccion', { categoria: 'chaquetas' })}
+                                >
+                                    Chaquetas
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'pantalones')}
+                                    active={route().current('productos.seccion', { categoria: 'pantalones' })}
+                                >
+                                    Pantalones
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'guantes')}
+                                    active={route().current('productos.seccion', { categoria: 'guantes' })}
+                                >
+                                    Guantes
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'botas')}
+                                    active={route().current('productos.seccion', { categoria: 'botas' })}
+                                >
+                                    Botas
+                                </NavLink>
+
+
                                 <NavLink href={route('productos.index')} active={route().current('productos.index')}>
                                     Productos
                                 </NavLink>

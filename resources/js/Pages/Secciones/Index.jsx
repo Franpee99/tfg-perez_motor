@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from '@inertiajs/inertia-react';
+import AppLayout from "@/Layouts/AuthenticatedLayout";
+
 
 const Categoria = ({ categoriaActual, productos }) => {
     return (
+        <AppLayout>
         <div>
             <h1>Productos en la categoría: {categoriaActual}</h1>
             <div className="productos">
@@ -19,6 +22,7 @@ const Categoria = ({ categoriaActual, productos }) => {
             </div>
             <Link href="/productos">Volver a todos los productos</Link>
         </div>
+        </AppLayout>
     );
 };
 

@@ -31,5 +31,5 @@ require __DIR__.'/auth.php';
 /*Productos*/
 Route::resource('productos', ProductoController::class)->middleware('auth');
 
-/*Secciones de los productos*/
-Route::get('/seccion/{categoria}', [ProductoSeccionController::class, 'index']);
+/*Poductos por secciones (categorias)*/
+Route::get('/seccion/{categoria}', [ProductoSeccionController::class, 'index'])->name('productos.seccion');
