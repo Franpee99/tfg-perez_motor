@@ -1,4 +1,6 @@
 import { Link } from "@inertiajs/react";
+import Boton from "@/Components/Boton";
+
 
 export default function TarjetaProducto({ producto }) {
   return (
@@ -45,18 +47,19 @@ export default function TarjetaProducto({ producto }) {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-            <Link
-              href={`/productos/${producto.id}/edit`}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
-            >
-              Editar
-            </Link>
-            <Link
-              href="/productos"
-              className="px-4 py-2 bg-gray-600 text-white rounded-md shadow hover:bg-gray-700 transition"
-            >
-              Volver a la lista
-            </Link>
+          <Boton
+            texto="Editar"
+            href={`/productos/${producto.id}/edit`}
+            color="blue"
+            tamaño="md"
+          />
+
+          <Boton
+            texto="Volver a la lista"
+            href="/productos"
+            color="gray"
+            tamaño="md"
+          />
           </div>
         </div>
       </div>

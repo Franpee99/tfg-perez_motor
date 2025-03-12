@@ -52,22 +52,7 @@ class ProductoController extends Controller
      */
     public function store(StoreProductoRequest $request)
     {
-        $validated = $request->validate([
-            'nombre'           => 'required|string|max:255',
-            'descripcion'      => 'nullable|string',
-            'precio'           => 'required|numeric|min:0',
-            'subcategoria_id'  => 'required|exists:subcategorias,id',
-            'marca_id'         => 'nullable|exists:marcas,id',
-            'nueva_marca'      => 'nullable|string|max:255',
-            'imagenes'         => 'nullable|array|max:3',
-            'imagenes.*'       => 'image|max:2048', // Validar cada imagen
-            'tallas'           => 'required|array|min:1',
-            'tallas.*.nombre'  => 'required|string|max:50',
-            'tallas.*.stock'   => 'required|integer|min:0',
-            'ficha_tecnica'    => 'nullable|array',
-            'ficha_tecnica.*.key'   => 'nullable|string|max:255',
-            'ficha_tecnica.*.value' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         // Si se ingresa una nueva marca, la creamos; de lo contrario, usamos la marca seleccionada.
         $marca_id = $request->filled('nueva_marca')
@@ -128,9 +113,12 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
+
         return Inertia::render('Productos/Edit', [
-            'producto' => $producto->load('categoria'),
-            'categorias' => Categoria::all(),
+            'producto'    => $producto,
+            'categorias'  => Categoria::with('subcategorias')->get(),
+            'marcas'      => Marca::all(),
         ]);
     }
 
@@ -140,27 +128,54 @@ class ProductoController extends Controller
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
 
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'precio' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'categoria_id' => 'required|exists:categorias,id',
-            'imagen' => 'nullable|image|max:2048', // La imagen es opcional
-        ]);
+        $validated = $request->validated();
 
-        // Si se sube una nueva imagen, eliminamos la anterior y guardamos la nueva
-        if ($request->hasFile('imagen')) {
-            if ($producto->imagen_url) {
-                Storage::disk('public')->delete($producto->imagen_url);
-            }
-            $validated['imagen_url'] = $request->file('imagen')->store('productos', 'public');
+        $marca_id = $request->filled('nueva_marca')
+            ? Marca::create(['nombre' => $request->nueva_marca])->id
+            : (int) $request->marca_id;
+        if (!$marca_id) {
+            return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
+        $validated['marca_id'] = $marca_id;
 
-        // Actualizar el producto
+
+        // Partimos de las imágenes actuales del producto.
+        $imagenRecurrente = $producto->imagenes ?? [];
+        // Procesamos las imágenes a eliminar, si se enviaron.
+        if ($request->has('imagenes_a_eliminar')) {
+            $imagenesAEliminar = $request->input('imagenes_a_eliminar'); // array de rutas
+            foreach ($imagenesAEliminar as $img) {
+                if (($key = array_search($img, $imagenRecurrente)) !== false) {
+                    unset($imagenRecurrente[$key]);
+                    Storage::disk('public')->delete($img);
+                }
+            }
+            $imagenRecurrente = array_values($imagenRecurrente);
+        }
+        // Procesamos las nuevas imágenes, si se han subido.
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('productos', 'public');
+                $imagenRecurrente[] = $path;
+            }
+        }
+        $validated['imagenes'] = $imagenRecurrente;
+
         $producto->update($validated);
 
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado correctamente.');
+        // Actualizar JSON
+        $producto->ficha_tecnica = $validated['ficha_tecnica'] ?? [];
+        $producto->save();
+
+        // Desvincular las tallas existentes y asociar las nuevas
+        $producto->tallas()->detach();
+        foreach ($validated['tallas'] as $tallaData) {
+            $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
+            $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
+        }
+
+        return redirect()->route('productos.show', $producto->id)
+            ->with('success', 'Producto actualizado correctamente.');
     }
 
     /**
