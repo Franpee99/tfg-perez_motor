@@ -1,29 +1,28 @@
 import React from 'react';
-import { Link } from '@inertiajs/inertia-react';
-import AppLayout from "@/Layouts/AuthenticatedLayout";
+import { Head } from '@inertiajs/react';
+import AppLayout from '@/Layouts/AuthenticatedLayout';
+import ProductoGrid from '@/Components/ProductoGrid';
 
-
-const Categoria = ({ categoriaActual, productos }) => {
+export default function SeccionIndex({ categoriaActual, productos }) {
     return (
-        <AppLayout>
-        <div>
-            <h1>Productos en la categoría: {categoriaActual}</h1>
-            <div className="productos">
-                {productos.map((producto) => (
-                    <div key={producto.id} className="producto">
-                        <h2>{producto.nombre}</h2>
-                        {producto.imagenes && producto.imagenes.length > 0 && (
-                            <img src={producto.imagenes[0]} alt={producto.nombre} />
-                        )}
-                        <p>{producto.descripcion}</p>
-                        <p>Precio: ${producto.precio}</p>
-                    </div>
-                ))}
+        <AppLayout
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    {`Sección: ${categoriaActual}`}
+                </h2>
+            }
+        >
+            <Head title={`Sección: ${categoriaActual}`} />
+
+            <div className="py-12">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <h1 className="mb-6 text-2xl font-bold">
+                        Productos en la categoría: {categoriaActual}
+                    </h1>
+
+                    <ProductoGrid productos={productos} />
+                </div>
             </div>
-            <Link href="/productos">Volver a todos los productos</Link>
-        </div>
         </AppLayout>
     );
-};
-
-export default Categoria;
+}
