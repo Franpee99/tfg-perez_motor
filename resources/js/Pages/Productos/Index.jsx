@@ -97,20 +97,19 @@ export default function Index({ productos, categorias }) {
             if (label.includes("Next")) label = "Siguiente";
 
             return (
-              <button
+              <Boton
                 key={index}
-                disabled={!link.url}
+                texto={label}
                 onClick={() => link.url && window.location.assign(link.url)}
-                className={`px-3 py-1 text-sm border rounded ${
-                  link.active
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
-                }`}
-                dangerouslySetInnerHTML={{ __html: label }}
+                disabled={!link.url}
+                color={link.active ? "blue" : "gray"}
+                tamaño="sm"
+                className="!text-sm"
               />
             );
           })}
         </div>
+
       </div>
     </AppLayout>
   );
