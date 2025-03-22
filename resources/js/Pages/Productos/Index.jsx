@@ -1,5 +1,5 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, useForm } from "@inertiajs/react";
+import { Link, useForm, router } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 
 export default function Index({ productos, categorias }) {
@@ -100,7 +100,7 @@ export default function Index({ productos, categorias }) {
               <Boton
                 key={index}
                 texto={label}
-                onClick={() => link.url && window.location.assign(link.url)}
+                onClick={() => link.url && router.visit(link.url)}
                 disabled={!link.url}
                 color={link.active ? "blue" : "gray"}
                 tamaño="sm"
