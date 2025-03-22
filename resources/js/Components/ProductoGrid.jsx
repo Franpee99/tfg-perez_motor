@@ -28,7 +28,7 @@ export default function ProductoGrid({ productos }) {
                     {/* Contenido del producto */}
                     <div className="p-4">
                         {/* Nombre */}
-                        <h2 className="mb-2 text-sm font-bold uppercase text-gray-800 line-clamp-2">
+                        <h2 className="mb-2 text-sm font-bold uppercase text-red-600 line-clamp-2">
                             {producto.nombre}
                         </h2>
 
@@ -48,7 +48,7 @@ export default function ProductoGrid({ productos }) {
 
                         {/* Precio */}
                         <div className="mt-2 flex items-center space-x-2">
-                            <p className="text-md font-semibold text-red-600">
+                            <p className="text-md font-semibold text-black-600">
                                 {producto.precio} €
                             </p>
                         </div>

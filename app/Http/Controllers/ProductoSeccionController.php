@@ -11,7 +11,7 @@ class ProductoSeccionController extends Controller
 {
     public function index($categoria)
     {
-        $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
+        $productos = Producto::with(['marca', 'subcategoria.categoria'])
             ->whereHas('subcategoria.categoria', function($query) use ($categoria) {
                 $query->whereRaw('LOWER(nombre) = ?', [strtolower($categoria)]);
 
