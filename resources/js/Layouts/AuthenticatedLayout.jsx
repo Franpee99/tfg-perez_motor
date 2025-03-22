@@ -8,8 +8,6 @@ import { useState } from 'react';
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user; // Aquí ya tomamos el usuario correctamente
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -30,6 +28,39 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                <NavLink
+                                    href={route('productos.seccion', 'cascos')}
+                                    active={route().current('productos.seccion', { categoria: 'cascos' })}
+                                >
+                                    Cascos
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'chaquetas')}
+                                    active={route().current('productos.seccion', { categoria: 'chaquetas' })}
+                                >
+                                    Chaquetas
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'pantalones')}
+                                    active={route().current('productos.seccion', { categoria: 'pantalones' })}
+                                >
+                                    Pantalones
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'guantes')}
+                                    active={route().current('productos.seccion', { categoria: 'guantes' })}
+                                >
+                                    Guantes
+                                </NavLink>
+                                <NavLink
+                                    href={route('productos.seccion', 'botas')}
+                                    active={route().current('productos.seccion', { categoria: 'botas' })}
+                                >
+                                    Botas
+                                </NavLink>
+
+
                                 <NavLink href={route('productos.index')} active={route().current('productos.index')}>
                                     Productos
                                 </NavLink>
