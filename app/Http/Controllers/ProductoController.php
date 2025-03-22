@@ -22,13 +22,13 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
-        ->get()
-        ->map(function ($producto) {
-            $producto->stock_total = $producto->tallas->sum(function ($talla) {
-                return $talla->pivot->stock;
+            ->paginate(10)
+            ->through(function ($producto) {
+                $producto->stock_total = $producto->tallas->sum(function ($talla) {
+                    return $talla->pivot->stock;
+                });
+                return $producto;
             });
-            return $producto;
-        })->toArray(); //A array para asegurarnos que los datos se envien correctamnete a la vista Inertia.
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,

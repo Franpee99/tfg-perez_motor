@@ -2,8 +2,7 @@ import AppLayout from "@/Layouts/AuthenticatedLayout";
 import { Link, useForm } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 
-
-export default function Index({ productos }) {
+export default function Index({ productos, categorias }) {
   const { delete: destroy, processing } = useForm();
 
   const handleDelete = (id) => {
@@ -34,7 +33,7 @@ export default function Index({ productos }) {
               </tr>
             </thead>
             <tbody>
-              {productos.map((producto) => (
+              {productos.data.map((producto) => (
                 <tr key={producto.id} className="hover:bg-gray-50">
                   <td className="py-2 px-3 border-b">
                     {producto.imagenes && producto.imagenes.length > 0 ? (
@@ -68,26 +67,42 @@ export default function Index({ productos }) {
                   </td>
                   <td className="py-2 px-3 border-b text-center">
                     <div className="flex flex-col sm:flex-row justify-center gap-2">
-                    <Boton
-                      texto="Editar"
-                      href={`/productos/${producto.id}/edit`}
-                      color="blue"
-                      tamaño="sm"
-                    />
-
-                    <Boton
-                      texto="Eliminar"
-                      onClick={() => handleDelete(producto.id)}
-                      color="red"
-                      tamaño="sm"
-                      disabled={processing}
-                    />
+                      <Boton
+                        texto="Editar"
+                        href={`/productos/${producto.id}/edit`}
+                        color="blue"
+                        tamaño="sm"
+                      />
+                      <Boton
+                        texto="Eliminar"
+                        onClick={() => handleDelete(producto.id)}
+                        color="red"
+                        tamaño="sm"
+                        disabled={processing}
+                      />
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Paginación */}
+        <div className="mt-6 flex justify-center flex-wrap gap-2">
+          {productos.links.map((link, index) => (
+            <button
+              key={index}
+              disabled={!link.url}
+              onClick={() => link.url && window.location.assign(link.url)}
+              className={`px-3 py-1 text-sm border rounded ${
+                link.active
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+              dangerouslySetInnerHTML={{ __html: link.label }}
+            />
+          ))}
         </div>
       </div>
     </AppLayout>
