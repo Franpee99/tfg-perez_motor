@@ -90,19 +90,26 @@ export default function Index({ productos, categorias }) {
 
         {/* Paginación */}
         <div className="mt-6 flex justify-center flex-wrap gap-2">
-          {productos.links.map((link, index) => (
-            <button
-              key={index}
-              disabled={!link.url}
-              onClick={() => link.url && window.location.assign(link.url)}
-              className={`px-3 py-1 text-sm border rounded ${
-                link.active
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-              dangerouslySetInnerHTML={{ __html: link.label }}
-            />
-          ))}
+          {productos.links.map((link, index) => {
+            let label = link.label;
+
+            if (label.includes("Previous")) label = "Anterior";
+            if (label.includes("Next")) label = "Siguiente";
+
+            return (
+              <button
+                key={index}
+                disabled={!link.url}
+                onClick={() => link.url && window.location.assign(link.url)}
+                className={`px-3 py-1 text-sm border rounded ${
+                  link.active
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+                dangerouslySetInnerHTML={{ __html: label }}
+              />
+            );
+          })}
         </div>
       </div>
     </AppLayout>
