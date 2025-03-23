@@ -1,6 +1,7 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import { Link, useForm, router } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
+import Paginacion from "@/Components/Paginacion";
 
 export default function Index({ productos, categorias }) {
   const { delete: destroy, processing } = useForm();
@@ -88,27 +89,7 @@ export default function Index({ productos, categorias }) {
           </table>
         </div>
 
-        {/* Paginación */}
-        <div className="mt-6 flex justify-center flex-wrap gap-2">
-          {productos.links.map((link, index) => {
-            let label = link.label;
-
-            if (label.includes("Previous")) label = "Anterior";
-            if (label.includes("Next")) label = "Siguiente";
-
-            return (
-              <Boton
-                key={index}
-                texto={label}
-                onClick={() => link.url && router.visit(link.url)}
-                disabled={!link.url}
-                color={link.active ? "blue" : "gray"}
-                tamaño="sm"
-                className="!text-sm"
-              />
-            );
-          })}
-        </div>
+        <Paginacion links={productos.links} />
 
       </div>
     </AppLayout>
