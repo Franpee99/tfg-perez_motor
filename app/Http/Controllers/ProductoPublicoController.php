@@ -17,9 +17,18 @@ class ProductoPublicoController extends Controller
             ->paginate(10)
             ->withQueryString(); //para maneter la categoria en la url
 
-        return Inertia::render('Secciones/Index', [
+        return Inertia::render('ProductosPublicos/Index', [
             'categoriaActual' => $categoria,
             'productos' => $productos,
+        ]);
+    }
+
+    public function show(Producto $producto)
+    {
+        $producto->load(['marca', 'imagenes', 'tallas', 'fichaTecnica']);
+
+        return inertia('ProductosPublicos/Show', [
+            'producto' => $producto
         ]);
     }
 }
