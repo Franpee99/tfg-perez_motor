@@ -14,13 +14,14 @@ class ProductoSeccionController extends Controller
         $productos = Producto::with(['marca', 'subcategoria.categoria'])
             ->whereHas('subcategoria.categoria', function($query) use ($categoria) {
                 $query->whereRaw('LOWER(nombre) = ?', [strtolower($categoria)]);
-
             })
-            ->get();
+            ->paginate(10)
+            ->withQueryString(); //para maneter la categoria en la url
 
         return Inertia::render('Secciones/Index', [
             'categoriaActual' => $categoria,
             'productos' => $productos,
         ]);
     }
+
 }

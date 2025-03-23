@@ -1,9 +1,9 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, useForm } from "@inertiajs/react";
+import { Link, useForm, router } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
+import Paginacion from "@/Components/Paginacion";
 
-
-export default function Index({ productos }) {
+export default function Index({ productos, categorias }) {
   const { delete: destroy, processing } = useForm();
 
   const handleDelete = (id) => {
@@ -34,7 +34,7 @@ export default function Index({ productos }) {
               </tr>
             </thead>
             <tbody>
-              {productos.map((producto) => (
+              {productos.data.map((producto) => (
                 <tr key={producto.id} className="hover:bg-gray-50">
                   <td className="py-2 px-3 border-b">
                     {producto.imagenes && producto.imagenes.length > 0 ? (
@@ -68,20 +68,19 @@ export default function Index({ productos }) {
                   </td>
                   <td className="py-2 px-3 border-b text-center">
                     <div className="flex flex-col sm:flex-row justify-center gap-2">
-                    <Boton
-                      texto="Editar"
-                      href={`/productos/${producto.id}/edit`}
-                      color="blue"
-                      tamaño="sm"
-                    />
-
-                    <Boton
-                      texto="Eliminar"
-                      onClick={() => handleDelete(producto.id)}
-                      color="red"
-                      tamaño="sm"
-                      disabled={processing}
-                    />
+                      <Boton
+                        texto="Editar"
+                        href={`/productos/${producto.id}/edit`}
+                        color="blue"
+                        tamaño="sm"
+                      />
+                      <Boton
+                        texto="Eliminar"
+                        onClick={() => handleDelete(producto.id)}
+                        color="red"
+                        tamaño="sm"
+                        disabled={processing}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -89,6 +88,9 @@ export default function Index({ productos }) {
             </tbody>
           </table>
         </div>
+
+        <Paginacion links={productos.links} />
+
       </div>
     </AppLayout>
   );
