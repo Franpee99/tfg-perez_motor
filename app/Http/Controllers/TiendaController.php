@@ -27,7 +27,7 @@ class TiendaController extends Controller
     {
         $producto->load(['marca', 'tallas']);
 
-        return inertia('ProductosPublicos/Show', [
+        return inertia('Tienda/Show', [
             'producto' => $producto
         ]);
     }

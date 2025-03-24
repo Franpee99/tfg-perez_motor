@@ -35,4 +35,4 @@ Route::resource('productos', ProductoController::class)->middleware('auth');
 /*CLIENTES (PUBLIC)*/
 /*Poductos por secciones (categorias)*/
 Route::get('/index/{categoria}', [TiendaController::class, 'index'])->name('tienda.index');
-Route::get('/producto/{producto}', [TiendaController::class, 'show'])->name('productospublicos.show');
+Route::get('/producto/{producto}', [TiendaController::class, 'show'])->name('tienda.show');
