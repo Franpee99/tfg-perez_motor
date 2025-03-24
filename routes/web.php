@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TiendaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,5 +34,5 @@ Route::resource('productos', ProductoController::class)->middleware('auth');
 
 /*CLIENTES (PUBLIC)*/
 /*Poductos por secciones (categorias)*/
-Route::get('/seccion/{categoria}', [ProductoPublicoController::class, 'index'])->name('productos.seccion');
-Route::get('/producto/{producto}', [ProductoPublicoController::class, 'show'])->name('productos.show');
+Route::get('/index/{categoria}', [TiendaController::class, 'index'])->name('tienda.index');
+Route::get('/producto/{producto}', [TiendaController::class, 'show'])->name('productospublicos.show');

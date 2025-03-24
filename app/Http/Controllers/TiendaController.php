@@ -6,7 +6,7 @@ use App\Models\Producto;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ProductoPublicoController extends Controller
+class TiendaController extends Controller
 {
     public function index($categoria)
     {
@@ -17,7 +17,7 @@ class ProductoPublicoController extends Controller
             ->paginate(10)
             ->withQueryString(); //para maneter la categoria en la url
 
-        return Inertia::render('ProductosPublicos/Index', [
+        return Inertia::render('Tienda/Index', [
             'categoriaActual' => $categoria,
             'productos' => $productos,
         ]);
@@ -25,7 +25,7 @@ class ProductoPublicoController extends Controller
 
     public function show(Producto $producto)
     {
-        $producto->load(['marca', 'imagenes', 'tallas', 'fichaTecnica']);
+        $producto->load(['marca', 'tallas']);
 
         return inertia('ProductosPublicos/Show', [
             'producto' => $producto
