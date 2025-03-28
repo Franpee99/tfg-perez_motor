@@ -54,7 +54,6 @@ class ProductoController extends Controller
     {
         $validated = $request->validated();
 
-        // Si se ingresa una nueva marca, la creamos; de lo contrario, usamos la marca seleccionada.
         $marca_id = $request->filled('nueva_marca')
             ? Marca::create(['nombre' => $request->nueva_marca])->id
             : (int) $request->marca_id;
@@ -62,7 +61,6 @@ class ProductoController extends Controller
             return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
 
-        // Guardar imagen si se proporciona.
         $imagenes = [];
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
@@ -71,7 +69,6 @@ class ProductoController extends Controller
             }
         }
 
-        // Crear el producto, incluyendo la ficha técnica que se almacenará como JSON.
         $producto = Producto::create([
             'nombre'           => $validated['nombre'],
             'descripcion'      => $validated['descripcion'] ?? null,
@@ -83,7 +80,6 @@ class ProductoController extends Controller
         ]);
 
         foreach ($validated['tallas'] as $tallaData) {
-            // Buscamos la talla por nombre o la creamos para evitar duplicados.
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
         }
@@ -98,7 +94,7 @@ class ProductoController extends Controller
     {
         $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
 
-        // Calcula el stock total a partir de las tallas (usando el stock del pivot)
+        // Stock total (stock del pivot)
         $producto->stock_total = $producto->tallas->sum(function ($talla) {
             return $talla->pivot->stock;
         });
@@ -138,21 +134,7 @@ class ProductoController extends Controller
         }
         $validated['marca_id'] = $marca_id;
 
-
-        // Partimos de las imágenes actuales del producto.
-        $imagenRecurrente = $producto->imagenes ?? [];
-        // Procesamos las imágenes a eliminar, si se enviaron.
-        if ($request->has('imagenes_a_eliminar')) {
-            $imagenesAEliminar = $request->input('imagenes_a_eliminar'); // array de rutas
-            foreach ($imagenesAEliminar as $img) {
-                if (($key = array_search($img, $imagenRecurrente)) !== false) {
-                    unset($imagenRecurrente[$key]);
-                    Storage::disk('public')->delete($img);
-                }
-            }
-            $imagenRecurrente = array_values($imagenRecurrente);
-        }
-        // Procesamos las nuevas imágenes, si se han subido.
+        // Procesamos las nuevas imágenes, si se han subido
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
                 $path = $imagen->store('productos', 'public');

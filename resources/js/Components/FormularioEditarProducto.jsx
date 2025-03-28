@@ -24,12 +24,8 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
     ficha_tecnica: producto.ficha_tecnica || [],
   });
 
-  // Estado para nuevas imágenes y sus vistas previas
   const [vistasPrevias, setVistasPrevias] = useState([]);
-  // Estado para las imágenes ya subidas (actuales)
-  const [imagenesExistentes, setImagenesExistentes] = useState(producto.imagenes || []);
-  // Lista de imágenes a eliminar (se enviará al backend)
-  const [imagenesAEliminar, setImagenesAEliminar] = useState([]);
+  const [imagenesExistentes] = useState(producto.imagenes || []);
   const [subcategorias, setSubcategorias] = useState([]);
 
   useEffect(() => {
@@ -53,31 +49,14 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
     setVistasPrevias(prev => [...prev, ...archivosNuevos.map(file => URL.createObjectURL(file))]);
   };
 
-  // Eliminar una imagen nueva (por índice)
-  const eliminarImagenNueva = (indice) => {
-    const imagenesActualizadas = [...datos.imagenes];
-    imagenesActualizadas.splice(indice, 1);
-    setDatos("imagenes", imagenesActualizadas);
-
-    const vistasActualizadas = [...vistasPrevias];
-    vistasActualizadas.splice(indice, 1);
-    setVistasPrevias(vistasActualizadas);
-  };
-
-  // Eliminar una imagen existente
-  const eliminarImagenExistente = (ruta) => {
-    setImagenesExistentes(imagenesExistentes.filter(img => img !== ruta));
-    setImagenesAEliminar(prev => [...prev, ruta]);
-  };
-
   // Métodos para tallas
   const agregarTalla = () => {
-    setDatos("tallas", [...datos.tallas, { nombre: "", stock: 0 }]);
+    setDatos("tallas", [...datos.tallas, { talla: "", stock: 0 }]);
   };
 
-  const actualizarTalla = (indice, campo, valor) => {
+  const actualizarTalla = (indice, talla, stock) => {
     const nuevasTallas = [...datos.tallas];
-    nuevasTallas[indice][campo] = valor;
+    nuevasTallas[indice][talla] = stock;
     setDatos("tallas", nuevasTallas);
   };
 
@@ -134,15 +113,8 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       });
     }
 
-    imagenesAEliminar.forEach((img, indice) => {
-      formData.append(`imagenes_a_eliminar[${indice}]`, img);
-    });
-
     formData.append("_method", "PUT");
 
-    for (let [clave, valor] of formData.entries()) {
-      console.log(`${clave}: `, valor);
-    }
 
     router.post(`/productos/${producto.id}`, formData, {
       forceFormData: true,
@@ -154,7 +126,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
 
   return (
     <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6">
-      {/* Campo: Nombre */}
+      {/* Nombre */}
       <div>
         <label className="block text-gray-700 font-semibold">Nombre</label>
         <input
@@ -166,7 +138,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         />
         {errores.nombre && <p className="text-red-500 text-sm mt-1">{errores.nombre}</p>}
       </div>
-      {/* Campo: Descripción */}
+      {/* Descripción */}
       <div>
         <label className="block text-gray-700 font-semibold">Descripción</label>
         <textarea
@@ -177,7 +149,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         />
         {errores.descripcion && <p className="text-red-500 text-sm mt-1">{errores.descripcion}</p>}
       </div>
-      {/* Campo: Precio */}
+      {/* Precio */}
       <div>
         <label className="block text-gray-700 font-semibold">Precio (€)</label>
         <input
@@ -189,7 +161,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         />
         {errores.precio && <p className="text-red-500 text-sm mt-1">{errores.precio}</p>}
       </div>
-      {/* Campo: Categoría */}
+      {/* Categoría */}
       <div>
         <label className="block text-gray-700 font-semibold">Categoría</label>
         <select
@@ -205,7 +177,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         </select>
         {errores.categoria_id && <p className="text-red-500 text-sm mt-1">{errores.categoria_id}</p>}
       </div>
-      {/* Campo: Subcategoría */}
+      {/* Subcategoría */}
       <div>
         <label className="block text-gray-700 font-semibold">Subcategoría</label>
         <select
@@ -222,7 +194,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         </select>
         {errores.subcategoria_id && <p className="text-red-500 text-sm mt-1">{errores.subcategoria_id}</p>}
       </div>
-      {/* Campo: Marca */}
+      {/* Marca */}
       <div>
         <label className="block text-gray-700 font-semibold">Marca</label>
         <select
@@ -242,7 +214,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         </select>
         {errores.marca_id && <p className="text-red-500 text-sm mt-1">{errores.marca_id}</p>}
       </div>
-      {/* Campo: Nueva Marca */}
+      {/* Nueva Marca */}
       <div>
         <label className="block text-gray-700 font-semibold">Nueva Marca (opcional)</label>
         <input
@@ -290,7 +262,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
                   />
                   <Boton
                     texto="X"
-                    onClick={() => eliminarImagenExistente(img)}
+                    onClick={() => {/* Falta implementar funcion de eliminar imagen */}}
                     color="red"
                     tamaño="sm"
                     titulo="Eliminar imagen"
@@ -326,7 +298,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
                   />
                   <Boton
                     texto="X"
-                    onClick={() => eliminarImagenNueva(indice)}
+                    onClick={() => {/* Falta implementar funcion de eliminar imagen */}}
                     color="red"
                     tamaño="sm"
                     titulo="Eliminar imagen"

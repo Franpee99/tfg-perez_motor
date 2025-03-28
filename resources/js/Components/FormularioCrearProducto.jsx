@@ -39,7 +39,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     }
   }, [datos.categoria_id, categorias]);
 
-  // Manejar el cambio de imágenes: acumula nuevas imágenes sin exceder 3 archivos
+  // Acumula nuevas imágenes sin exceder 3 archivos
   const manejarCambioImagenes = (e) => {
     const nuevosArchivos = Array.from(e.target.files).slice(0, 3);
     const archivosCombinados = [...datos.imagenes, ...nuevosArchivos].slice(0, 3);
@@ -47,25 +47,14 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setVistasPrevias(archivosCombinados.map((archivo) => URL.createObjectURL(archivo)));
   };
 
-  // Eliminar una imagen nueva de la vista previa (índice corresponde a la posición en "imagenes")
-  const eliminarImagenNueva = (indice) => {
-    const imagenesActualizadas = [...datos.imagenes];
-    imagenesActualizadas.splice(indice, 1);
-    setDatos("imagenes", imagenesActualizadas);
-
-    const vistasActualizadas = [...vistasPrevias];
-    vistasActualizadas.splice(indice, 1);
-    setVistasPrevias(vistasActualizadas);
-  };
-
   // Métodos para tallas
   const agregarTalla = () => {
-    setDatos("tallas", [...datos.tallas, { nombre: "", stock: 0 }]);
+    setDatos("tallas", [...datos.tallas, { talla: "", stock: 0 }]);
   };
 
-  const actualizarTalla = (indice, campo, valor) => {
+  const actualizarTalla = (indice, talla, stock) => {
     const nuevasTallas = [...datos.tallas];
-    nuevasTallas[indice][campo] = valor;
+    nuevasTallas[indice][talla] = stock;
     setDatos("tallas", nuevasTallas);
   };
 
@@ -262,7 +251,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
                 />
                 <Boton
                   texto="X"
-                  onClick={() => eliminarImagenNueva(indice)}
+                  onClick={() => {/* Falta implementar funcion de eliminar imagen */}}
                   color="red"
                   tamaño="sm"
                   titulo="Eliminar imagen"
