@@ -66,7 +66,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
   // Métodos para ficha técnica
   const agregarCaracteristica = () => {
-    setDatos("caracteristicas", [...datos.caracteristicas, { key: "", value: "" }]);
+    setDatos("caracteristicas", [...datos.caracteristicas, { caracteristica: "", definicion: "" }]);
   };
 
   const actualizarCaracteristica = (indice, caracteristica, definicion) => {
@@ -140,7 +140,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map((cat) => (
-            <option key={cat.id} value={cat.id}>
+            <option caracteristica={cat.id}definicion value={cat.id}>
               {cat.nombre}
             </option>
           ))}

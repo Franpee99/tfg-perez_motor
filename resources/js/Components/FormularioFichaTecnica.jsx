@@ -2,7 +2,7 @@ import React from "react";
 import Boton from "./Boton";
 
 
-export default function FormularioFichaTecnica({ listaFichaTecnica, agregarCaracteristica, actualizarCaracteristica, eliminarCaracteristica, errorFichaTecnica }) {
+export default function FormularioFichaTecnica({ listaFichaTecnica, agregarCaracteristica, actualizarCaracteristica, eliminarCaracteristica, errorCaracteristicas }) {
   return (
     <div>
       <label className="block text-gray-700 font-semibold mb-2">
@@ -33,8 +33,8 @@ export default function FormularioFichaTecnica({ listaFichaTecnica, agregarCarac
           />
         </div>
       ))}
-      {errorFichaTecnica && typeof errorFichaTecnica === "string" && (
-        <p className="text-red-500 text-sm mt-1">{errorFichaTecnica}</p>
+      {errorCaracteristicas && typeof errorCaracteristicas === "string" && (
+        <p className="text-red-500 text-sm mt-1">{errorCaracteristicas}</p>
       )}
         <Boton
         texto="+ Agregar Característica"
