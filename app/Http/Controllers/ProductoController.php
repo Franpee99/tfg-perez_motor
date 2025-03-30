@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
+use App\Models\Caracteristica;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Producto;
@@ -69,13 +70,17 @@ class ProductoController extends Controller
             'precio'           => $validated['precio'],
             'subcategoria_id'  => $validated['subcategoria_id'],
             'marca_id'         => $marca_id,
-            'ficha_tecnica'    => $validated['ficha_tecnica'] ?? [],
-            'imagenes'       => $imagenes,
+            'imagenes'         => $imagenes,
         ]);
 
         foreach ($validated['tallas'] as $tallaData) {
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
+        }
+
+        foreach ($validated['caracteristicas'] as $caracteristicaData) {
+            $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
+            $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
         }
 
         return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
