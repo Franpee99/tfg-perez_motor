@@ -9,4 +9,11 @@ class Caracteristica extends Model
 {
     /** @use HasFactory<\Database\Factories\CaracteristicaFactory> */
     use HasFactory;
+
+    protected $fillable = ['caracteristica'];
+
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class)->withPivot('definicion');
+    }
 }
