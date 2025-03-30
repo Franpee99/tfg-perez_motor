@@ -1,13 +1,12 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
 import TarjetaProducto from "@/Components/TarjetaProducto";
 import TablaStock from "@/Components/TablaStock";
 import FichaTecnica from "@/Components/FichaTecnica";
 import Imagenes from "@/Components/Imagenes";
 
 export default function Show({ producto }) {
-  // Aseguramos que ficha_tecnica y tallas sean arrays
-  const fichaTecnica = producto.ficha_tecnica || [];
+  // Aseguramos que ficha tecnica y tallas sean arrays
+  const fichaTecnica = producto.caracteristicas || [];
   const tallas = producto.tallas || [];
 
   return (

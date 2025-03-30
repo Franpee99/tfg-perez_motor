@@ -91,7 +91,7 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
 
         // Stock total (stock del pivot)
         $producto->stock_total = $producto->tallas->sum(function ($talla) {
