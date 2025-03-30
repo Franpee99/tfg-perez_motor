@@ -221,11 +221,11 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
       {/* Sección de ficha técnica */}
       <FormularioFichaTecnica
-        listaFichaTecnica={datos.ficha_tecnica}
+        listaFichaTecnica={datos.caracteristicas}
         agregarCaracteristica={agregarCaracteristica}
         actualizarCaracteristica={actualizarCaracteristica}
         eliminarCaracteristica={eliminarCaracteristica}
-        errorFichaTecnica={errores.ficha_tecnica}
+        errorFichaTecnica={errores.caracteristicas}
       />
       {/* Imágenes */}
       <div>
