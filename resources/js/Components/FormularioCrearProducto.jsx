@@ -22,7 +22,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     nueva_marca: "",
     imagenes: [],
     tallas: [],
-    ficha_tecnica: [],
+    caracteristicas: [],
   });
 
   const [vistasPrevias, setVistasPrevias] = useState([]);
@@ -66,19 +66,19 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
   // Métodos para ficha técnica
   const agregarCaracteristica = () => {
-    setDatos("ficha_tecnica", [...datos.ficha_tecnica, { key: "", value: "" }]);
+    setDatos("caracteristicas", [...datos.caracteristicas, { key: "", value: "" }]);
   };
 
-  const actualizarCaracteristica = (indice, campo, valor) => {
-    const nuevasFicha = [...datos.ficha_tecnica];
-    nuevasFicha[indice][campo] = valor;
-    setDatos("ficha_tecnica", nuevasFicha);
+  const actualizarCaracteristica = (indice, caracteristica, definicion) => {
+    const nuevasFicha = [...datos.caracteristicas];
+    nuevasFicha[indice][caracteristica] = definicion;
+    setDatos("caracteristicas", nuevasFicha);
   };
 
   const eliminarCaracteristica = (indice) => {
-    const nuevasFicha = [...datos.ficha_tecnica];
+    const nuevasFicha = [...datos.caracteristicas];
     nuevasFicha.splice(indice, 1);
-    setDatos("ficha_tecnica", nuevasFicha);
+    setDatos("caracteristicas", nuevasFicha);
   };
 
   const manejarEnvio = (e) => {
