@@ -22,13 +22,7 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
-            ->paginate(10)
-            ->through(function ($producto) {
-                $producto->stock_total = $producto->tallas->sum(function ($talla) {
-                    return $talla->pivot->stock;
-                });
-                return $producto;
-            });
+            ->paginate(10);
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
@@ -134,20 +128,20 @@ class ProductoController extends Controller
         }
         $validated['marca_id'] = $marca_id;
 
-        // Procesamos las nuevas imágenes, si se han subido
+        $imagenesActuales = $producto->imagenes ?? [];
+
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
                 $path = $imagen->store('productos', 'public');
-                $imagenRecurrente[] = $path;
+                $imagenesActuales[] = $path;
             }
         }
-        $validated['imagenes'] = $imagenRecurrente;
+
+        $validated['imagenes'] = $imagenesActuales;
+
+        $producto->ficha_tecnica = $validated['ficha_tecnica'] ?? [];
 
         $producto->update($validated);
-
-        // Actualizar JSON
-        $producto->ficha_tecnica = $validated['ficha_tecnica'] ?? [];
-        $producto->save();
 
         // Desvincular las tallas existentes y asociar las nuevas
         $producto->tallas()->detach();

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useForm, router } from "@inertiajs/react";
-import AppLayout from "@/Layouts/AuthenticatedLayout";
 import FormularioTallas from "@/Components/FormularioTallas";
 import FormularioFichaTecnica from "@/Components/FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
@@ -86,9 +85,8 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
   // Manejar envío del formulario
   const manejarEnvio = (e) => {
     e.preventDefault();
-    console.log("Enviando formulario de actualización...");
 
-    const formData = new FormData();
+    const formData = new FormData(); //FormData necesario para subir archivoss
     formData.append("nombre", datos.nombre);
     formData.append("descripcion", datos.descripcion);
     formData.append("precio", datos.precio);
@@ -117,10 +115,9 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
 
 
     router.post(`/productos/${producto.id}`, formData, {
-      forceFormData: true,
-      preserveScroll: true,
+      forceFormData: true, // Enviar las imagenes como multipart/form-data para laravel
+      preserveScroll: true, // Para que pueda rederigirme hacia otra pagina
       onError: (errores) => console.error("Errores de validación:", errores),
-      onSuccess: (pagina) => console.log("Producto actualizado correctamente.", pagina),
     });
   };
 
