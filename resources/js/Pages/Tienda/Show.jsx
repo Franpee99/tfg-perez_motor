@@ -7,7 +7,7 @@ import Boton from '@/Components/Boton';
 export default function Show() {
   const { producto } = usePage().props;
   const imagenes = producto.imagenes || [];
-  const fichaTecnica = Array.isArray(producto.ficha_tecnica) ? producto.ficha_tecnica : [];
+  const fichaTecnica = producto.caracteristicas || [];
   const tallas = producto.tallas || [];
   const [imagenPrincipal, setImagenPrincipal] = useState(imagenes[0]);
   const [tabActivo, setTabActivo] = useState('descripcion');

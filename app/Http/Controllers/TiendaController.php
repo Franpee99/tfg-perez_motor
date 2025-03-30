@@ -25,7 +25,7 @@ class TiendaController extends Controller
 
     public function show(Producto $producto)
     {
-        $producto->load(['marca', 'tallas']);
+        $producto->load(['marca', 'tallas', 'caracteristicas']);
 
         return inertia('Tienda/Show', [
             'producto' => $producto
