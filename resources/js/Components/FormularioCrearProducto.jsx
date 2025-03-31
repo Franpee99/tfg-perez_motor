@@ -22,7 +22,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     nueva_marca: "",
     imagenes: [],
     tallas: [],
-    ficha_tecnica: [],
+    caracteristicas: [],
   });
 
   const [vistasPrevias, setVistasPrevias] = useState([]);
@@ -39,7 +39,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     }
   }, [datos.categoria_id, categorias]);
 
-  // Manejar el cambio de imágenes: acumula nuevas imágenes sin exceder 3 archivos
+  // Acumula nuevas imágenes sin exceder 3 archivos
   const manejarCambioImagenes = (e) => {
     const nuevosArchivos = Array.from(e.target.files).slice(0, 3);
     const archivosCombinados = [...datos.imagenes, ...nuevosArchivos].slice(0, 3);
@@ -47,25 +47,14 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setVistasPrevias(archivosCombinados.map((archivo) => URL.createObjectURL(archivo)));
   };
 
-  // Eliminar una imagen nueva de la vista previa (índice corresponde a la posición en "imagenes")
-  const eliminarImagenNueva = (indice) => {
-    const imagenesActualizadas = [...datos.imagenes];
-    imagenesActualizadas.splice(indice, 1);
-    setDatos("imagenes", imagenesActualizadas);
-
-    const vistasActualizadas = [...vistasPrevias];
-    vistasActualizadas.splice(indice, 1);
-    setVistasPrevias(vistasActualizadas);
-  };
-
   // Métodos para tallas
   const agregarTalla = () => {
-    setDatos("tallas", [...datos.tallas, { nombre: "", stock: 0 }]);
+    setDatos("tallas", [...datos.tallas, { talla: "", stock: 0 }]);
   };
 
-  const actualizarTalla = (indice, campo, valor) => {
+  const actualizarTalla = (indice, talla, stock) => {
     const nuevasTallas = [...datos.tallas];
-    nuevasTallas[indice][campo] = valor;
+    nuevasTallas[indice][talla] = stock;
     setDatos("tallas", nuevasTallas);
   };
 
@@ -77,19 +66,19 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
   // Métodos para ficha técnica
   const agregarCaracteristica = () => {
-    setDatos("ficha_tecnica", [...datos.ficha_tecnica, { key: "", value: "" }]);
+    setDatos("caracteristicas", [...datos.caracteristicas, { caracteristica: "", definicion: "" }]);
   };
 
-  const actualizarCaracteristica = (indice, campo, valor) => {
-    const nuevasFicha = [...datos.ficha_tecnica];
-    nuevasFicha[indice][campo] = valor;
-    setDatos("ficha_tecnica", nuevasFicha);
+  const actualizarCaracteristica = (indice, caracteristica, definicion) => {
+    const nuevasFicha = [...datos.caracteristicas];
+    nuevasFicha[indice][caracteristica] = definicion;
+    setDatos("caracteristicas", nuevasFicha);
   };
 
   const eliminarCaracteristica = (indice) => {
-    const nuevasFicha = [...datos.ficha_tecnica];
+    const nuevasFicha = [...datos.caracteristicas];
     nuevasFicha.splice(indice, 1);
-    setDatos("ficha_tecnica", nuevasFicha);
+    setDatos("caracteristicas", nuevasFicha);
   };
 
   const manejarEnvio = (e) => {
@@ -151,7 +140,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map((cat) => (
-            <option key={cat.id} value={cat.id}>
+            <option caracteristica={cat.id}definicion value={cat.id}>
               {cat.nombre}
             </option>
           ))}
@@ -232,11 +221,11 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
       {/* Sección de ficha técnica */}
       <FormularioFichaTecnica
-        listaFichaTecnica={datos.ficha_tecnica}
+        listaFichaTecnica={datos.caracteristicas}
         agregarCaracteristica={agregarCaracteristica}
         actualizarCaracteristica={actualizarCaracteristica}
         eliminarCaracteristica={eliminarCaracteristica}
-        errorFichaTecnica={errores.ficha_tecnica}
+        errorFichaTecnica={errores.caracteristicas}
       />
       {/* Imágenes */}
       <div>
@@ -262,7 +251,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
                 />
                 <Boton
                   texto="X"
-                  onClick={() => eliminarImagenNueva(indice)}
+                  onClick={() => {/* Falta implementar funcion de eliminar imagen */}}
                   color="red"
                   tamaño="sm"
                   titulo="Eliminar imagen"

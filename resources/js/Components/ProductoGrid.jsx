@@ -1,21 +1,21 @@
 import React from 'react';
 import { router } from '@inertiajs/react';
-import Boton from '@/Components/Boton';
-import Paginacion from "@/Components/Paginacion";
+import Paginacion from '@/Components/Paginacion';
 
 export default function ProductoGrid({ productos }) {
     return (
         <>
-            {/* Grid de productos */}
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {productos.data.map((producto) => (
-                    <div
+
+                    <button
                         key={producto.id}
-                        className="relative overflow-hidden rounded-lg border bg-white shadow transition-shadow duration-300 hover:shadow-lg"
+                        type="button"
+                        onClick={() => router.get(route('tienda.show', producto.id))}
+                        className="text-left w-full cursor-pointer relative overflow-hidden rounded-lg border bg-white shadow transition-shadow duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
-                        {/* Imagen del producto */}
                         <div className="relative h-48 w-full bg-gray-100">
-                            {producto.imagenes && producto.imagenes.length > 0 ? (
+                            {producto.imagenes?.[0] ? (
                                 <img
                                     src={`/storage/${producto.imagenes[0]}`}
                                     alt={producto.nombre}
@@ -30,7 +30,6 @@ export default function ProductoGrid({ productos }) {
                             )}
                         </div>
 
-                        {/* Contenido del producto */}
                         <div className="p-4">
                             <h2 className="mb-2 text-sm font-bold uppercase text-red-600 line-clamp-2">
                                 {producto.nombre}
@@ -54,7 +53,7 @@ export default function ProductoGrid({ productos }) {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </button>
                 ))}
             </div>
 

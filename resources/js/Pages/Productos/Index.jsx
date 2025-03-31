@@ -26,7 +26,6 @@ export default function Index({ productos, categorias }) {
                 <th className="py-2 px-3 text-left border-b">Imagen</th>
                 <th className="py-2 px-3 text-left border-b">Nombre</th>
                 <th className="py-2 px-3 text-left border-b">Precio</th>
-                <th className="py-2 px-3 text-left border-b">Stock</th>
                 <th className="py-2 px-3 text-left border-b">Categoría</th>
                 <th className="py-2 px-3 text-left border-b">Subcategoría</th>
                 <th className="py-2 px-3 text-left border-b">Marca</th>
@@ -56,7 +55,6 @@ export default function Index({ productos, categorias }) {
                     </Link>
                   </td>
                   <td className="py-2 px-3 border-b">{producto.precio}€</td>
-                  <td className="py-2 px-3 border-b">{producto.stock_total}</td>
                   <td className="py-2 px-3 border-b">
                     {producto.subcategoria?.categoria?.nombre || "N/A"}
                   </td>

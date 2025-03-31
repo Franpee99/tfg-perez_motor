@@ -11,14 +11,14 @@ export default function FichaTecnica({ fichaTecnica }) {
               <thead>
                 <tr className="bg-gray-200">
                   <th className="py-3 px-4 text-left">Característica</th>
-                  <th className="py-3 px-4 text-left">Valor</th>
+                  <th className="py-3 px-4 text-left">Definición</th>
                 </tr>
               </thead>
               <tbody>
-                {fichaTecnica.map((item, index) => (
+                {fichaTecnica.map((caracteristica, index) => (
                   <tr key={index} className="border-b">
-                    <td className="py-3 px-4">{item.key || "N/A"}</td>
-                    <td className="py-3 px-4">{item.value || "N/A"}</td>
+                    <td className="py-3 px-4">{caracteristica.caracteristica ?? "N/A"}</td>
+                    <td className="py-3 px-4">{caracteristica.pivot?.definicion ?? "N/A"}</td>
                   </tr>
                 ))}
               </tbody>

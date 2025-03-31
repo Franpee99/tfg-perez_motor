@@ -30,32 +30,32 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </NavLink>
 
                                 <NavLink
-                                    href={route('productos.seccion', 'cascos')}
-                                    active={route().current('productos.seccion', { categoria: 'cascos' })}
+                                    href={route('tienda.index', 'cascos')}
+                                    active={route().current('tienda.index', { categoria: 'cascos' })}
                                 >
                                     Cascos
                                 </NavLink>
                                 <NavLink
-                                    href={route('productos.seccion', 'chaquetas')}
-                                    active={route().current('productos.seccion', { categoria: 'chaquetas' })}
+                                    href={route('tienda.index', 'chaquetas')}
+                                    active={route().current('tienda.index', { categoria: 'chaquetas' })}
                                 >
                                     Chaquetas
                                 </NavLink>
                                 <NavLink
-                                    href={route('productos.seccion', 'pantalones')}
-                                    active={route().current('productos.seccion', { categoria: 'pantalones' })}
+                                    href={route('tienda.index', 'pantalones')}
+                                    active={route().current('tienda.index', { categoria: 'pantalones' })}
                                 >
                                     Pantalones
                                 </NavLink>
                                 <NavLink
-                                    href={route('productos.seccion', 'guantes')}
-                                    active={route().current('productos.seccion', { categoria: 'guantes' })}
+                                    href={route('tienda.index', 'guantes')}
+                                    active={route().current('tienda.index', { categoria: 'guantes' })}
                                 >
                                     Guantes
                                 </NavLink>
                                 <NavLink
-                                    href={route('productos.seccion', 'botas')}
-                                    active={route().current('productos.seccion', { categoria: 'botas' })}
+                                    href={route('tienda.index', 'botas')}
+                                    active={route().current('tienda.index', { categoria: 'botas' })}
                                 >
                                     Botas
                                 </NavLink>

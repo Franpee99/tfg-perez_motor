@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ProductoSeccionController extends Controller
+class TiendaController extends Controller
 {
     public function index($categoria)
     {
@@ -18,10 +17,18 @@ class ProductoSeccionController extends Controller
             ->paginate(10)
             ->withQueryString(); //para maneter la categoria en la url
 
-        return Inertia::render('Secciones/Index', [
+        return Inertia::render('Tienda/Index', [
             'categoriaActual' => $categoria,
             'productos' => $productos,
         ]);
     }
 
+    public function show(Producto $producto)
+    {
+        $producto->load(['marca', 'tallas', 'caracteristicas']);
+
+        return inertia('Tienda/Show', [
+            'producto' => $producto
+        ]);
+    }
 }

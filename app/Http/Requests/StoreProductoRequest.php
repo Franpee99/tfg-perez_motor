@@ -33,9 +33,9 @@ class StoreProductoRequest extends FormRequest
             'tallas'           => 'required|array|min:1',
             'tallas.*.nombre'  => 'required|string|max:50',
             'tallas.*.stock'   => 'required|integer|min:0',
-            'ficha_tecnica'    => 'nullable|array',
-            'ficha_tecnica.*.key'   => 'nullable|string|max:255',
-            'ficha_tecnica.*.value' => 'nullable|string|max:255',
+            'caracteristicas'    => 'nullable|array',
+            'caracteristicas.*.caracteristica'   => 'nullable|string|max:255',
+            'caracteristicas.*.definicion' => 'nullable|string|max:255',
         ];
     }
 }

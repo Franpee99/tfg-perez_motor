@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
+use App\Models\Caracteristica;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Producto;
@@ -22,13 +23,7 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
-            ->paginate(10)
-            ->through(function ($producto) {
-                $producto->stock_total = $producto->tallas->sum(function ($talla) {
-                    return $talla->pivot->stock;
-                });
-                return $producto;
-            });
+            ->paginate(10);
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
@@ -54,7 +49,6 @@ class ProductoController extends Controller
     {
         $validated = $request->validated();
 
-        // Si se ingresa una nueva marca, la creamos; de lo contrario, usamos la marca seleccionada.
         $marca_id = $request->filled('nueva_marca')
             ? Marca::create(['nombre' => $request->nueva_marca])->id
             : (int) $request->marca_id;
@@ -62,7 +56,6 @@ class ProductoController extends Controller
             return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
 
-        // Guardar imagen si se proporciona.
         $imagenes = [];
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
@@ -71,21 +64,23 @@ class ProductoController extends Controller
             }
         }
 
-        // Crear el producto, incluyendo la ficha técnica que se almacenará como JSON.
         $producto = Producto::create([
             'nombre'           => $validated['nombre'],
             'descripcion'      => $validated['descripcion'] ?? null,
             'precio'           => $validated['precio'],
             'subcategoria_id'  => $validated['subcategoria_id'],
             'marca_id'         => $marca_id,
-            'ficha_tecnica'    => $validated['ficha_tecnica'] ?? [],
-            'imagenes'       => $imagenes,
+            'imagenes'         => $imagenes,
         ]);
 
         foreach ($validated['tallas'] as $tallaData) {
-            // Buscamos la talla por nombre o la creamos para evitar duplicados.
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
+        }
+
+        foreach ($validated['caracteristicas'] as $caracteristicaData) {
+            $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
+            $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
         }
 
         return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
@@ -96,9 +91,9 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
 
-        // Calcula el stock total a partir de las tallas (usando el stock del pivot)
+        // Stock total (stock del pivot)
         $producto->stock_total = $producto->tallas->sum(function ($talla) {
             return $talla->pivot->stock;
         });
@@ -113,7 +108,7 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
 
         return Inertia::render('Productos/Edit', [
             'producto'    => $producto,
@@ -138,40 +133,37 @@ class ProductoController extends Controller
         }
         $validated['marca_id'] = $marca_id;
 
+        $imagenesActuales = $producto->imagenes ?? [];
 
-        // Partimos de las imágenes actuales del producto.
-        $imagenRecurrente = $producto->imagenes ?? [];
-        // Procesamos las imágenes a eliminar, si se enviaron.
-        if ($request->has('imagenes_a_eliminar')) {
-            $imagenesAEliminar = $request->input('imagenes_a_eliminar'); // array de rutas
-            foreach ($imagenesAEliminar as $img) {
-                if (($key = array_search($img, $imagenRecurrente)) !== false) {
-                    unset($imagenRecurrente[$key]);
-                    Storage::disk('public')->delete($img);
-                }
-            }
-            $imagenRecurrente = array_values($imagenRecurrente);
-        }
-        // Procesamos las nuevas imágenes, si se han subido.
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
                 $path = $imagen->store('productos', 'public');
-                $imagenRecurrente[] = $path;
+                $imagenesActuales[] = $path;
             }
         }
-        $validated['imagenes'] = $imagenRecurrente;
+
+        $validated['imagenes'] = $imagenesActuales;
 
         $producto->update($validated);
-
-        // Actualizar JSON
-        $producto->ficha_tecnica = $validated['ficha_tecnica'] ?? [];
-        $producto->save();
 
         // Desvincular las tallas existentes y asociar las nuevas
         $producto->tallas()->detach();
         foreach ($validated['tallas'] as $tallaData) {
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
+        }
+
+        $producto->caracteristicas()->detach();
+        if(!empty($validated['caracteristicas'])){
+            foreach ($validated['caracteristicas'] as $caracteristicaData) {
+
+                if (empty($caracteristicaData['caracteristica']) && empty($caracteristicaData['definicion'])) {
+                    continue;
+                }
+
+                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
+                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
+            }
         }
 
         return redirect()->route('productos.show', $producto->id)
