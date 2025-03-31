@@ -108,7 +108,7 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
 
         return Inertia::render('Productos/Edit', [
             'producto'    => $producto,
@@ -144,8 +144,6 @@ class ProductoController extends Controller
 
         $validated['imagenes'] = $imagenesActuales;
 
-        $producto->ficha_tecnica = $validated['ficha_tecnica'] ?? [];
-
         $producto->update($validated);
 
         // Desvincular las tallas existentes y asociar las nuevas
@@ -153,6 +151,19 @@ class ProductoController extends Controller
         foreach ($validated['tallas'] as $tallaData) {
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
+        }
+
+        $producto->caracteristicas()->detach();
+        if(!empty($validated['caracteristicas'])){
+            foreach ($validated['caracteristicas'] as $caracteristicaData) {
+
+                if (empty($caracteristicaData['caracteristica']) && empty($caracteristicaData['definicion'])) {
+                    continue;
+                }
+
+                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
+                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
+            }
         }
 
         return redirect()->route('productos.show', $producto->id)

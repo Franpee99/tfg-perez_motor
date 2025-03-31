@@ -13,14 +13,14 @@ export default function FormularioFichaTecnica({ listaFichaTecnica, agregarCarac
           <input
             type="text"
             placeholder="Ej: Color, Material"
-            value={caracteristica.key}
+            value={caracteristica.caracteristica}
             onChange={(e) => actualizarCaracteristica(index, "caracteristica", e.target.value)}
             className="border p-2 rounded w-1/3"
           />
           <input
             type="text"
             placeholder="Ej: Rojo, Cuero"
-            value={caracteristica.value}
+            value={caracteristica.definicion}
             onChange={(e) => actualizarCaracteristica(index, "definicion", e.target.value)}
             className="border p-2 rounded w-1/2"
           />

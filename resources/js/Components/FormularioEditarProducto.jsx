@@ -20,7 +20,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
     nueva_marca: "",
     imagenes: [], // Nuevas imágenes que se agreguen
     tallas: producto.tallas?.map(t => ({ nombre: t.nombre, stock: t.pivot.stock })) || [],
-    ficha_tecnica: producto.ficha_tecnica || [],
+    caracteristicas: producto.caracteristicas?.map(f => ({ caracteristica: f.caracteristica, definicion: f.pivot.definicion })) || [],
   });
 
   const [vistasPrevias, setVistasPrevias] = useState([]);
@@ -67,19 +67,19 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
 
   // Métodos para ficha técnica
   const agregarCaracteristica = () => {
-    setDatos("ficha_tecnica", [...datos.ficha_tecnica, { key: "", value: "" }]);
+    setDatos("caracteristicas", [...datos.caracteristicas, { caracteristica: "", definicion: "" }]);
   };
 
-  const actualizarCaracteristica = (indice, campo, valor) => {
-    const nuevasFicha = [...datos.ficha_tecnica];
-    nuevasFicha[indice][campo] = valor;
-    setDatos("ficha_tecnica", nuevasFicha);
+  const actualizarCaracteristica = (indice, caracteristica, definicion) => {
+    const nuevasFicha = [...datos.caracteristicas];
+    nuevasFicha[indice][caracteristica] = definicion;
+    setDatos("caracteristicas", nuevasFicha);
   };
 
   const eliminarCaracteristica = (indice) => {
-    const nuevasFicha = [...datos.ficha_tecnica];
+    const nuevasFicha = [...datos.caracteristicas];
     nuevasFicha.splice(indice, 1);
-    setDatos("ficha_tecnica", nuevasFicha);
+    setDatos("caracteristicas", nuevasFicha);
   };
 
   // Manejar envío del formulario
@@ -100,9 +100,9 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       formData.append(`tallas[${indice}][stock]`, talla.stock);
     });
 
-    datos.ficha_tecnica.forEach((item, indice) => {
-      formData.append(`ficha_tecnica[${indice}][key]`, item.key);
-      formData.append(`ficha_tecnica[${indice}][value]`, item.value);
+    datos.caracteristicas.forEach((caracteristica, indice) => {
+      formData.append(`caracteristicas[${indice}][caracteristica]`, caracteristica.caracteristica);
+      formData.append(`caracteristicas[${indice}][definicion]`, caracteristica.definicion);
     });
 
     if (datos.imagenes.length > 0) {
@@ -235,11 +235,11 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
 
       {/* Sección de ficha técnica */}
       <FormularioFichaTecnica
-        listaFichaTecnica={datos.ficha_tecnica}
+        listaFichaTecnica={datos.caracteristicas}
         agregarCaracteristica={agregarCaracteristica}
         actualizarCaracteristica={actualizarCaracteristica}
         eliminarCaracteristica={eliminarCaracteristica}
-        errorFichaTecnica={errores.ficha_tecnica}
+        errorFichaTecnica={errores.caracteristicas}
       />
 
       {/* Sección de imágenes */}
