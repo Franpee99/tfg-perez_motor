@@ -78,9 +78,16 @@ class ProductoController extends Controller
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
         }
 
-        foreach ($validated['caracteristicas'] as $caracteristicaData) {
-            $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
-            $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
+        if(!empty($validated['caracteristicas'])){
+            foreach ($validated['caracteristicas'] as $caracteristicaData) {
+
+                if (empty($caracteristicaData['caracteristica']) && empty($caracteristicaData['definicion'])) {
+                    continue;
+                }
+
+                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
+                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
+            }
         }
 
         return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');

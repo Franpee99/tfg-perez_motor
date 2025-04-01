@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 import FormularioTallas from "./FormularioTallas";
 import FormularioFichaTecnica from "./FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
@@ -9,7 +9,6 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
   const {
     data: datos,
     setData: setDatos,
-    post,
     processing: procesando,
     errors: errores,
   } = useForm({
@@ -83,11 +82,43 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
   const manejarEnvio = (e) => {
     e.preventDefault();
-    post("/productos");
+
+    const formData = new FormData();
+    formData.append("nombre", datos.nombre);
+    formData.append("descripcion", datos.descripcion);
+    formData.append("precio", datos.precio);
+    formData.append("categoria_id", datos.categoria_id);
+    formData.append("subcategoria_id", datos.subcategoria_id);
+    formData.append("marca_id", datos.marca_id || "");
+    formData.append("nueva_marca", datos.nueva_marca || "");
+
+    datos.tallas.forEach((talla, indice) => {
+      formData.append(`tallas[${indice}][nombre]`, talla.nombre);
+      formData.append(`tallas[${indice}][stock]`, talla.stock);
+    });
+
+    datos.caracteristicas.forEach((caracteristica, indice) => {
+      formData.append(`caracteristicas[${indice}][caracteristica]`, caracteristica.caracteristica);
+      formData.append(`caracteristicas[${indice}][definicion]`, caracteristica.definicion);
+    });
+
+    if (datos.imagenes.length > 0) {
+      datos.imagenes.forEach((archivo) => {
+        formData.append("imagenes[]", archivo);
+      });
+    }
+
+    // Enviar la solicitud POST
+    router.post("/productos", formData, {
+      forceFormData: true,
+      preserveScroll: true,
+      onError: (errores) => console.error("Errores de validación:", errores),
+    });
   };
 
+
   return (
-    <form onSubmit={manejarEnvio} className="space-y-6">
+    <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6" >
       {/* Nombre */}
       <div>
         <label className="block text-gray-700 font-semibold">Nombre</label>
