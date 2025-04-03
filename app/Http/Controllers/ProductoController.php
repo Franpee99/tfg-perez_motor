@@ -140,20 +140,28 @@ class ProductoController extends Controller
         if (!$marca_id) {
             return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
-        $validated['marca_id'] = $marca_id;
+
+        $producto->update([
+            'nombre'          => $validated['nombre'],
+            'descripcion'     => $validated['descripcion'] ?? null,
+            'precio'          => $validated['precio'],
+            'subcategoria_id' => $validated['subcategoria_id'],
+            'marca_id'        => $marca_id,
+        ]);
 
         $imagenesActuales = $producto->imagenes ?? [];
 
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
                 $path = $imagen->store('productos', 'public');
-                $imagenesActuales[] = $path;
+
+                $producto->imagenes()->create([
+                    'ruta' => $path,
+                ]);
             }
         }
 
         $validated['imagenes'] = $imagenesActuales;
-
-        $producto->update($validated);
 
         // Desvincular las tallas existentes y asociar las nuevas
         $producto->tallas()->detach();
