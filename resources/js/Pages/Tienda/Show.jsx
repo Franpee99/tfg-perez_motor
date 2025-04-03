@@ -9,7 +9,7 @@ export default function Show() {
   const imagenes = producto.imagenes || [];
   const fichaTecnica = producto.caracteristicas || [];
   const tallas = producto.tallas || [];
-  const [imagenPrincipal, setImagenPrincipal] = useState(imagenes[0].ruta);
+  const [imagenPrincipal, setImagenPrincipal] = useState(imagenes.length > 0 ? imagenes[0].ruta : null);
   const [tabActivo, setTabActivo] = useState('descripcion');
 
   return (
