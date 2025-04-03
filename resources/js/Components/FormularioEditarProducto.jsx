@@ -253,7 +253,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
               imagenesExistentes.map((img, indice) => (
                 <div key={indice} className="relative">
                   <img
-                    src={`/storage/${img}`}
+                    src={`/storage/${img.ruta}`}
                     alt={`Imagen ${indice}`}
                     className="w-24 h-24 object-cover rounded-lg shadow"
                   />

@@ -9,7 +9,7 @@ export default function Show() {
   const imagenes = producto.imagenes || [];
   const fichaTecnica = producto.caracteristicas || [];
   const tallas = producto.tallas || [];
-  const [imagenPrincipal, setImagenPrincipal] = useState(imagenes[0]);
+  const [imagenPrincipal, setImagenPrincipal] = useState(imagenes[0].ruta);
   const [tabActivo, setTabActivo] = useState('descripcion');
 
   return (
@@ -26,8 +26,8 @@ export default function Show() {
                 {imagenes.map((img, i) => (
                   <img
                     key={i}
-                    src={`/storage/${img}`}
-                    onClick={() => setImagenPrincipal(img)}
+                    src={`/storage/${img.ruta}`}
+                    onClick={() => setImagenPrincipal(img.ruta)}
                     className="w-24 h-24 object-contain cursor-pointer hover:scale-105 duration-200"
                   />
                 ))}

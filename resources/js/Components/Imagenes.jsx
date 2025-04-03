@@ -14,7 +14,7 @@ export default function Imagenes({ imagenes }) {
       {imagenes.map((imagen, index) => (
         <img
           key={index}
-          src={`/storage/${imagen}`}
+          src={`/storage/${imagen.ruta}`}
           alt={`Imagen ${index + 1}`}
           className="w-full h-64 object-cover rounded-lg"
         />

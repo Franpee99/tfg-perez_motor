@@ -22,7 +22,7 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
+        $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas', 'imagenes'])
             ->paginate(10);
 
         return Inertia::render('Productos/Index', [
@@ -100,7 +100,7 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         // Stock total (stock del pivot)
         $producto->stock_total = $producto->tallas->sum(function ($talla) {
@@ -117,7 +117,7 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         return Inertia::render('Productos/Edit', [
             'producto'    => $producto,

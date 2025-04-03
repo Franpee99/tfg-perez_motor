@@ -9,7 +9,7 @@ export default function TarjetaProducto({ producto }) {
         {producto.imagenes && producto.imagenes.length > 0 ? (
           <div className="md:w-1/3">
             <img
-              src={`/storage/${producto.imagenes[0]}`}
+              src={`/storage/${producto.imagenes[0].ruta}`}
               alt={producto.nombre}
               className="w-full h-full object-cover rounded-lg"
             />

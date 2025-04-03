@@ -10,7 +10,7 @@ class TiendaController extends Controller
 {
     public function index($categoria)
     {
-        $productos = Producto::with(['marca', 'subcategoria.categoria'])
+        $productos = Producto::with(['marca', 'subcategoria.categoria', 'imagenes'])
             ->whereHas('subcategoria.categoria', function($query) use ($categoria) {
                 $query->whereRaw('LOWER(nombre) = ?', [strtolower($categoria)]);
             })
@@ -25,7 +25,7 @@ class TiendaController extends Controller
 
     public function show(Producto $producto)
     {
-        $producto->load(['marca', 'tallas', 'caracteristicas']);
+        $producto->load(['marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         return inertia('Tienda/Show', [
             'producto' => $producto
