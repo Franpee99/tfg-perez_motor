@@ -56,13 +56,6 @@ class ProductoController extends Controller
             return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
 
-        $imagenes = [];
-        if ($request->hasFile('imagenes')) {
-            foreach ($request->file('imagenes') as $imagen) {
-                $path = $imagen->store('productos', 'public');
-                $imagenes[] = $path;
-            }
-        }
 
         $producto = Producto::create([
             'nombre'           => $validated['nombre'],
@@ -70,8 +63,17 @@ class ProductoController extends Controller
             'precio'           => $validated['precio'],
             'subcategoria_id'  => $validated['subcategoria_id'],
             'marca_id'         => $marca_id,
-            'imagenes'         => $imagenes,
         ]);
+
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('productos', 'public');
+
+                $producto->imagenes()->create([ //laravel pone automaticamente el producto_id
+                    'ruta' => $path,
+                ]);
+            }
+        }
 
         foreach ($validated['tallas'] as $tallaData) {
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
