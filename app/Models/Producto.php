@@ -46,4 +46,10 @@ class Producto extends Model
     {
         return $this->hasMany(CarritoDetalle::class);
     }
+
+    public function imagenes()
+    {
+        return $this->hasMany(Imagen::class);
+    }
+
 }
