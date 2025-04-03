@@ -46,9 +46,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function carrito()
+    public function lineasCarrito()
     {
-        return $this->hasOne(Carrito::class);
+        return $this->hasMany(LineaCarrito::class);
     }
 
     public function pedidos()

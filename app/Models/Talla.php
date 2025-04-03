@@ -16,4 +16,10 @@ class Talla extends Model
     {
         return $this->belongsToMany(Producto::class)->withPivot('stock');
     }
+
+    public function lineasCarrito()
+    {
+        return $this->hasMany(LineaCarrito::class);
+    }
+
 }

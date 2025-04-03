@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LineaCarritoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
@@ -36,3 +37,10 @@ Route::resource('productos', ProductoController::class)->middleware('auth');
 /*Poductos por secciones (categorias)*/
 Route::get('/index/{categoria}', [TiendaController::class, 'index'])->name('tienda.index');
 Route::get('/producto/{producto}', [TiendaController::class, 'show'])->name('tienda.show');
+
+/* CARRITO */
+Route::middleware(['auth'])->group(function () {
+    // Mostrar el carrito
+    Route::get('/carrito', [LineaCarritoController::class, 'index'])->name('carrito.index');
+
+});
