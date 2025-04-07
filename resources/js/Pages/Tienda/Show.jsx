@@ -122,8 +122,13 @@ export default function Show({ producto }) {
                   key={t.id}
                   type="button"
                   onClick={() => {
-                    setTallaSeleccionada(t);
-                    setData('talla_id', t.id);
+                    if (tallaSeleccionada?.id === t.id) {
+                      setTallaSeleccionada(null);
+                      setData('talla_id', '');
+                    } else {
+                      setTallaSeleccionada(t);
+                      setData('talla_id', t.id);
+                    }
                   }}
                   className={`px-6 py-2 border text-lg cursor-pointer rounded ${
                     tallaSeleccionada?.id === t.id
