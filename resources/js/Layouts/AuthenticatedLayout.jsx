@@ -60,6 +60,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Botas
                                 </NavLink>
 
+                                <NavLink
+                                    href={route('carrito.index')}
+                                    active={route().current('carrito.index')}
+                                >
+                                    Carrito
+                                </NavLink>
 
                                 <NavLink href={route('productos.index')} active={route().current('productos.index')}>
                                     Productos
