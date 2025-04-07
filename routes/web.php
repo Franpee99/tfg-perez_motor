@@ -42,5 +42,6 @@ Route::get('/producto/{producto}', [TiendaController::class, 'show'])->name('tie
 Route::middleware(['auth'])->group(function () {
     // Mostrar el carrito
     Route::get('/carrito', [LineaCarritoController::class, 'index'])->name('carrito.index');
+    Route::post('/carrito/insertar', [LineaCarritoController::class, 'insertarLinea'])->name('carrito.insertarLinea');
 
 });

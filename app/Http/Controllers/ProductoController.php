@@ -22,12 +22,11 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas', 'imagenes'])
+        $productos = Producto::with(['marca', 'subcategoria.categoria', 'imagenes'])
             ->paginate(10);
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
-            'categorias' => Categoria::with('subcategorias')->get(),
         ]);
     }
 

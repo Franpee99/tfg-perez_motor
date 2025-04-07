@@ -3,7 +3,7 @@ import { Link, useForm, router } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 import Paginacion from "@/Components/Paginacion";
 
-export default function Index({ productos, categorias }) {
+export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
 
   const handleDelete = (id) => {

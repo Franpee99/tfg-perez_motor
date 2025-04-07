@@ -23,4 +23,27 @@ class LineaCarritoController extends Controller
         ]);
     }
 
+    public function insertarLinea(Request $request)
+{
+    $request->validate([
+        'producto_id' => 'required|exists:productos,id',
+        'talla_id' => 'required|exists:tallas,id',
+        'cantidad' => 'nullable|integer|min:1',
+    ]);
+
+    LineaCarrito::updateOrCreate(
+        [
+            'user_id' => Auth::id(),
+            'producto_id' => $request->producto_id,
+            'talla_id' => $request->talla_id,
+        ],
+        [
+            'cantidad' => DB::raw('cantidad + ' . ($request->cantidad ?? 1)),
+        ]
+    );
+
+    return redirect()->back()->with('success', 'Producto añadido a la cesta');
+}
+
+
 }
