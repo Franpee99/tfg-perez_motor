@@ -31,16 +31,21 @@ class LineaCarritoController extends Controller
         'cantidad' => 'nullable|integer|min:1',
     ]);
 
-    LineaCarrito::updateOrCreate(
-        [
+    $linea = LineaCarrito::where('user_id', Auth::id())
+    ->where('producto_id', $request->producto_id)
+    ->where('talla_id', $request->talla_id)
+    ->first();
+
+    if ($linea) {
+        $linea->increment('cantidad', $request->cantidad ?? 1);
+    } else {
+        LineaCarrito::create([
             'user_id' => Auth::id(),
             'producto_id' => $request->producto_id,
             'talla_id' => $request->talla_id,
-        ],
-        [
-            'cantidad' => DB::raw('cantidad + ' . ($request->cantidad ?? 1)),
-        ]
-    );
+            'cantidad' => $request->cantidad ?? 1,
+        ]);
+    }
 
     return redirect()->back()->with('success', 'Producto añadido a la cesta');
 }
