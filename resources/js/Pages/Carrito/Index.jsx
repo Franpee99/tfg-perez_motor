@@ -1,7 +1,17 @@
 import React from 'react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
+import { router } from '@inertiajs/react';
+import Boton from '@/Components/Boton';
 
 export default function Index({ lineasCarrito }) {
+
+  const eliminarLinea = (id) => {
+    router.delete(route('carrito.destroy', id))
+  };
+
+  const vaciarCarrito = () => {
+    router.delete(route('carrito.vaciar'))
+  };
 
   return (
     <AppLayout>
@@ -11,20 +21,38 @@ export default function Index({ lineasCarrito }) {
         {lineasCarrito.length === 0 ? (
           <p className="text-gray-600">Tu carrito está vacío.</p>
         ) : (
-          <div className="space-y-4">
-            {lineasCarrito.map(linea => (
-              <div
-                key={linea.id}
-                className="bg-white border shadow-sm rounded p-4 flex items-center justify-between"
-              >
-                <div>
-                  <h2 className="text-lg font-semibold">{linea.producto.nombre}</h2>
-                  <p className="text-sm text-gray-600">Talla: {linea.talla.nombre}</p>
-                  <p className="text-sm text-gray-600">Cantidad: {linea.cantidad}</p>
+          <>
+            <div className="flex justify-end mb-4">
+              <Boton
+                texto="Vaciar carrito"
+                color="red"
+                tamaño="sm"
+                onClick={vaciarCarrito}
+              />
+            </div>
+
+            <div className="space-y-4">
+              {lineasCarrito.map((linea) => (
+                <div
+                  key={linea.id}
+                  className="bg-white border shadow-sm rounded p-4 flex items-center justify-between"
+                >
+                  <div>
+                    <h2 className="text-lg font-semibold">{linea.producto.nombre}</h2>
+                    <p className="text-sm text-gray-600">Talla: {linea.talla.nombre}</p>
+                    <p className="text-sm text-gray-600">Cantidad: {linea.cantidad}</p>
+                  </div>
+
+                  <Boton
+                    texto="Eliminar"
+                    color="red"
+                    tamaño="sm"
+                    onClick={() => eliminarLinea(linea.id)}
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </main>
     </AppLayout>

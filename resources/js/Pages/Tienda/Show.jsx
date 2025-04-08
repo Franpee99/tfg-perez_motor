@@ -117,28 +117,30 @@ export default function Show({ producto }) {
 
             <h2 className="text-xl font-semibold mb-2">ELIGE TU TALLA</h2>
             <div className="w-full max-w-md flex flex-wrap gap-2 justify-center mb-6">
-              {tallas.map(t => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => {
-                    if (tallaSeleccionada?.id === t.id) {
-                      setTallaSeleccionada(null);
-                      setData('talla_id', '');
-                    } else {
-                      setTallaSeleccionada(t);
-                      setData('talla_id', t.id);
-                    }
-                  }}
-                  className={`px-6 py-2 border text-lg cursor-pointer rounded ${
-                    tallaSeleccionada?.id === t.id
-                      ? 'bg-red-800 text-white'
-                      : 'hover:bg-red-800 hover:text-white'
-                  }`}
-                >
-                  {t.nombre}
-                </button>
-              ))}
+              {tallas
+                .filter(t => t.pivot?.stock > 0)
+                .map(t => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      if (tallaSeleccionada?.id === t.id) {
+                        setTallaSeleccionada(null);
+                        setData('talla_id', '');
+                      } else {
+                        setTallaSeleccionada(t);
+                        setData('talla_id', t.id);
+                      }
+                    }}
+                    className={`px-6 py-2 border text-lg cursor-pointer rounded transition ${
+                      tallaSeleccionada?.id === t.id
+                        ? 'bg-red-800 text-white'
+                        : 'hover:bg-red-400 hover:text-white'
+                    }`}
+                  >
+                    {t.nombre}
+                  </button>
+                ))}
             </div>
 
             <Boton
