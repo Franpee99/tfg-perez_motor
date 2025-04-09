@@ -11,6 +11,8 @@ export default function Show({ producto }) {
 
   const [imagenPrincipal, setImagenPrincipal] = useState(imagenes.length > 0 ? imagenes[0].ruta : null);
   const [tabActivo, setTabActivo] = useState('descripcion');
+
+  /* Manejo del carrito */
   const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
 
   const { post, setData, processing } = useForm({
@@ -24,6 +26,7 @@ export default function Show({ producto }) {
     setData('talla_id', tallaSeleccionada.id);
     post(route('carrito.insertarLinea'));
   };
+  /* */
 
   return (
     <AppLayout>

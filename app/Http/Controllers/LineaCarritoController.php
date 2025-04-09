@@ -13,7 +13,7 @@ class LineaCarritoController extends Controller
 
     public function index()
     {
-        $lineas = LineaCarrito::with(['producto', 'talla'])
+        $lineas = LineaCarrito::with(['producto.imagenes', 'talla'])
             ->where('user_id', Auth::id())
             ->get();
 
@@ -48,6 +48,16 @@ class LineaCarritoController extends Controller
 
         return redirect()->back()->with('success', 'Producto añadido a la cesta');
     }
+
+    /*
+    public function modificarLinea(Request $request, LineaCarrito $lineaCarrito)
+    {
+        $request->validate([
+            'cantidad' => 'required|integer|min:1'
+        ]);
+
+    }
+    */
 
     public function destroy(LineaCarrito $lineaCarrito)
     {

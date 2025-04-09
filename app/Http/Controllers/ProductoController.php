@@ -193,9 +193,6 @@ class ProductoController extends Controller
     {
         $this->authorize('delete', $producto);
 
-        if ($producto->imagen_url) {
-            Storage::disk('public')->delete($producto->imagen_url);
-        }
         $producto->delete();
 
         return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
