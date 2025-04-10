@@ -49,24 +49,28 @@ class LineaCarritoController extends Controller
         return redirect()->back()->with('success', 'Producto añadido a la cesta');
     }
 
-    /*
+
     public function modificarLinea(Request $request, LineaCarrito $lineaCarrito)
     {
         $request->validate([
             'cantidad' => 'required|integer|min:1'
         ]);
 
+        $this->authorize('update', $lineaCarrito);
+
     }
-    */
+
 
     public function destroy(LineaCarrito $lineaCarrito)
     {
+        $this->authorize('delete', $lineaCarrito);
+
         $lineaCarrito->delete();
 
         return redirect()->back()->with('success', 'Producto eliminado del carrito.');
     }
 
-    public function vaciar()
+    public function vaciar(LineaCarrito $lineaCarrito)
     {
         LineaCarrito::where('user_id', Auth::id())->delete();
 
