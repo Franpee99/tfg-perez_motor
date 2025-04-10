@@ -5,6 +5,20 @@ import Boton from '@/Components/Boton';
 
 export default function Index({ lineasCarrito }) {
 
+  const modificarCantidad = (linea, nuevaCantidad) => {
+    if (nuevaCantidad < 1){
+      eliminarLinea(linea.id);
+      return;
+    }
+
+    router.put(route('carrito.modificarLinea', linea.id), {
+      cantidad: nuevaCantidad
+    }, {
+      preserveScroll: true,
+    });
+  };
+
+
   const eliminarLinea = (id) => {
     router.delete(route('carrito.destroy', id))
   };
@@ -45,14 +59,26 @@ export default function Index({ lineasCarrito }) {
                         className="w-full h-full object-contain"
                       />
                     </div>
-
                       <div>
                         <h2 className="text-lg font-semibold">{linea.producto.nombre}</h2>
                         <p className="text-sm text-gray-600">Talla: {linea.talla.nombre}</p>
-                        <p className="text-sm text-gray-600">Cantidad: {linea.cantidad}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Boton
+                            texto="-"
+                            tamaño="sm"
+                            color="gray"
+                            onClick={() => modificarCantidad(linea, linea.cantidad - 1)}
+                          />
+                          <span className="text-sm font-medium">{linea.cantidad}</span>
+                          <Boton
+                            texto="+"
+                            tamaño="sm"
+                            color="gray"
+                            onClick={() => modificarCantidad(linea, linea.cantidad + 1)}
+                          />
+                        </div>
                       </div>
                     </div>
-
 
                   <Boton
                     texto="Eliminar"

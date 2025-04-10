@@ -15,6 +15,7 @@ class LineaCarritoController extends Controller
     {
         $lineas = LineaCarrito::with(['producto.imagenes', 'talla'])
             ->where('user_id', Auth::id())
+            ->orderBy('created_at')
             ->get();
 
         return inertia('Carrito/Index', [
@@ -58,6 +59,11 @@ class LineaCarritoController extends Controller
 
         $this->authorize('update', $lineaCarrito);
 
+        $lineaCarrito->update([
+            'cantidad' => $request->cantidad,
+        ]);
+
+        return redirect()->back()->with('success', 'Cantidad actualizada correctamente.');
     }
 
 
@@ -70,7 +76,7 @@ class LineaCarritoController extends Controller
         return redirect()->back()->with('success', 'Producto eliminado del carrito.');
     }
 
-    public function vaciar(LineaCarrito $lineaCarrito)
+    public function vaciar()
     {
         LineaCarrito::where('user_id', Auth::id())->delete();
 

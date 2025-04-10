@@ -24,7 +24,9 @@ export default function Show({ producto }) {
   const handleInsertar = () => {
     if (!tallaSeleccionada) return;
     setData('talla_id', tallaSeleccionada.id);
-    post(route('carrito.insertarLinea'));
+    post(route('carrito.insertarLinea'), {
+      preserveScroll: true,
+    });
   };
   /* */
 

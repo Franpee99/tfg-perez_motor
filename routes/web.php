@@ -42,6 +42,7 @@ Route::get('/producto/{producto}', [TiendaController::class, 'show'])->name('tie
 Route::middleware(['auth'])->group(function () {
     Route::get('/carrito', [LineaCarritoController::class, 'index'])->name('carrito.index');
     Route::post('/carrito/insertar', [LineaCarritoController::class, 'insertarLinea'])->name('carrito.insertarLinea');
+    Route::put('/carrito/{lineaCarrito}', [LineaCarritoController::class, 'modificarLinea'])->name('carrito.modificarLinea');
     Route::delete('/carrito/{lineaCarrito}', [LineaCarritoController::class, 'destroy'])->name('carrito.destroy');
     Route::delete('/carrito', [LineaCarritoController::class, 'vaciar'])->name('carrito.vaciar');
 });
