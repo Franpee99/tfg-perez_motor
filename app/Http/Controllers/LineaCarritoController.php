@@ -93,4 +93,20 @@ class LineaCarritoController extends Controller
     }
 
 
+    /* GUARDAR PARA MÁS TARDE */
+
+    public function cambiarEstadoGuardado(LineaCarrito $lineaCarrito)
+    {
+        $this->authorize('update', $lineaCarrito);
+
+        $lineaCarrito->update([
+            'guardado' => !$lineaCarrito->guardado,
+        ]);
+
+        return redirect()->back()->with('success', $lineaCarrito->guardado
+                                    ? 'Producto guardado para más tarde.'
+                                    : 'Producto movido al carrito.');
+    }
+
+
 }
