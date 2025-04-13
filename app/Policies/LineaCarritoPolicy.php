@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Carrito;
+use App\Models\LineaCarrito;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class CarritoPolicy
+class LineaCarritoPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class CarritoPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Carrito $carrito): bool
+    public function view(User $user, LineaCarrito $lineaCarrito): bool
     {
         return false;
     }
@@ -35,23 +35,23 @@ class CarritoPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Carrito $carrito): bool
+    public function update(User $user, LineaCarrito $lineaCarrito): bool
     {
-        return false;
+        return $user->id === $lineaCarrito->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Carrito $carrito): bool
+    public function delete(User $user, LineaCarrito $lineaCarrito): bool
     {
-        return false;
+        return $user->id === $lineaCarrito->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Carrito $carrito): bool
+    public function restore(User $user, LineaCarrito $lineaCarrito): bool
     {
         return false;
     }
@@ -59,7 +59,7 @@ class CarritoPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Carrito $carrito): bool
+    public function forceDelete(User $user, LineaCarrito $lineaCarrito): bool
     {
         return false;
     }

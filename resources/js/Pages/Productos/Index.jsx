@@ -3,7 +3,7 @@ import { Link, useForm, router } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 import Paginacion from "@/Components/Paginacion";
 
-export default function Index({ productos, categorias }) {
+export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
 
   const handleDelete = (id) => {
@@ -38,7 +38,7 @@ export default function Index({ productos, categorias }) {
                   <td className="py-2 px-3 border-b">
                     {producto.imagenes && producto.imagenes.length > 0 ? (
                       <img
-                        src={`/storage/${producto.imagenes[0]}`}
+                        src={`/storage/${producto.imagenes[0].ruta}`}
                         alt={producto.nombre}
                         className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
                       />

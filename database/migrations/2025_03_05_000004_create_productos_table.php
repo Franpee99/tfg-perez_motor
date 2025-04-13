@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('precio', 8, 2);
             $table->foreignId('subcategoria_id')->constrained();
             $table->foreignId('marca_id')->constrained();
-            $table->json('imagenes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

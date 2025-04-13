@@ -11,11 +11,8 @@ class Producto extends Model
     /** @use HasFactory<\Database\Factories\ProductoFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['nombre', 'descripcion', 'precio', 'subcategoria_id', 'marca_id', 'stock', 'definicion', 'imagenes'];
+    protected $fillable = ['nombre', 'descripcion', 'precio', 'subcategoria_id', 'marca_id', 'stock', 'definicion'];
 
-    protected $casts = [
-        'imagenes' => 'array', // Para manejar el JSON como array en Laravel
-    ];
 
     public function subcategoria()
     {
@@ -42,8 +39,14 @@ class Producto extends Model
         return $this->hasMany(DetallePedido::class);
     }
 
-    public function carritosDetalle()
+    public function lineasCarrito()
     {
-        return $this->hasMany(CarritoDetalle::class);
+        return $this->hasMany(LineaCarrito::class);
     }
+
+    public function imagenes()
+    {
+        return $this->hasMany(Imagen::class);
+    }
+
 }

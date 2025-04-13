@@ -1,22 +1,39 @@
 import React, { useState } from 'react';
-import { usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import FichaTecnica from '@/Components/FichaTecnica';
 import Boton from '@/Components/Boton';
+import { useForm } from '@inertiajs/react';
 
-export default function Show() {
-  const { producto } = usePage().props;
+export default function Show({ producto }) {
   const imagenes = producto.imagenes || [];
   const fichaTecnica = producto.caracteristicas || [];
   const tallas = producto.tallas || [];
-  const [imagenPrincipal, setImagenPrincipal] = useState(imagenes[0]);
+
+  const [imagenPrincipal, setImagenPrincipal] = useState(imagenes.length > 0 ? imagenes[0].ruta : null);
   const [tabActivo, setTabActivo] = useState('descripcion');
+
+  /* Manejo del carrito */
+  const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
+
+  const { post, setData, processing } = useForm({
+    producto_id: producto.id,
+    talla_id: '',
+    cantidad: 1,
+  });
+
+  const handleInsertar = () => {
+    if (!tallaSeleccionada) return;
+    setData('talla_id', tallaSeleccionada.id);
+    post(route('carrito.insertarLinea'), {
+      preserveScroll: true,
+    });
+  };
+  /* */
 
   return (
     <AppLayout>
       <main className="max-w-[90vw] xl:max-w-6xl mx-auto overflow-x-hidden">
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
-          {/* Izquierda: Galería e info */}
           <div className="flex flex-col items-end">
             <h2 className="text-4xl font-bold self-start mb-6">{producto.nombre}</h2>
 
@@ -26,8 +43,8 @@ export default function Show() {
                 {imagenes.map((img, i) => (
                   <img
                     key={i}
-                    src={`/storage/${img}`}
-                    onClick={() => setImagenPrincipal(img)}
+                    src={`/storage/${img.ruta}`}
+                    onClick={() => setImagenPrincipal(img.ruta)}
                     className="w-24 h-24 object-contain cursor-pointer hover:scale-105 duration-200"
                   />
                 ))}
@@ -65,14 +82,12 @@ export default function Show() {
                 />
               </div>
               <div className="p-6 text-gray-800 text-sm">
-                {tabActivo === 'descripcion' && (
-                  <p>{producto.descripcion}</p>
-                )}
-                {tabActivo === 'caracteristicas' && (
+                {tabActivo === 'descripcion' && <p>{producto.descripcion}</p>}
+                {tabActivo === 'caracteristicas' &&
                   <div>
-                    // Falta por implementar algo aqui
+                    Falta por implementar
                   </div>
-                )}
+                }
                 {tabActivo === 'dudas' && (
                   <div>
                     <details className="mb-2">
@@ -89,7 +104,7 @@ export default function Show() {
             </div>
           </div>
 
-          {/* Derecha: Precio, tallas y ficha técnica */}
+          {/* Derecha: Precio, tallas, añadir a la cesta */}
           <div className="flex flex-col items-center py-12">
             <table className="w-full max-w-md border text-center mb-8">
               <tbody>
@@ -106,22 +121,40 @@ export default function Show() {
             </table>
 
             <h2 className="text-xl font-semibold mb-2">ELIGE TU TALLA</h2>
-            <form className="w-full max-w-md flex flex-wrap gap-2 justify-center mb-6">
-              {tallas.map(t => (
-                <input
-                  key={t.id}
-                  type="button"
-                  value={t.nombre}
-                  className="px-6 py-2 border text-lg hover:bg-red-800 hover:text-white cursor-pointer"
-                />
-              ))}
-            </form>
+            <div className="w-full max-w-md flex flex-wrap gap-2 justify-center mb-6">
+              {tallas
+                .filter(t => t.pivot?.stock > 0)
+                .map(t => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      if (tallaSeleccionada?.id === t.id) {
+                        setTallaSeleccionada(null);
+                        setData('talla_id', '');
+                      } else {
+                        setTallaSeleccionada(t);
+                        setData('talla_id', t.id);
+                      }
+                    }}
+                    className={`px-6 py-2 border text-lg cursor-pointer rounded transition ${
+                      tallaSeleccionada?.id === t.id
+                        ? 'bg-red-800 text-white'
+                        : 'hover:bg-red-400 hover:text-white'
+                    }`}
+                  >
+                    {t.nombre}
+                  </button>
+                ))}
+            </div>
 
             <Boton
               texto="AÑADIR A LA CESTA"
               color="green"
               tamaño="lg"
               className="w-full max-w-md"
+              onClick={handleInsertar}
+              disabled={!tallaSeleccionada || processing}
             />
 
             <div className="mt-12 w-full max-w-xl">

@@ -17,7 +17,7 @@ export default function ProductoGrid({ productos }) {
                         <div className="relative h-48 w-full bg-gray-100">
                             {producto.imagenes?.[0] ? (
                                 <img
-                                    src={`/storage/${producto.imagenes[0]}`}
+                                    src={`/storage/${producto.imagenes[0].ruta}`}
                                     alt={producto.nombre}
                                     className="h-full w-full object-contain"
                                 />

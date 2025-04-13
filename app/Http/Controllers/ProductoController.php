@@ -22,12 +22,11 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::with(['marca', 'subcategoria.categoria', 'tallas'])
+        $productos = Producto::with(['marca', 'subcategoria.categoria', 'imagenes'])
             ->paginate(10);
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
-            'categorias' => Categoria::with('subcategorias')->get(),
         ]);
     }
 
@@ -56,13 +55,6 @@ class ProductoController extends Controller
             return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
 
-        $imagenes = [];
-        if ($request->hasFile('imagenes')) {
-            foreach ($request->file('imagenes') as $imagen) {
-                $path = $imagen->store('productos', 'public');
-                $imagenes[] = $path;
-            }
-        }
 
         $producto = Producto::create([
             'nombre'           => $validated['nombre'],
@@ -70,8 +62,17 @@ class ProductoController extends Controller
             'precio'           => $validated['precio'],
             'subcategoria_id'  => $validated['subcategoria_id'],
             'marca_id'         => $marca_id,
-            'imagenes'         => $imagenes,
         ]);
+
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('productos', 'public');
+
+                $producto->imagenes()->create([ //laravel pone automaticamente el producto_id
+                    'ruta' => $path,
+                ]);
+            }
+        }
 
         foreach ($validated['tallas'] as $tallaData) {
             $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
@@ -98,7 +99,7 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         // Stock total (stock del pivot)
         $producto->stock_total = $producto->tallas->sum(function ($talla) {
@@ -115,7 +116,7 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas']);
+        $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         return Inertia::render('Productos/Edit', [
             'producto'    => $producto,
@@ -138,20 +139,28 @@ class ProductoController extends Controller
         if (!$marca_id) {
             return redirect()->back()->withErrors(['marca_id' => 'Debe seleccionar o crear una marca.']);
         }
-        $validated['marca_id'] = $marca_id;
+
+        $producto->update([
+            'nombre'          => $validated['nombre'],
+            'descripcion'     => $validated['descripcion'] ?? null,
+            'precio'          => $validated['precio'],
+            'subcategoria_id' => $validated['subcategoria_id'],
+            'marca_id'        => $marca_id,
+        ]);
 
         $imagenesActuales = $producto->imagenes ?? [];
 
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
                 $path = $imagen->store('productos', 'public');
-                $imagenesActuales[] = $path;
+
+                $producto->imagenes()->create([
+                    'ruta' => $path,
+                ]);
             }
         }
 
         $validated['imagenes'] = $imagenesActuales;
-
-        $producto->update($validated);
 
         // Desvincular las tallas existentes y asociar las nuevas
         $producto->tallas()->detach();
@@ -184,9 +193,6 @@ class ProductoController extends Controller
     {
         $this->authorize('delete', $producto);
 
-        if ($producto->imagen_url) {
-            Storage::disk('public')->delete($producto->imagen_url);
-        }
         $producto->delete();
 
         return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
