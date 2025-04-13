@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained();
             $table->foreignId('talla_id')->constrained();
             $table->integer('cantidad')->default(1);
+            $table->boolean('guardado')->default(false);
             $table->timestamps();
 
             $table->unique(['user_id', 'producto_id', 'talla_id']);

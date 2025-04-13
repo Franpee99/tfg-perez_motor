@@ -13,15 +13,24 @@ class LineaCarritoController extends Controller
 
     public function index()
     {
-        $lineas = LineaCarrito::with(['producto.imagenes', 'talla'])
+        $carrito = LineaCarrito::with(['producto.imagenes', 'talla'])
             ->where('user_id', Auth::id())
+            ->where('guardado', false)
+            ->orderBy('created_at')
+            ->get();
+
+        $guardados = LineaCarrito::with(['producto.imagenes', 'talla'])
+            ->where('user_id', Auth::id())
+            ->where('guardado', true)
             ->orderBy('created_at')
             ->get();
 
         return inertia('Carrito/Index', [
-            'lineasCarrito' => $lineas,
+            'lineasCarrito' => $carrito,
+            'guardados' => $guardados,
         ]);
     }
+
 
     public function insertarLinea(Request $request)
     {
