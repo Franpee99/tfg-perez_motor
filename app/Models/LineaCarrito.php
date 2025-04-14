@@ -8,7 +8,7 @@ class LineaCarrito extends Model
 {
     protected $table = 'lineas_carrito';
 
-    protected $fillable = ['user_id', 'producto_id', 'talla_id', 'cantidad'];
+    protected $fillable = ['user_id', 'producto_id', 'talla_id', 'cantidad', 'guardado'];
 
     public function user()
     {

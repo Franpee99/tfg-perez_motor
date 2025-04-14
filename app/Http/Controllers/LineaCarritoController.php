@@ -13,15 +13,24 @@ class LineaCarritoController extends Controller
 
     public function index()
     {
-        $lineas = LineaCarrito::with(['producto.imagenes', 'talla'])
+        $carrito = LineaCarrito::with(['producto.imagenes', 'talla'])
             ->where('user_id', Auth::id())
+            ->where('guardado', false)
+            ->orderBy('created_at')
+            ->get();
+
+        $guardados = LineaCarrito::with(['producto.imagenes', 'talla'])
+            ->where('user_id', Auth::id())
+            ->where('guardado', true)
             ->orderBy('created_at')
             ->get();
 
         return inertia('Carrito/Index', [
-            'lineasCarrito' => $lineas,
+            'lineasCarrito' => $carrito,
+            'guardados' => $guardados,
         ]);
     }
+
 
     public function insertarLinea(Request $request)
     {
@@ -81,6 +90,22 @@ class LineaCarritoController extends Controller
         LineaCarrito::where('user_id', Auth::id())->delete();
 
         return redirect()->back()->with('success', 'Carrito vaciado correctamente.');
+    }
+
+
+    /* GUARDAR PARA MÁS TARDE */
+
+    public function cambiarEstadoGuardado(LineaCarrito $lineaCarrito)
+    {
+        $this->authorize('update', $lineaCarrito);
+
+        $lineaCarrito->update([
+            'guardado' => !$lineaCarrito->guardado,
+        ]);
+
+        return redirect()->back()->with('success', $lineaCarrito->guardado
+                                    ? 'Producto guardado para más tarde.'
+                                    : 'Producto movido al carrito.');
     }
 
 
