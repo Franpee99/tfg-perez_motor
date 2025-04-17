@@ -22,8 +22,13 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        $productos = Producto::with(['marca', 'subcategoria.categoria', 'imagenes'])
-            ->paginate(10);
+        $productos = Producto::with([
+            'marca',
+            'subcategoria.categoria',
+            'imagenes',
+            'tallas',
+            'caracteristicas'
+        ])->get();
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,

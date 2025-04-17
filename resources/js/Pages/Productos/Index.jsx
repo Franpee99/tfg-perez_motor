@@ -1,15 +1,143 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, useForm, router } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
-import Paginacion from "@/Components/Paginacion";
+import DataTable from "react-data-table-component";
+import { useState } from "react";
 
 export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
+
+  const [filtroNombre, setFiltroNombre] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("");
+  const [filtroSubcategoria, setFiltroSubcategoria] = useState("");
+  const [filtroPrecioMin, setFiltroPrecioMin] = useState("");
+  const [filtroPrecioMax, setFiltroPrecioMax] = useState("");
+  const [filtroCaracteristicas, setFiltroCaracteristicas] = useState("");
+  const [filtroTalla, setFiltroTalla] = useState("");
+  const [filtroMarca, setFiltroMarca] = useState("");
+
+  const limpiarFiltros = () => {
+    setFiltroNombre("");
+    setFiltroCategoria("");
+    setFiltroSubcategoria("");
+    setFiltroPrecioMin("");
+    setFiltroPrecioMax("");
+    setFiltroCaracteristicas("");
+    setFiltroTalla("");
+    setFiltroMarca("");
+  };
 
   const handleDelete = (id) => {
     if (confirm("¿Seguro que quieres eliminar este producto?")) {
       destroy(`/productos/${id}`);
     }
+  };
+
+  const columnas = [
+    {
+      name: "Imagen",
+      selector: row => row.imagenes?.[0]?.ruta,
+      cell: row =>
+        row.imagenes?.[0] ? (
+          <img
+            src={`/storage/${row.imagenes[0].ruta}`}
+            alt={row.nombre}
+            className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
+          />
+        ) : (
+          <span className="text-gray-400">Sin imagen</span>
+        ),
+      sortable: false,
+    },
+    {
+      name: "Nombre",
+      selector: row => row.nombre,
+      sortable: true,
+      cell: row => (
+        <Link
+          href={`/productos/${row.id}`}
+          className="text-blue-500 hover:underline"
+        >
+          {row.nombre}
+        </Link>
+      ),
+    },
+    {
+      name: "Precio",
+      selector: row => Number(row.precio),
+      sortable: true,
+      cell: row => `${Number(row.precio).toFixed(2)}€`,
+    },
+    {
+      name: "Categoría",
+      selector: row => row.subcategoria?.categoria?.nombre || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Subcategoría",
+      selector: row => row.subcategoria?.nombre || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Marca",
+      selector: row => row.marca?.nombre || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Acciones",
+      cell: row => (
+        <div className="flex flex-col items-center gap-1 min-w-[100px]">
+          <Boton
+            texto="Editar"
+            href={`/productos/${row.id}/edit`}
+            color="blue"
+            tamaño="sm"
+          />
+          <Boton
+            texto="Eliminar"
+            onClick={() => handleDelete(row.id)}
+            color="red"
+            tamaño="sm"
+            disabled={processing}
+          />
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      style: {
+        whiteSpace: "normal",
+      },
+    }
+  ];
+
+  const categorias = [...new Set(productos.map(p => p.subcategoria?.categoria?.nombre).filter(Boolean))];
+  const subcategorias = [...new Set(productos.map(p => p.subcategoria?.nombre).filter(Boolean))];
+  const marcas = [...new Set(productos.map(p => p.marca?.nombre).filter(Boolean))];
+  const tallas = [...new Set(productos.flatMap(p => p.tallas?.map(t => t.nombre)).filter(Boolean))];
+
+  const productosFiltrados = productos.filter(producto => {
+    const nombreOk = producto.nombre.toLowerCase().includes(filtroNombre.toLowerCase());
+    const categoriaOk = filtroCategoria === "" || (producto.subcategoria?.categoria?.nombre || "").toLowerCase() === filtroCategoria.toLowerCase();
+    const subcategoriaOk = filtroSubcategoria === "" || (producto.subcategoria?.nombre || "").toLowerCase() === filtroSubcategoria.toLowerCase();
+    const precioMinOk = filtroPrecioMin === "" || producto.precio >= parseFloat(filtroPrecioMin);
+    const precioMaxOk = filtroPrecioMax === "" || producto.precio <= parseFloat(filtroPrecioMax);
+    const caracteristicasOk =
+      filtroCaracteristicas === "" || producto.caracteristicas?.some(c =>
+        (c.pivot?.definicion || "").toLowerCase().includes(filtroCaracteristicas.toLowerCase())
+      );
+    const tallaOk = filtroTalla === "" || producto.tallas?.some(t => t.nombre.toLowerCase() === filtroTalla.toLowerCase());
+    const marcaOk = filtroMarca === "" || (producto.marca?.nombre || "").toLowerCase() === filtroMarca.toLowerCase();
+
+    return nombreOk && categoriaOk && subcategoriaOk && precioMinOk && precioMaxOk && caracteristicasOk && tallaOk && marcaOk;
+  });
+
+  const paginacionES = {
+    rowsPerPageText: 'Filas por página',
+    rangeSeparatorText: 'de',
+    noRowsPerPage: false,
+    selectAllRowsItem: false,
+    selectAllRowsItemText: 'Todos',
   };
 
   return (
@@ -19,76 +147,88 @@ export default function Index({ productos }) {
           Lista de Productos
         </h1>
 
-        <div className="w-full overflow-x-auto">
-          <table className="w-full min-w-[600px] bg-white border border-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-3 text-left border-b">Imagen</th>
-                <th className="py-2 px-3 text-left border-b">Nombre</th>
-                <th className="py-2 px-3 text-left border-b">Precio</th>
-                <th className="py-2 px-3 text-left border-b">Categoría</th>
-                <th className="py-2 px-3 text-left border-b">Subcategoría</th>
-                <th className="py-2 px-3 text-left border-b">Marca</th>
-                <th className="py-2 px-3 text-center border-b">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productos.data.map((producto) => (
-                <tr key={producto.id} className="hover:bg-gray-50">
-                  <td className="py-2 px-3 border-b">
-                    {producto.imagenes && producto.imagenes.length > 0 ? (
-                      <img
-                        src={`/storage/${producto.imagenes[0].ruta}`}
-                        alt={producto.nombre}
-                        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
-                      />
-                    ) : (
-                      <span className="text-gray-400">Sin imagen</span>
-                    )}
-                  </td>
-                  <td className="py-2 px-3 border-b">
-                    <Link
-                      href={`/productos/${producto.id}`}
-                      className="text-blue-500 hover:underline"
-                    >
-                      {producto.nombre}
-                    </Link>
-                  </td>
-                  <td className="py-2 px-3 border-b">{producto.precio}€</td>
-                  <td className="py-2 px-3 border-b">
-                    {producto.subcategoria?.categoria?.nombre || "N/A"}
-                  </td>
-                  <td className="py-2 px-3 border-b">
-                    {producto.subcategoria?.nombre || "N/A"}
-                  </td>
-                  <td className="py-2 px-3 border-b">
-                    {producto.marca?.nombre || "N/A"}
-                  </td>
-                  <td className="py-2 px-3 border-b text-center">
-                    <div className="flex flex-col sm:flex-row justify-center gap-2">
-                      <Boton
-                        texto="Editar"
-                        href={`/productos/${producto.id}/edit`}
-                        color="blue"
-                        tamaño="sm"
-                      />
-                      <Boton
-                        texto="Eliminar"
-                        onClick={() => handleDelete(producto.id)}
-                        color="red"
-                        tamaño="sm"
-                        disabled={processing}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Filtros */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 text-sm text-gray-700">
+          {[
+            ["Nombre", filtroNombre, setFiltroNombre, "text", "Buscar por nombre"],
+            ["Categoría", filtroCategoria, setFiltroCategoria, "select", categorias],
+            ["Subcategoría", filtroSubcategoria, setFiltroSubcategoria, "select", subcategorias],
+            ["Precio mínimo", filtroPrecioMin, setFiltroPrecioMin, "number", "Mínimo"],
+            ["Precio máximo", filtroPrecioMax, setFiltroPrecioMax, "number", "Máximo"],
+            ["Características", filtroCaracteristicas, setFiltroCaracteristicas, "text", "Buscar característica"],
+            ["Talla", filtroTalla, setFiltroTalla, "select", tallas],
+            ["Marca", filtroMarca, setFiltroMarca, "select", marcas],
+          ].map(([label, value, setter, type, extra], i) => (
+            <div key={i} className="bg-gray-50 border rounded px-3 py-2">
+              <label className="block mb-1 font-semibold text-[#040A2A]">{label}:</label>
+              {type === "select" ? (
+                <select
+                  value={value}
+                  onChange={e => setter(e.target.value)}
+                  className="border rounded px-3 py-2 h-[40px] w-full"
+                >
+                  <option value="">Todas</option>
+                  {extra.map(op => (
+                    <option key={op} value={op}>{op}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={type}
+                  value={value}
+                  onChange={e => setter(e.target.value)}
+                  className="border rounded px-3 py-2 h-[40px] w-full"
+                  placeholder={extra}
+                />
+              )}
+            </div>
+          ))}
         </div>
 
-        <Paginacion links={productos.links} />
+        {/* Botón Limpiar Filtros */}
+        <div className="flex justify-end mb-6">
+          <Boton
+            texto="Limpiar filtros"
+            onClick={limpiarFiltros}
+            color="gray"
+            tamaño="md"
+          />
+        </div>
 
+        {/* Tabla */}
+        <DataTable
+          columns={columnas}
+          data={productosFiltrados}
+          pagination
+          paginationComponentOptions={paginacionES}
+          responsive
+          highlightOnHover
+          striped
+          noDataComponent="No hay productos disponibles"
+          customStyles={{
+            table: {
+              style: {
+                minWidth: '1000px',
+                fontSize: '15px',
+              },
+            },
+            headCells: {
+              style: {
+                fontSize: '15px',
+                fontWeight: 'bold',
+                backgroundColor: '#f3f4f6',
+              },
+            },
+            cells: {
+              style: {
+                paddingTop: '14px',
+                paddingBottom: '14px',
+                paddingLeft: '12px',
+                paddingRight: '12px',
+              },
+            },
+          }}
+        />
       </div>
     </AppLayout>
   );
