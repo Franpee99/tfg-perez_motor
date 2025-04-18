@@ -47,3 +47,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/carrito/{lineaCarrito}', [LineaCarritoController::class, 'destroy'])->name('carrito.destroy');
     Route::delete('/carrito', [LineaCarritoController::class, 'vaciar'])->name('carrito.vaciar');
 });
+
+/* INFORMACIÓN */
+Route::get('/quienesSomos', function () {
+    return Inertia::render('Informacion/QuienesSomos');
+});

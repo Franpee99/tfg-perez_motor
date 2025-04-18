@@ -30,7 +30,7 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-3 text-red-500">Información</h3>
           <ul className="space-y-2">
             <li><Link href="/" className="hover:underline">Inicio</Link></li>
-            <li><Link href="/quienes-somos" className="hover:underline">Quiénes somos</Link></li>
+            <li><Link href="/quienesSomos" className="hover:underline">Quiénes somos</Link></li>
             <li><Link href="/contacto" className="hover:underline">Contacto</Link></li>
           </ul>
         </div>
