@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useForm, router } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import FormularioTallas from "./FormularioTallas";
 import FormularioFichaTecnica from "./FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
-
+import { usePage } from "@inertiajs/react";
 
 export default function FormularioCrearProducto({ categorias = [], marcas = [] }) {
   const {
@@ -11,6 +11,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setData: setDatos,
     processing: procesando,
     errors: errores,
+    post,
   } = useForm({
     nombre: "",
     descripcion: "",
@@ -38,7 +39,6 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     }
   }, [datos.categoria_id, categorias]);
 
-  // Acumula nuevas imágenes sin exceder 3 archivos
   const manejarCambioImagenes = (e) => {
     const nuevosArchivos = Array.from(e.target.files).slice(0, 3);
     const archivosCombinados = [...datos.imagenes, ...nuevosArchivos].slice(0, 3);
@@ -46,14 +46,13 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setVistasPrevias(archivosCombinados.map((archivo) => URL.createObjectURL(archivo)));
   };
 
-  // Métodos para tallas
   const agregarTalla = () => {
-    setDatos("tallas", [...datos.tallas, { talla: "", stock: 0 }]);
+    setDatos("tallas", [...datos.tallas, { nombre: "", stock: 0 }]);
   };
 
-  const actualizarTalla = (indice, talla, stock) => {
+  const actualizarTalla = (indice, campo, valor) => {
     const nuevasTallas = [...datos.tallas];
-    nuevasTallas[indice][talla] = stock;
+    nuevasTallas[indice][campo] = valor;
     setDatos("tallas", nuevasTallas);
   };
 
@@ -63,14 +62,13 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setDatos("tallas", nuevasTallas);
   };
 
-  // Métodos para ficha técnica
   const agregarCaracteristica = () => {
     setDatos("caracteristicas", [...datos.caracteristicas, { caracteristica: "", definicion: "" }]);
   };
 
-  const actualizarCaracteristica = (indice, caracteristica, definicion) => {
+  const actualizarCaracteristica = (indice, campo, valor) => {
     const nuevasFicha = [...datos.caracteristicas];
-    nuevasFicha[indice][caracteristica] = definicion;
+    nuevasFicha[indice][campo] = valor;
     setDatos("caracteristicas", nuevasFicha);
   };
 
@@ -108,16 +106,22 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
       });
     }
 
-    // Enviar la solicitud POST
-    router.post("/productos", formData, {
+    post("/productos", {
+      data: formData,
       forceFormData: true,
       preserveScroll: true,
-      onError: (errores) => console.error("Errores de validación:", errores),
     });
   };
 
+  const { flash } = usePage().props;
 
   return (
+    <>
+      {flash?.success && (
+        <div className="bg-green-100 text-green-800 p-3 rounded-lg shadow mb-4 text-center">
+          {flash.success}
+        </div>
+      )}
     <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6" >
       {/* Nombre */}
       <div>
@@ -309,5 +313,6 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
         />
       </div>
     </form>
+  </>
   );
 }
