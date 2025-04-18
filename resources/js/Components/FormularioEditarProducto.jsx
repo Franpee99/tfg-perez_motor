@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useForm, router } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import FormularioTallas from "@/Components/FormularioTallas";
 import FormularioFichaTecnica from "@/Components/FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
+import { usePage } from "@inertiajs/react";
+
 
 export default function FormularioEditarProducto({ producto, categorias = [], marcas = [] }) {
   const {
     data: datos,
     setData: setDatos,
     processing: procesando,
-    errors: errores
+    errors: errores,
+    put,
   } = useForm({
     nombre: producto.nombre,
     descripcion: producto.descripcion || "",
@@ -111,17 +114,23 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       });
     }
 
-    formData.append("_method", "PUT");
 
-
-    router.post(`/productos/${producto.id}`, formData, {
+    put(`/productos/${producto.id}`, formData, {
       forceFormData: true, // Enviar las imagenes como multipart/form-data para laravel
       preserveScroll: true, // Para que pueda rederigirme hacia otra pagina
-      onError: (errores) => console.error("Errores de validación:", errores),
     });
   };
 
+  const { flash } = usePage().props;
+
   return (
+    <>
+      {flash?.success && (
+        <div className="bg-green-100 text-green-800 p-3 rounded-lg shadow mb-4 text-center">
+          {flash.success}
+        </div>
+      )}
+
     <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6">
       {/* Nombre */}
       <div>
@@ -322,5 +331,6 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         />
       </div>
     </form>
+  </>
   );
 }

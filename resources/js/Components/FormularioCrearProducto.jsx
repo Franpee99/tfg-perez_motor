@@ -122,6 +122,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
           {flash.success}
         </div>
       )}
+
     <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6" >
       {/* Nombre */}
       <div>
