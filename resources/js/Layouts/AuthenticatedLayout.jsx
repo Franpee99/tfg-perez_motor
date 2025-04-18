@@ -62,11 +62,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Carrito
                                 </NavLink>
 
+                                {user?.can?.viewAny_productos && (
                                 <NavLink
                                     href={route('productos.index')}
                                     active={route().current('productos.index')}>
                                     Productos
                                 </NavLink>
+                                )}
 
                                 {user?.can?.create_productos && (
                                     <NavLink

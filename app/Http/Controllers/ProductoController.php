@@ -22,6 +22,9 @@ class ProductoController extends Controller
      */
     public function index()
     {
+
+        $this->authorize('viewAny', Producto::class);
+
         $productos = Producto::with([
             'marca',
             'subcategoria.categoria',
@@ -40,6 +43,9 @@ class ProductoController extends Controller
      */
     public function create()
     {
+
+        $this->authorize('create', Producto::class);
+
         return Inertia::render('Productos/Create', [
             'categorias' => Categoria::with('subcategorias')->get(),
             'marcas' => Marca::all(),
@@ -121,6 +127,9 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
+
+        $this->authorize('viewAny', $producto);
+
         $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         return Inertia::render('Productos/Edit', [
@@ -135,6 +144,8 @@ class ProductoController extends Controller
      */
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
+
+        $this->authorize('update', $producto);
 
         $validated = $request->validated();
 

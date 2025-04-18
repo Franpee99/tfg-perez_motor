@@ -13,7 +13,7 @@ class ProductoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return strtolower($user->name) === 'admin';
     }
 
     /**
