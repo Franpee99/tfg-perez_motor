@@ -57,20 +57,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                          active={route().current('carrito.index')}>
                                     Carrito
                                 </NavLink>
-
-                                {user?.can?.viewAny_productos && (
-                                    <NavLink href={route('productos.index')}
-                                             active={route().current('productos.index')}>
-                                        Productos
-                                    </NavLink>
-                                )}
-
-                                {user?.can?.create_productos && (
-                                    <NavLink href={route('productos.create')}
-                                             active={route().current('productos.create')}>
-                                        Crear Producto
-                                    </NavLink>
-                                )}
                             </div>
                         </div>
 
@@ -101,6 +87,17 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </Dropdown.Trigger>
 
                                 <Dropdown.Content>
+                                    {user?.can?.viewAny_productos && (
+                                    <Dropdown.Link href={route('productos.index')}>
+                                        Ver lista de productos
+                                    </Dropdown.Link>
+                                    )}
+
+                                    {user?.can?.create_productos && (
+                                        <Dropdown.Link href={route('productos.create')}>
+                                            Crear producto
+                                        </Dropdown.Link>
+                                    )}
                                     <Dropdown.Link href={route('profile.edit')}>
                                         Perfil
                                     </Dropdown.Link>
