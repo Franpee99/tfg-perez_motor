@@ -4,9 +4,11 @@ import Dropdown          from '@/Components/Dropdown';
 import NavLink           from '@/Components/NavLink';
 import Footer            from '@/Components/Footer';
 import { Link, usePage } from '@inertiajs/react';
+import { useState }      from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth?.user;
+    const [menuAbierto, setMenuAbierto] = useState(false);
 
     return (
         <div className="min-h-screen flex flex-col bg-white">
@@ -16,113 +18,127 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex h-28 justify-between items-center">
 
                         {/* Logo + links */}
-                        <div className="flex items-center">
-                        <Link href="/" className="flex items-center">
-                            <ApplicationLogo />
-                        </Link>
+                        <div className="flex items-center w-full justify-between">
+                            <Link href="/" className="flex items-center">
+                                <ApplicationLogo />
+                            </Link>
 
+                            {/* Botón hamburguesa visible hasta xl */}
+                            <div className="xl:hidden">
+                                <button
+                                    onClick={() => setMenuAbierto(!menuAbierto)}
+                                    className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white/80 focus:outline-none"
+                                >
+                                    <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                        {menuAbierto ? (
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        ) : (
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                                        )}
+                                    </svg>
+                                </button>
+                            </div>
 
-                            <div className="hidden space-x-6 sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')}
-                                         active={route().current('dashboard')}>
-                                    Inicio
-                                </NavLink>
+                            {/* Menú de escritorio visible desde xl */}
+                            <div className="hidden xl:flex space-x-6 ms-10">
+                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>Inicio</NavLink>
+                                <NavLink href={route('tienda.index', 'cascos')} active={route().current('tienda.index', { categoria: 'cascos' })}>Cascos</NavLink>
+                                <NavLink href={route('tienda.index', 'chaquetas')} active={route().current('tienda.index', { categoria: 'chaquetas' })}>Chaquetas</NavLink>
+                                <NavLink href={route('tienda.index', 'pantalones')} active={route().current('tienda.index', { categoria: 'pantalones' })}>Pantalones</NavLink>
+                                <NavLink href={route('tienda.index', 'guantes')} active={route().current('tienda.index', { categoria: 'guantes' })}>Guantes</NavLink>
+                                <NavLink href={route('tienda.index', 'botas')} active={route().current('tienda.index', { categoria: 'botas' })}>Botas</NavLink>
+                                <NavLink href={route('carrito.index')} active={route().current('carrito.index')}>Carrito</NavLink>
+                            </div>
 
-                                <NavLink href={route('tienda.index', 'cascos')}
-                                         active={route().current('tienda.index', { categoria: 'cascos' })}>
-                                    Cascos
-                                </NavLink>
+                            {/* Dropdown usuario */}
+                            {/* Si estas logeado */}
+                            {user && (
+                                <div className="hidden xl:flex items-center">
+                                    <Dropdown>
+                                        <Dropdown.Trigger>
+                                            <span className="inline-flex rounded-md">
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center rounded-md border border-transparent bg-[#040A2A] px-3 py-2 text-sm font-medium leading-4 !text-white hover:!text-white/80 focus:outline-none"
+                                                >
+                                                    {user.name}
+                                                    <svg className="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        </Dropdown.Trigger>
+                                        <Dropdown.Content>
+                                            {user?.can?.viewAny_productos && (
+                                                <Dropdown.Link href={route('productos.index')}>
+                                                    Ver lista de productos
+                                                </Dropdown.Link>
+                                            )}
+                                            {user?.can?.create_productos && (
+                                                <Dropdown.Link href={route('productos.create')}>
+                                                    Crear producto
+                                                </Dropdown.Link>
+                                            )}
+                                            <Dropdown.Link href={route('profile.edit')}>
+                                                Perfil
+                                            </Dropdown.Link>
+                                            <Dropdown.Link href={route('logout')} method="post" as="button">
+                                                Cerrar sesión
+                                            </Dropdown.Link>
+                                        </Dropdown.Content>
+                                    </Dropdown>
+                                </div>
+                            )}
 
-                                <NavLink href={route('tienda.index', 'chaquetas')}
-                                         active={route().current('tienda.index', { categoria: 'chaquetas' })}>
-                                    Chaquetas
-                                </NavLink>
+                            {/* Si NO estas logeado */}
+                            {!user && (
+                                <div className="hidden xl:flex items-center">
+                                    <Link
+                                        href={route('login')}
+                                        className="inline-flex items-center rounded-md border border-white bg-transparent px-3 py-2 text-sm font-medium text-white hover:bg-white hover:text-[#040A2A] transition"
+                                    >
+                                        Iniciar sesión
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
-                                <NavLink href={route('tienda.index', 'pantalones')}
-                                         active={route().current('tienda.index', { categoria: 'pantalones' })}>
-                                    Pantalones
-                                </NavLink>
+                    {/* Menú móvil (hamburguesa expandido) */}
+                    {menuAbierto && (
+                        <div className="xl:hidden bg-[#040A2A] text-white py-4 px-6 shadow-md transition-all">
+                            <div className="flex flex-col sm:flex-row sm:justify-between gap-10">
+                                {/* Navegación principal */}
+                                <nav className="flex flex-col space-y-3 text-base font-medium sm:w-1/2">
+                                    <Link href={route('dashboard')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Inicio</Link>
+                                    <Link href={route('tienda.index', 'cascos')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Cascos</Link>
+                                    <Link href={route('tienda.index', 'chaquetas')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Chaquetas</Link>
+                                    <Link href={route('tienda.index', 'pantalones')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Pantalones</Link>
+                                    <Link href={route('tienda.index', 'guantes')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Guantes</Link>
+                                    <Link href={route('tienda.index', 'botas')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Botas</Link>
+                                    <Link href={route('carrito.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Carrito</Link>
+                                </nav>
 
-                                <NavLink href={route('tienda.index', 'guantes')}
-                                         active={route().current('tienda.index', { categoria: 'guantes' })}>
-                                    Guantes
-                                </NavLink>
-
-                                <NavLink href={route('tienda.index', 'botas')}
-                                         active={route().current('tienda.index', { categoria: 'botas' })}>
-                                    Botas
-                                </NavLink>
-
-                                <NavLink href={route('carrito.index')}
-                                         active={route().current('carrito.index')}>
-                                    Carrito
-                                </NavLink>
+                                {/* Perfil / Usuario */}
+                                <nav className="flex flex-col space-y-3 text-base font-medium sm:w-1/2">
+                                    {user ? (
+                                        <>
+                                            {user?.can?.viewAny_productos && (
+                                                <Link href={route('productos.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Ver lista de productos</Link>
+                                            )}
+                                            {user?.can?.create_productos && (
+                                                <Link href={route('productos.create')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Crear producto</Link>
+                                            )}
+                                            <Link href={route('profile.edit')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Perfil</Link>
+                                            <Link href={route('logout')} method="post" as="button" onClick={() => setMenuAbierto(false)} className="hover:text-red-500">Cerrar sesión</Link>
+                                        </>
+                                    ) : (
+                                        <Link href={route('login')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500">Iniciar sesión</Link>
+                                    )}
+                                </nav>
                             </div>
                         </div>
-
-                        {/* Dropdown usuario */}
-                        {/* Si estas logeado */}
-                        {user && (
-                            <div className="hidden sm:flex sm:items-center">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-[#040A2A] px-3 py-2 text-sm font-medium leading-4 !text-white hover:!text-white/80 focus:outline-none"
-                                            >
-                                                {user.name}
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        {user?.can?.viewAny_productos && (
-                                        <Dropdown.Link href={route('productos.index')}>
-                                            Ver lista de productos
-                                        </Dropdown.Link>
-                                        )}
-
-                                        {user?.can?.create_productos && (
-                                            <Dropdown.Link href={route('productos.create')}>
-                                                Crear producto
-                                            </Dropdown.Link>
-                                        )}
-                                        <Dropdown.Link href={route('profile.edit')}>
-                                            Perfil
-                                        </Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Cerrar sesión
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        )}
-
-                        {/* Si NO estas logeado */}
-                        {!user && (
-                            <div className="hidden sm:flex sm:items-center">
-                                <Link
-                                    href={route('login')}
-                                    className="inline-flex items-center rounded-md border border-white bg-transparent px-3 py-2 text-sm font-medium text-white hover:bg-white hover:text-[#040A2A] transition"
-                                >
-                                    Iniciar sesión
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </div>
             </nav>
 
