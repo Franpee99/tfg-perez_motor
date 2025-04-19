@@ -36,6 +36,7 @@ class HandleInertiaRequests extends Middleware
                     ? array_merge($request->user()->toArray(), [
                         'can' => [
                             'create_productos' => $request->user()->can('create', Producto::class),
+                            'viewAny_productos' => $request->user()->can('viewAny', Producto::class),
                         ],
                     ])
                     : null,
