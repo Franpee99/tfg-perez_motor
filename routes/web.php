@@ -52,3 +52,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/quienesSomos', function () {
     return Inertia::render('Informacion/QuienesSomos');
 });
+
+Route::get('/contacto', function () {
+    return Inertia::render('Informacion/Contacto');
+});
