@@ -17,9 +17,11 @@ export default function Paginacion({ links }) {
             texto={label}
             onClick={() => link.url && router.visit(link.url)}
             disabled={!link.url}
-            color={link.active ? "blue" : "gray"}
+            color="primary"
             tamaño="sm"
-            className="!text-sm"
+            className={`!text-sm ${
+              link.active ? 'bg-red-600 text-white border-red-600' : ''
+            }`}
           />
         );
       })}

@@ -18,10 +18,19 @@ export default function Boton({
 }) {
 
     const colores = {
-    blue: "bg-blue-500 hover:bg-blue-600",
-    red: "bg-red-500 hover:bg-red-600",
-    green: "bg-green-500 hover:bg-green-600",
-    gray: "bg-gray-500 hover:bg-gray-600",
+      blue: "bg-blue-500 hover:bg-blue-600",
+      red: "bg-red-500 hover:bg-red-600",
+      green: "bg-green-500 hover:bg-green-600",
+      gray: "bg-gray-500 hover:bg-gray-600",
+      primary: `
+        bg-[#040A2A]
+        text-white
+        border border-[#040A2A]
+        hover:bg-red-600
+        hover:text-white
+        hover:border-red-600
+        transition
+        duration-200`,
   };
 
   const tamaños = {

@@ -69,7 +69,7 @@ class ProductoController extends Controller
 
         $producto = Producto::create([
             'nombre'           => $validated['nombre'],
-            'descripcion'      => $validated['descripcion'] ?? null,
+            'descripcion'      => $validated['descripcion'] ?? "",
             'precio'           => $validated['precio'],
             'subcategoria_id'  => $validated['subcategoria_id'],
             'marca_id'         => $marca_id,

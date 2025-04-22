@@ -47,12 +47,12 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
   };
 
   const agregarTalla = () => {
-    setDatos("tallas", [...datos.tallas, { nombre: "", stock: 0 }]);
+    setDatos("tallas", [...datos.tallas, { talla: "", stock: 0 }]);
   };
 
-  const actualizarTalla = (indice, campo, valor) => {
+  const actualizarTalla = (indice, talla, stock) => {
     const nuevasTallas = [...datos.tallas];
-    nuevasTallas[indice][campo] = valor;
+    nuevasTallas[indice][talla] = stock;
     setDatos("tallas", nuevasTallas);
   };
 
@@ -66,9 +66,9 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setDatos("caracteristicas", [...datos.caracteristicas, { caracteristica: "", definicion: "" }]);
   };
 
-  const actualizarCaracteristica = (indice, campo, valor) => {
+  const actualizarCaracteristica = (indice, caracteristica, definicion) => {
     const nuevasFicha = [...datos.caracteristicas];
-    nuevasFicha[indice][campo] = valor;
+    nuevasFicha[indice][caracteristica] = definicion;
     setDatos("caracteristicas", nuevasFicha);
   };
 
