@@ -1,11 +1,22 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, useForm } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 import DataTable from "react-data-table-component";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
+  const { flash = {} } = usePage().props;
+  const [mensaje, setMensaje] = useState(flash.success || null);
+
+  useEffect(() => {
+    if (mensaje) {
+      const timer = setTimeout(() => {
+        setMensaje(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [mensaje]);
 
   const [filtroNombre, setFiltroNombre] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
@@ -143,6 +154,12 @@ export default function Index({ productos }) {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        {/* Mensaje flash */}
+        {mensaje && (
+          <div className="transition-all duration-500 ease-out transform scale-100 opacity-100 mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            {mensaje}
+          </div>
+        )}
         <h1 className="text-xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
           Lista de Productos
         </h1>

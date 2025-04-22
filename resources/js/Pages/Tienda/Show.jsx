@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import FichaTecnica from '@/Components/FichaTecnica';
 import Boton from '@/Components/Boton';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 
 export default function Show({ producto }) {
   const imagenes = producto.imagenes || [];
@@ -11,6 +11,17 @@ export default function Show({ producto }) {
 
   const [imagenPrincipal, setImagenPrincipal] = useState(imagenes.length > 0 ? imagenes[0].ruta : null);
   const [tabActivo, setTabActivo] = useState('descripcion');
+
+  /* Mensaje producto añadido */
+  const { flash = {} } = usePage().props;
+  const [mensaje, setMensaje] = useState(flash.success || null);
+
+  useEffect(() => {
+    if (mensaje) {
+      const timer = setTimeout(() => setMensaje(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [mensaje]);
 
   /* Manejo del carrito */
   const [tallaSeleccionada, setTallaSeleccionada] = useState(null);
@@ -26,6 +37,10 @@ export default function Show({ producto }) {
     setData('talla_id', tallaSeleccionada.id);
     post(route('carrito.insertarLinea'), {
       preserveScroll: true,
+      preserveState: false,
+      onSuccess: () => {
+
+      },
     });
   };
   /* */
@@ -33,6 +48,28 @@ export default function Show({ producto }) {
   return (
     <AppLayout>
       <main className="max-w-[90vw] xl:max-w-6xl mx-auto overflow-x-hidden">
+      {mensaje && (
+        <div className="fixed bottom-6 right-6 z-50 animate-slide-in bg-green-100 border border-green-400 text-green-800 px-6 py-4 rounded-lg shadow-xl flex items-start gap-3 transition-opacity duration-300">
+          <svg
+            className="w-6 h-6 mt-1 flex-shrink-0 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <div className="flex-1 text-sm font-medium">{mensaje}</div>
+          <Boton
+            texto="X"
+            tipo="button"
+            onClick={() => setMensaje(null)}
+            color="green"
+            tamaño="sm"
+            className="ml-4 px-2 py-1 font-bold"
+          />
+        </div>
+      )}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
           <div className="flex flex-col items-end">
             <h2 className="text-4xl font-bold self-start mb-6">{producto.nombre}</h2>

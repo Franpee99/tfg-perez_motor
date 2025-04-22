@@ -17,6 +17,7 @@ const Contacto = () => {
     acepta: false,
   });
 
+  const [errores, setErrores] = useState({});
   const [animarBarra, setAnimarBarra] = useState(false);
 
   useEffect(() => {
@@ -34,12 +35,42 @@ const Contacto = () => {
 
   const manejarEnvio = (e) => {
     e.preventDefault();
-    console.log("Formulario enviado:", datos); // Simulamos el envio por ahora
+    const nuevosErrores = {};
+
+    if (!datos.nombre.trim()) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    }
+
+    if (!datos.correo.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(datos.correo)) {
+      nuevosErrores.correo = "Introduce un correo válido.";
+    }
+
+    if (!/^[0-9]{9}$/.test(datos.telefono)) {
+      nuevosErrores.telefono = "El teléfono debe tener 9 dígitos.";
+    }
+
+    if (!datos.motivo.trim()) {
+      nuevosErrores.motivo = "Selecciona un motivo.";
+    }
+
+    if (!datos.mensaje.trim()) {
+      nuevosErrores.mensaje = "El mensaje es obligatorio.";
+    }
+
+    if (!datos.acepta) {
+      nuevosErrores.acepta = "Debes aceptar las condiciones.";
+    }
+
+    setErrores(nuevosErrores);
+
+    if (Object.keys(nuevosErrores).length === 0) {
+        console.log("Formulario enviado:", datos); // Simulamos el envio por ahora
+    }
   };
 
   return (
     <AppLayout>
-      <section className="bg-[#040A2A] text-white py-10 px-6">
+      <section className="bg-[#040A2A] text-white py-10 px-6 pt-20">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10">
             <h1 className="text-3xl font-bold relative w-fit z-10">CONTÁCTANOS</h1>
@@ -62,9 +93,9 @@ const Contacto = () => {
                   name="nombre"
                   value={datos.nombre}
                   onChange={manejarCambio}
-                  required
                   className="w-full h-10 px-3 mt-1 bg-gray-300 text-black"
                 />
+                {errores.nombre && <p className="text-red-400 text-sm">{errores.nombre}</p>}
               </label>
 
               <label className="block">
@@ -85,9 +116,9 @@ const Contacto = () => {
                   name="correo"
                   value={datos.correo}
                   onChange={manejarCambio}
-                  required
                   className="w-full h-10 px-3 mt-1 bg-gray-300 text-black"
                 />
+                {errores.correo && <p className="text-red-400 text-sm">{errores.correo}</p>}
               </label>
 
               <label className="block">
@@ -97,9 +128,9 @@ const Contacto = () => {
                   name="telefono"
                   value={datos.telefono}
                   onChange={manejarCambio}
-                  required
                   className="w-full h-10 px-3 mt-1 bg-gray-300 text-black"
                 />
+                {errores.telefono && <p className="text-red-400 text-sm">{errores.telefono}</p>}
               </label>
 
               <label className="block">
@@ -108,7 +139,6 @@ const Contacto = () => {
                   name="motivo"
                   value={datos.motivo}
                   onChange={manejarCambio}
-                  required
                   className="w-full h-10 px-3 mt-1 bg-gray-300 text-black"
                 >
                   <option value="">Selecciona un motivo</option>
@@ -116,6 +146,7 @@ const Contacto = () => {
                   <option value="pago_plazos">Pago a plazos</option>
                   <option value="otro">Otro</option>
                 </select>
+                {errores.motivo && <p className="text-red-400 text-sm">{errores.motivo}</p>}
               </label>
 
               <label className="block">
@@ -126,22 +157,25 @@ const Contacto = () => {
                   onChange={manejarCambio}
                   rows="5"
                   maxLength="150"
-                  required
                   className="w-full px-3 mt-1 bg-gray-300 text-black resize-none"
                 />
+                {errores.mensaje && <p className="text-red-400 text-sm">{errores.mensaje}</p>}
               </label>
 
-              <div className="flex items-start gap-2">
-                <input
-                  type="checkbox"
-                  name="acepta"
-                  checked={datos.acepta}
-                  onChange={manejarCambio}
-                  className="mt-1"
-                />
-                <span className="text-sm">
-                  Acepto recibir comunicaciones vía email y teléfono para atender a mi consulta
-                </span>
+              <div className="flex flex-col gap-2">
+                <label className="flex gap-2 items-start">
+                  <input
+                    type="checkbox"
+                    name="acepta"
+                    checked={datos.acepta}
+                    onChange={manejarCambio}
+                    className="mt-1"
+                  />
+                  <span className="text-sm">
+                    Acepto recibir comunicaciones vía email y teléfono para atender a mi consulta
+                  </span>
+                </label>
+                {errores.acepta && <p className="text-red-400 text-sm">{errores.acepta}</p>}
               </div>
 
               <button
