@@ -16,4 +16,10 @@ class Caracteristica extends Model
     {
         return $this->belongsToMany(Producto::class)->withPivot('definicion');
     }
+
+    public function setCaracteristicaAttribute($value)
+    {
+        $this->attributes['caracteristica'] = ucfirst(strtolower($value));
+    }
+
 }
