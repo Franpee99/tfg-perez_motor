@@ -32,6 +32,6 @@ class PagoController extends Controller
             ->where('guardado', false)
             ->delete();
 
-        return response()->noContent();
+        return response()->json(['mensaje' => 'Pago procesado con éxito']);
     }
 }
