@@ -115,8 +115,19 @@ export default function Index({ lineasCarrito, guardados }) {
                 {lineasCarrito.map((linea) => renderLinea(linea))}
               </div>
 
-              <div className="border-t border-gray-300 mt-8 pt-4 text-right text-lg font-semibold text-[#040A2A]">
-                Subtotal ({lineasCarrito.length} producto{lineasCarrito.length > 1 && 's'}): {calcularSubtotal()} €
+              <div className="border-t border-gray-300 mt-8 pt-4 flex justify-end">
+                <div className="flex flex-col items-end space-y-2">
+                  <div className="text-lg font-semibold text-[#040A2A]">
+                    Subtotal ({lineasCarrito.length} producto{lineasCarrito.length > 1 && 's'}): {calcularSubtotal()} €
+                  </div>
+
+                  <Boton
+                    texto="Finalizar compra"
+                    href="/checkout"
+                    tamaño="md"
+                    className="bg-green-600 text-white hover:bg-green-700 transition"
+                  />
+                </div>
               </div>
             </>
           )}
