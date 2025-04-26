@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\LineaCarrito;
+use Illuminate\Support\Facades\DB;
 
 class PagoController extends Controller
 {
@@ -21,7 +22,18 @@ class PagoController extends Controller
             ], 400);
         }
 
-        // Vaciar el carrito, solo los no guardados
+        // Actualizar el stock de los productos no guardados y vaciar el carrito
+        $lineas = LineaCarrito::where('user_id', Auth::id())
+            ->where('guardado', false)
+            ->get();
+
+        foreach ($lineas as $linea) {
+            DB::table('producto_talla')
+                ->where('producto_id', $linea->producto_id)
+                ->where('talla_id', $linea->talla_id)
+                ->decrement('stock', $linea->cantidad);
+        }
+
         LineaCarrito::where('user_id', Auth::id())
             ->where('guardado', false)
             ->delete();
