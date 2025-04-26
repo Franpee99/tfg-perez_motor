@@ -73,6 +73,13 @@ export default function Show({ producto }) {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
           <div className="flex flex-col items-end">
             <h2 className="text-4xl font-bold self-start mb-6">{producto.nombre}</h2>
+            {producto.marca?.nombre && (
+              <div className="self-start mb-6">
+                <span className="inline-block text-sm text-gray-500 font-medium tracking-wide border border-gray-200 rounded-md px-3 py-1 bg-white shadow-sm hover:shadow-md transition">
+                  {producto.marca.nombre}
+                </span>
+              </div>
+            )}
 
             {/* Galería */}
             <div className="flex flex-col sm:flex-row gap-4 w-full">

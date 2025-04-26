@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import { router } from '@inertiajs/react';
 import Boton from '@/Components/Boton';
+import Checkout from '../Checkout';
 
 export default function Index({ lineasCarrito, guardados }) {
+  const [mostrarModal, setMostrarModal] = useState(false);
+
   const modificarCantidad = (linea, nuevaCantidad) => {
     if (nuevaCantidad < 1) {
       eliminarLinea(linea.id);
@@ -94,6 +97,11 @@ export default function Index({ lineasCarrito, guardados }) {
   return (
     <AppLayout>
       <main className="max-w-6xl mx-auto p-6 bg-gray-50 rounded-xl shadow-md space-y-12">
+        {/* MODAL DE CHECKOUT */}
+        {mostrarModal && (
+          <Checkout total={calcularSubtotal()} cerrar={() => setMostrarModal(false)} />
+        )}
+
         {/* CARRITO */}
         <section>
           <h1 className="text-3xl font-bold text-[#040A2A] mb-6">Carrito</h1>
@@ -123,7 +131,7 @@ export default function Index({ lineasCarrito, guardados }) {
 
                   <Boton
                     texto="Finalizar compra"
-                    href="/checkout"
+                    onClick={() => setMostrarModal(true)}
                     tamaño="md"
                     className="bg-green-600 text-white hover:bg-green-700 transition"
                   />

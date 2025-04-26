@@ -63,5 +63,5 @@ Route::get('/contacto', function () {
 /* PAYPAL */
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [PagoController::class, 'checkout'])->name('checkout');
-    Route::middleware(['auth'])->post('/pagos/paypal', [PagoController::class, 'procesarPago']);
+    Route::post('/pagos/paypal', [PagoController::class, 'procesarPago']);
 });

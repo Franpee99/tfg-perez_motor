@@ -10,23 +10,17 @@ use App\Models\LineaCarrito;
 
 class PagoController extends Controller
 {
-    public function checkout()
-    {
-        $total = LineaCarrito::where('user_id', Auth::id())
-            ->with('producto')
-            ->where('guardado', false)
-            ->get()
-            ->reduce(function ($acc, $linea) {
-                return $acc + ($linea->producto->precio * $linea->cantidad);
-            }, 0);
-
-        return Inertia::render('Checkout', [
-            'total' => number_format($total, 2, '.', '')
-        ]);
-    }
 
     public function procesarPago(Request $request)
     {
+        $estadoPago = $request->input('detalles.status');
+
+        if ($estadoPago !== 'COMPLETED') {
+            return response()->json([
+                'mensaje' => 'El pago no se completó correctamente'
+            ], 400);
+        }
+
         // Vaciar el carrito, solo los no guardados
         LineaCarrito::where('user_id', Auth::id())
             ->where('guardado', false)
