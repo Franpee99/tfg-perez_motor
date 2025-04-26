@@ -15,7 +15,7 @@ export default function ProductoGrid({ productos, paginacion }) {
             key={producto.id}
             type="button"
             onClick={() => router.get(route('tienda.show', producto.id))}
-            className="text-left w-full cursor-pointer relative overflow-hidden rounded-lg border bg-white shadow transition-shadow duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="text-left w-full cursor-pointer relative overflow-hidden rounded-lg border bg-white shadow transition-shadow duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#040A2A]"
           >
             <div className="relative h-48 w-full bg-gray-100">
               <img

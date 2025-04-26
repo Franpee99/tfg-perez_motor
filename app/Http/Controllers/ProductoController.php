@@ -86,19 +86,22 @@ class ProductoController extends Controller
         }
 
         foreach ($validated['tallas'] as $tallaData) {
-            $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
+            $nombreTalla = strtoupper($tallaData['nombre']);
+            $talla = Talla::firstOrCreate(['nombre' => $nombreTalla]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
         }
 
-        if(!empty($validated['caracteristicas'])){
+        if (!empty($validated['caracteristicas'])) {
             foreach ($validated['caracteristicas'] as $caracteristicaData) {
-
                 if (empty($caracteristicaData['caracteristica']) && empty($caracteristicaData['definicion'])) {
                     continue;
                 }
 
-                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
-                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
+                $caracteristicaNombre = ucfirst(strtolower($caracteristicaData['caracteristica']));
+                $definicion = ucfirst(strtolower($caracteristicaData['definicion'] ?? ''));
+
+                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaNombre]);
+                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $definicion]);
             }
         }
 
@@ -181,20 +184,23 @@ class ProductoController extends Controller
         // Desvincular las tallas existentes y asociar las nuevas
         $producto->tallas()->detach();
         foreach ($validated['tallas'] as $tallaData) {
-            $talla = Talla::firstOrCreate(['nombre' => $tallaData['nombre']]);
+            $nombreTalla = strtoupper($tallaData['nombre']);
+            $talla = Talla::firstOrCreate(['nombre' => $nombreTalla]);
             $producto->tallas()->attach($talla->id, ['stock' => $tallaData['stock']]);
         }
 
         $producto->caracteristicas()->detach();
-        if(!empty($validated['caracteristicas'])){
+        if (!empty($validated['caracteristicas'])) {
             foreach ($validated['caracteristicas'] as $caracteristicaData) {
-
                 if (empty($caracteristicaData['caracteristica']) && empty($caracteristicaData['definicion'])) {
                     continue;
                 }
 
-                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaData['caracteristica']]);
-                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $caracteristicaData['definicion']]);
+                $caracteristicaNombre = ucfirst(strtolower($caracteristicaData['caracteristica']));
+                $definicion = ucfirst(strtolower($caracteristicaData['definicion'] ?? ''));
+
+                $caracteristica = Caracteristica::firstOrCreate(['caracteristica' => $caracteristicaNombre]);
+                $producto->caracteristicas()->attach($caracteristica->id, ['definicion' => $definicion]);
             }
         }
 

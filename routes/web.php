@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LineaCarritoController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
@@ -57,4 +58,10 @@ Route::get('/quienesSomos', function () {
 
 Route::get('/contacto', function () {
     return Inertia::render('Informacion/Contacto');
+});
+
+/* PAYPAL */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [PagoController::class, 'checkout'])->name('checkout');
+    Route::post('/pagos/paypal', [PagoController::class, 'procesarPago']);
 });
