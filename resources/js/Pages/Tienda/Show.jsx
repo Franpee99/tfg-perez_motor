@@ -39,7 +39,6 @@ export default function Show({ producto }) {
       preserveScroll: true,
       preserveState: false,
       onSuccess: () => {
-
       },
     });
   };
@@ -48,28 +47,31 @@ export default function Show({ producto }) {
   return (
     <AppLayout>
       <main className="max-w-[90vw] xl:max-w-6xl mx-auto overflow-x-hidden">
-      {mensaje && (
-        <div className="fixed bottom-6 right-6 z-50 animate-slide-in bg-green-100 border border-green-400 text-green-800 px-6 py-4 rounded-lg shadow-xl flex items-start gap-3 transition-opacity duration-300">
-          <svg
-            className="w-6 h-6 mt-1 flex-shrink-0 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-          <div className="flex-1 text-sm font-medium">{mensaje}</div>
-          <Boton
-            texto="X"
-            tipo="button"
-            onClick={() => setMensaje(null)}
-            color="green"
-            tamaño="sm"
-            className="ml-4 px-2 py-1 font-bold"
-          />
-        </div>
-      )}
+
+        {/* Mensaje de producto añadido */}
+        {mensaje && (
+          <div className="fixed bottom-6 right-6 z-50 animate-slide-in bg-green-100 border border-green-400 text-green-800 px-6 py-4 rounded-lg shadow-xl flex items-start gap-3 transition-opacity duration-300">
+            <svg
+              className="w-6 h-6 mt-1 flex-shrink-0 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <div className="flex-1 text-sm font-medium">{mensaje}</div>
+            <Boton
+              texto="X"
+              tipo="button"
+              onClick={() => setMensaje(null)}
+              color="green"
+              tamaño="sm"
+              className="ml-4 px-2 py-1 font-bold"
+            />
+          </div>
+        )}
+
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
           <div className="flex flex-col items-end">
             <h2 className="text-4xl font-bold self-start mb-6">{producto.nombre}</h2>
@@ -127,11 +129,9 @@ export default function Show({ producto }) {
               </div>
               <div className="p-6 text-gray-800 text-sm">
                 {tabActivo === 'descripcion' && <p>{producto.descripcion}</p>}
-                {tabActivo === 'caracteristicas' &&
-                  <div>
-                    Falta por implementar
-                  </div>
-                }
+                {tabActivo === 'caracteristicas' && (
+                  <div>Falta por implementar</div>
+                )}
                 {tabActivo === 'dudas' && (
                   <div>
                     <details className="mb-2">
@@ -164,15 +164,15 @@ export default function Show({ producto }) {
               </tbody>
             </table>
 
+            {/* Tallas disponibles */}
             <h2 className="text-xl font-semibold mb-2">ELIGE TU TALLA</h2>
             <div className="w-full max-w-md flex flex-wrap gap-2 justify-center mb-6">
-              {tallas
-                .filter(t => t.pivot?.stock > 0)
-                .map(t => (
+              {tallas.map(t => (
+                <div key={t.id} className="flex flex-col items-center">
                   <button
-                    key={t.id}
                     type="button"
                     onClick={() => {
+                      if (t.pivot?.stock === 0) return; // No permitir seleccionar tallas agotadas
                       if (tallaSeleccionada?.id === t.id) {
                         setTallaSeleccionada(null);
                         setData('talla_id', '');
@@ -181,15 +181,22 @@ export default function Show({ producto }) {
                         setData('talla_id', t.id);
                       }
                     }}
+                    disabled={t.pivot?.stock === 0}
                     className={`px-6 py-2 border text-lg cursor-pointer rounded transition ${
                       tallaSeleccionada?.id === t.id
                         ? 'bg-red-800 text-white'
-                        : 'hover:bg-red-400 hover:text-white'
+                        : t.pivot?.stock === 0
+                          ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                          : 'hover:bg-red-400 hover:text-white'
                     }`}
                   >
                     {t.nombre}
                   </button>
-                ))}
+                  {t.pivot?.stock === 0 && (
+                    <span className="text-xs text-red-600 mt-1">Stock agotado</span>
+                  )}
+                </div>
+              ))}
             </div>
 
             <Boton
@@ -201,6 +208,7 @@ export default function Show({ producto }) {
               disabled={!tallaSeleccionada || processing}
             />
 
+            {/* Ficha técnica */}
             <div className="mt-12 w-full max-w-xl">
               <FichaTecnica fichaTecnica={fichaTecnica} />
             </div>

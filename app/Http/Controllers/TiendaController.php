@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LineaCarrito;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TiendaController extends Controller
@@ -50,7 +52,7 @@ class TiendaController extends Controller
             $query->whereBetween('precio', [$precioMin, $precioMax]);
         }
 
-        $productos = $query->paginate(2)->withQueryString(); // conserva los filtros al cambiar de página
+        $productos = $query->paginate(10)->withQueryString(); // conserva los filtros al cambiar de página
 
         // Obtener todas las opciones únicas para filtros
         $todos = Producto::with(['marca', 'subcategoria', 'tallas', 'caracteristicas'])
@@ -78,8 +80,36 @@ class TiendaController extends Controller
     {
         $producto->load(['marca', 'tallas', 'caracteristicas', 'imagenes']);
 
-        return inertia('Tienda/Show', [
-            'producto' => $producto
+        $userId = Auth::id();
+
+        $tallasConStock = $producto->tallas->map(function ($talla) use ($producto, $userId) {
+
+            $enCarrito = LineaCarrito::where('user_id', $userId)
+                         ->where('producto_id', $producto->id)
+                         ->where('talla_id',    $talla->id)
+                         ->value('cantidad') ?? 0;
+
+            $stockReal  = $talla->pivot->stock;
+            $stockFinal = max(0, ($stockReal ?? 0) - $enCarrito);
+
+            return [
+                'id'     => $talla->id,
+                'nombre' => $talla->nombre,
+                'pivot'  => ['stock' => $stockFinal],
+            ];
+        });
+
+        return Inertia::render('Tienda/Show', [
+            'producto' => [
+                'id'             => $producto->id,
+                'nombre'         => $producto->nombre,
+                'precio'         => $producto->precio,
+                'descripcion'    => $producto->descripcion,
+                'marca'          => $producto->marca,
+                'imagenes'       => $producto->imagenes,
+                'caracteristicas'=> $producto->caracteristicas,
+                'tallas'         => $tallasConStock,
+            ],
         ]);
     }
 }
