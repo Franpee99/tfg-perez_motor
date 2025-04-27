@@ -13,24 +13,59 @@ class LineaCarritoController extends Controller
 
     public function index()
     {
-        $carrito = LineaCarrito::with(['producto.imagenes', 'talla'])
-            ->where('user_id', Auth::id())
-            ->where('guardado', false)
-            ->orderBy('created_at')
-            ->get();
+        // Cargamos las tallas del producto con su stock en el pivot
+        $withProducto = [
+            'producto.imagenes',
+            'producto.tallas' => fn ($q) => $q->withPivot('stock'),
+            'talla',
+        ];
 
-        $guardados = LineaCarrito::with(['producto.imagenes', 'talla'])
-            ->where('user_id', Auth::id())
-            ->where('guardado', true)
-            ->orderBy('created_at')
-            ->get();
+        $carrito   = $this->lineas(Auth::id(), false, $withProducto);
+        $guardados = $this->lineas(Auth::id(), true,  $withProducto);
 
         return inertia('Carrito/Index', [
             'lineasCarrito' => $carrito,
-            'guardados' => $guardados,
+            'guardados'     => $guardados,
         ]);
     }
 
+    //  Devuelve la colección con stockDisponible calculado
+    protected function lineas($userId, bool $guardado, array $withProducto)
+    {
+        return LineaCarrito::with($withProducto)
+            ->where('user_id', $userId)
+            ->where('guardado', $guardado)
+            ->orderBy('created_at')
+            ->get()
+            ->map(function ($linea) {
+                // Comprobar si el producto existe (se haya eliminado)
+                if (!$linea->producto) {
+                    return [
+                        'id'              => $linea->id,
+                        'cantidad'        => $linea->cantidad,
+                        'producto'        => null,
+                        'talla'           => $linea->talla,
+                        'stockDisponible' => 0,
+                        'guardado'        => $linea->guardado,
+                    ];
+                }
+
+                $stock = optional(
+                    $linea->producto
+                        ->tallas
+                        ->firstWhere('id', $linea->talla_id)
+                )->pivot->stock ?? 0;
+
+                return [
+                    'id'              => $linea->id,
+                    'cantidad'        => $linea->cantidad,
+                    'producto'        => $linea->producto,
+                    'talla'           => $linea->talla,
+                    'stockDisponible' => $stock,
+                    'guardado'        => $linea->guardado,
+                ];
+            });
+    }
 
     public function insertarLinea(Request $request)
     {
@@ -67,6 +102,17 @@ class LineaCarritoController extends Controller
         ]);
 
         $this->authorize('update', $lineaCarrito);
+
+        $stockDisponible = optional(
+            $lineaCarrito->producto
+                        ->tallas
+                        ->firstWhere('id', $lineaCarrito->talla_id)
+        )->pivot->stock;
+
+        if ($stockDisponible !== null && $request->cantidad > $stockDisponible) {
+            return back()->with('error', 'No puedes añadir más unidades de las disponibles.');
+        }
+
 
         $lineaCarrito->update([
             'cantidad' => $request->cantidad,

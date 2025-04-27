@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import Boton from '@/Components/Boton';
 import Checkout from '../Checkout';
 
@@ -17,6 +17,10 @@ export default function Index({ lineasCarrito, guardados }) {
       cantidad: nuevaCantidad
     }, {
       preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => {
+        router.reload({ only: ['lineasCarrito'] }); // Recarga solo la lineas del carrito
+      },
     });
   };
 
@@ -34,7 +38,7 @@ export default function Index({ lineasCarrito, guardados }) {
 
   const calcularSubtotal = () => {
     return lineasCarrito
-      .reduce((total, linea) => total + (linea.producto.precio * linea.cantidad), 0)
+      .reduce((total, linea) => total + ((linea.producto?.precio || 0) * linea.cantidad), 0)
       .toFixed(2);
   };
 
@@ -44,44 +48,69 @@ export default function Index({ lineasCarrito, guardados }) {
       className="bg-white border border-gray-200 rounded-md p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
     >
       <div className="flex gap-4">
-        <div className="w-32 h-32 bg-white border rounded-md overflow-hidden flex-shrink-0">
-          <img
-            src={`/storage/${linea.producto.imagenes?.[0]?.ruta}`}
-            alt={linea.producto.nombre}
-            className="w-full h-full object-contain"
-          />
+        <div className="w-32 h-32 bg-white border rounded-md overflow-hidden flex-shrink-0 flex items-center justify-center">
+          {linea.producto ? (
+            <img
+              src={`/storage/${linea.producto.imagenes?.[0]?.ruta}`}
+              alt={linea.producto.nombre}
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <span className="text-xs text-gray-500 text-center">Producto eliminado</span>
+          )}
         </div>
 
         <div className="flex flex-col justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[#040A2A]">{linea.producto.nombre}</h2>
-            <p className="text-sm text-gray-700 mt-1">Talla: {linea.talla.nombre}</p>
+            <h2 className="text-lg font-semibold text-[#040A2A]">
+              {linea.producto ? linea.producto.nombre : 'Producto eliminado'}
+            </h2>
+            <p className="text-sm text-gray-700 mt-1">Talla: {linea.talla?.nombre || '-'}</p>
           </div>
 
-          {!esGuardado && (
+          {/* Botones cantidad */}
+          {!esGuardado && linea.producto && (
             <div className="flex items-center gap-2 mt-3">
-              <Boton
-                texto="−"
-                tamaño="xs"
-                onClick={() => modificarCantidad(linea, linea.cantidad - 1)}
-                className="w-8 h-8 rounded-full bg-[#040A2A] text-white hover:bg-opacity-90 text-sm p-0 flex items-center justify-center"
-              />
-              <span className="px-3 py-1 border rounded font-medium">{linea.cantidad}</span>
-              <Boton
-                texto="+"
-                tamaño="xs"
-                onClick={() => modificarCantidad(linea, linea.cantidad + 1)}
-                className="w-8 h-8 rounded-full bg-[#040A2A] text-white hover:bg-opacity-90 text-sm p-0 flex items-center justify-center"
-              />
+              {linea.stockDisponible === 0 ? (
+                <span className="text-red-600 font-bold text-sm">Producto agotado</span>
+              ) : (
+                <>
+                  <Boton
+                    texto="−"
+                    tamaño="xs"
+                    onClick={() => modificarCantidad(linea, linea.cantidad - 1)}
+                    className="w-8 h-8 rounded-full bg-[#040A2A] text-white hover:bg-opacity-90 text-sm p-0 flex items-center justify-center"
+                  />
+                  <span className="px-3 py-1 border rounded font-medium">{linea.cantidad}</span>
+                  <Boton
+                    texto="+"
+                    tamaño="xs"
+                    onClick={() => {
+                      if (linea.cantidad < linea.stockDisponible) {
+                        modificarCantidad(linea, linea.cantidad + 1);
+                      }
+                    }}
+                    disabled={
+                      linea.cantidad >= linea.stockDisponible
+                    }
+                    className="w-8 h-8 rounded-full bg-[#040A2A] text-white hover:bg-opacity-90 text-sm p-0 flex items-center justify-center"
+                  />
+                </>
+              )}
             </div>
           )}
 
+          {/* Acciones */}
           <div className="flex gap-3 mt-2 text-xs text-[#040A2A]">
             <button className="hover:underline" onClick={() => eliminarLinea(linea.id)}>
               Eliminar
             </button>
             <span>|</span>
-            <button className="hover:underline" onClick={() => cambiarEstadoGuardado(linea.id)}>
+            <button
+              className="hover:underline"
+              onClick={() => cambiarEstadoGuardado(linea.id)}
+              disabled={!linea.producto}
+            >
               {esGuardado ? 'Mover al carrito' : 'Guardar para más tarde'}
             </button>
           </div>
@@ -89,7 +118,7 @@ export default function Index({ lineasCarrito, guardados }) {
       </div>
 
       <div className="text-right sm:w-32 text-xl font-bold text-[#040A2A]">
-        {(linea.producto.precio * linea.cantidad).toFixed(2)} €
+        {linea.producto ? (linea.producto.precio * linea.cantidad).toFixed(2) + ' €' : '-'}
       </div>
     </div>
   );
