@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 import FormularioTallas from "@/Components/FormularioTallas";
 import FormularioFichaTecnica from "@/Components/FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
@@ -12,7 +12,8 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
     setData: setDatos,
     processing: procesando,
     errors: errores,
-    put,
+    setError,
+    clearErrors
   } = useForm({
     nombre: producto.nombre,
     descripcion: producto.descripcion || "",
@@ -27,7 +28,8 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
   });
 
   const [vistasPrevias, setVistasPrevias] = useState([]);
-  const [imagenesExistentes] = useState(producto.imagenes || []);
+  const [imagenesExistentes, setImagenesExistentes] = useState(producto.imagenes || []);
+  const [imagenesAEliminar, setImagenesAEliminar] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
 
   useEffect(() => {
@@ -49,6 +51,23 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
     const archivosNuevos = nuevasSeleccionadas.slice(0, permitidas);
     setDatos("imagenes", [...datos.imagenes, ...archivosNuevos]);
     setVistasPrevias(prev => [...prev, ...archivosNuevos.map(file => URL.createObjectURL(file))]);
+  };
+
+  // Eliminar una imagen nueva
+  const eliminarImagenNueva = (indice) => {
+    const imagenesActualizadas = [...datos.imagenes];
+    imagenesActualizadas.splice(indice, 1);
+    setDatos("imagenes", imagenesActualizadas);
+
+    const vistasActualizadas = [...vistasPrevias];
+    vistasActualizadas.splice(indice, 1);
+    setVistasPrevias(vistasActualizadas);
+  };
+
+  // Eliminar una imagen existente
+  const eliminarImagenExistente = (img) => {
+    setImagenesExistentes(imagenesExistentes.filter(i => i.ruta !== img.ruta));
+    setImagenesAEliminar(prev => [...prev, img.ruta]);
   };
 
   // Métodos para tallas
@@ -114,10 +133,22 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       });
     }
 
+    imagenesAEliminar.forEach((img, indice) => {
+      formData.append(`imagenes_a_eliminar[${indice}]`, img);
+    });
 
-    put(`/productos/${producto.id}`, formData, {
+    formData.append('_method', 'PUT');
+
+    router.post(`/productos/${producto.id}`, formData, {
       forceFormData: true, // Enviar las imagenes como multipart/form-data para laravel
       preserveScroll: true, // Para que pueda rederigirme hacia otra pagina
+      onError: (erroresDelServidor) => {
+        console.log('Errores de validación:', erroresDelServidor);
+        clearErrors();
+        Object.entries(erroresDelServidor).forEach(([campo, mensaje]) => {
+          setError(campo, mensaje);
+        });
+      },
     });
   };
 
@@ -131,50 +162,50 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         </div>
       )}
 
-    <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6">
+    <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6 bg-[#040A2A]">
       {/* Nombre */}
       <div>
-        <label className="block text-gray-700 font-semibold">Nombre</label>
+        <label className="block text-white font-semibold">Nombre</label>
         <input
           type="text"
           name="nombre"
           value={datos.nombre}
           onChange={(e) => setDatos("nombre", e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        />
+          className={`w-full p-3 border rounded-lg ${errores.nombre ? 'border-red-500' : 'border-black-300'}`}
+          />
         {errores.nombre && <p className="text-red-500 text-sm mt-1">{errores.nombre}</p>}
       </div>
       {/* Descripción */}
       <div>
-        <label className="block text-gray-700 font-semibold">Descripción</label>
+        <label className="block text-white font-semibold">Descripción</label>
         <textarea
           name="descripcion"
           value={datos.descripcion}
           onChange={(e) => setDatos("descripcion", e.target.value)}
-          className="w-full p-3 border rounded-lg"
+          className={`w-full p-3 border rounded-lg`}
         />
         {errores.descripcion && <p className="text-red-500 text-sm mt-1">{errores.descripcion}</p>}
       </div>
       {/* Precio */}
       <div>
-        <label className="block text-gray-700 font-semibold">Precio (€)</label>
+        <label className="block text-white font-semibold">Precio (€)</label>
         <input
           type="number"
           name="precio"
           value={datos.precio}
           onChange={(e) => setDatos("precio", e.target.value)}
-          className="w-full p-3 border rounded-lg"
+          className={`w-full p-3 border rounded-lg ${errores.precio ? 'border-red-500' : 'border-black-300'}`}
         />
         {errores.precio && <p className="text-red-500 text-sm mt-1">{errores.precio}</p>}
       </div>
       {/* Categoría */}
       <div>
-        <label className="block text-gray-700 font-semibold">Categoría</label>
+        <label className="block text-white font-semibold">Categoría</label>
         <select
           name="categoria_id"
           value={datos.categoria_id}
           onChange={(e) => setDatos("categoria_id", e.target.value)}
-          className="w-full p-3 border rounded-lg"
+          className={`w-full p-3 border rounded-lg ${errores.categoria_id ? 'border-red-500' : 'border-black-300'}`}
         >
           <option value="">Selecciona una categoría</option>
           {categorias.map(cat => (
@@ -185,12 +216,12 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Subcategoría */}
       <div>
-        <label className="block text-gray-700 font-semibold">Subcategoría</label>
+        <label className="block text-white font-semibold">Subcategoría</label>
         <select
           name="subcategoria_id"
           value={datos.subcategoria_id}
           onChange={(e) => setDatos("subcategoria_id", e.target.value)}
-          className="w-full p-3 border rounded-lg"
+          className={`w-full p-3 border rounded-lg ${errores.subcategoria_id ? 'border-red-500' : 'border-black-300'}`}
           disabled={!subcategorias.length}
         >
           <option value="">Selecciona una subcategoría</option>
@@ -202,12 +233,12 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Marca */}
       <div>
-        <label className="block text-gray-700 font-semibold">Marca</label>
+        <label className="block text-white font-semibold">Marca</label>
         <select
           name="marca_id"
           value={datos.marca_id || ""}
           onChange={(e) => setDatos("marca_id", e.target.value || null)}
-          className="w-full p-3 border rounded-lg"
+          className={`w-full p-3 border rounded-lg ${errores.marca_id ? 'border-red-500' : 'border-black-300'}`}
         >
           <option value="">Selecciona una marca</option>
           {marcas.length > 0 ? (
@@ -222,13 +253,13 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Nueva Marca */}
       <div>
-        <label className="block text-gray-700 font-semibold">Nueva Marca (opcional)</label>
+        <label className="block text-white font-semibold">Nueva Marca (opcional)</label>
         <input
           type="text"
           name="nueva_marca"
           value={datos.nueva_marca}
           onChange={(e) => setDatos("nueva_marca", e.target.value)}
-          className="w-full p-3 border rounded-lg"
+          className={`w-full p-3 border rounded-lg ${errores.nueva_marca ? 'border-red-500' : 'border-black-300'}`}
         />
         {errores.nueva_marca && <p className="text-red-500 text-sm mt-1">{errores.nueva_marca}</p>}
       </div>
@@ -253,7 +284,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
 
       {/* Sección de imágenes */}
       <div>
-        <label className="block text-gray-700 font-semibold">Imágenes del Producto (Máx 3)</label>
+        <label className="block text-white font-semibold">Imágenes del Producto (Máx 3)</label>
         {/* Imágenes actuales */}
         <div className="mt-2">
           <p className="font-semibold">Imágenes Actuales</p>
@@ -268,7 +299,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
                   />
                   <Boton
                     texto="X"
-                    onClick={() => {/* Falta implementar funcion de eliminar imagen */}}
+                    onClick={() => eliminarImagenExistente(img)}
                     color="red"
                     tamaño="sm"
                     titulo="Eliminar imagen"
@@ -278,13 +309,13 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
                 </div>
               ))
             ) : (
-              <p className="text-gray-500">No hay imágenes actuales</p>
+              <p className="text-white">No hay imágenes actuales</p>
             )}
           </div>
         </div>
         {/* Nuevas imágenes */}
         <div className="mt-4">
-          <p className="font-semibold">Agregar Imágenes Nuevas</p>
+          <p className="font-semibold text-white">Agregar Imágenes Nuevas</p>
           <input
             type="file"
             name="imagenes"
@@ -304,7 +335,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
                   />
                   <Boton
                     texto="X"
-                    onClick={() => {/* Falta implementar funcion de eliminar imagen */}}
+                    onClick={() => eliminarImagenNueva(indice)}
                     color="red"
                     tamaño="sm"
                     titulo="Eliminar imagen"
@@ -324,7 +355,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         <Boton
           texto="Actualizar Producto"
           tipo="submit"
-          color="blue"
+          color="green"
           tamaño="lg"
           enProceso={procesando}
           cargandoTexto="Guardando..."

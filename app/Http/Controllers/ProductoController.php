@@ -161,11 +161,23 @@ class ProductoController extends Controller
 
         $producto->update([
             'nombre'          => $validated['nombre'],
-            'descripcion'     => $validated['descripcion'] ?? null,
+            'descripcion'     => $validated['descripcion'] ?? '',
             'precio'          => $validated['precio'],
             'subcategoria_id' => $validated['subcategoria_id'],
             'marca_id'        => $marca_id,
         ]);
+
+        $imagenesAEliminar = $request->input('imagenes_a_eliminar', []);
+
+        if (!empty($imagenesAEliminar)) {
+            foreach ($request->imagenes_a_eliminar as $ruta) {
+                $imagen = $producto->imagenes()->where('ruta', $ruta)->first();
+                if ($imagen) {
+                    Storage::disk('public')->delete($imagen->ruta);
+                    $imagen->delete();
+                }
+            }
+        }
 
         $imagenesActuales = $producto->imagenes ?? [];
 

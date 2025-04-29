@@ -5,7 +5,7 @@ import Boton from "./Boton";
 export default function FormularioFichaTecnica({ listaFichaTecnica, agregarCaracteristica, actualizarCaracteristica, eliminarCaracteristica, errorCaracteristicas }) {
   return (
     <div>
-      <label className="block text-gray-700 font-semibold mb-2">
+      <label className="block text-white font-semibold mb-2">
         Características del Producto (Ficha Técnica)
       </label>
       {listaFichaTecnica.map((caracteristica, index) => (

@@ -4,8 +4,8 @@ import FormularioCrearProducto from "@/Components/FormularioCrearProducto";
 export default function Create({ categorias = [], marcas = [] }) {
   return (
     <AppLayout>
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+      <div className="max-w-4xl mx-auto bg-[#040A2A] rounded-lg shadow-lg mt-10 pt-10">
+        <h1 className="text-3xl font-bold text-center text-white mb-4">
           Crear Producto
         </h1>
         <FormularioCrearProducto categorias={categorias} marcas={marcas} />

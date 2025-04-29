@@ -29,7 +29,7 @@ class StoreProductoRequest extends FormRequest
             'marca_id'         => 'nullable|exists:marcas,id',
             'nueva_marca'      => 'nullable|string|max:255',
             'imagenes'         => 'nullable|array|max:3',
-            'imagenes.*'       => 'image|max:2048', // Validar cada imagen
+            'imagenes.*'       => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validar cada imagen
             'tallas'           => 'required|array|min:1',
             'tallas.*.nombre'  => 'required|string|max:50',
             'tallas.*.stock'   => 'required|integer|min:0',

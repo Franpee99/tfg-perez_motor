@@ -4,7 +4,7 @@ import Boton from "./Boton";
 export default function FormularioTallas({ listaTallas, agregarTalla, actualizarTalla, eliminarTalla, errorTallas }) {
   return (
     <div>
-      <label className="block text-gray-700 font-semibold">Tallas y Cantidad en Stock</label>
+      <label className="block text-white font-semibold">Tallas y Cantidad en Stock</label>
       {listaTallas.map((talla, index) => (
         <div key={index} className="flex gap-2 items-center mb-2">
           <input
