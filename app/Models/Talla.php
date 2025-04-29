@@ -22,6 +22,11 @@ class Talla extends Model
         return $this->hasMany(LineaCarrito::class);
     }
 
+    public function detallesPedido()
+    {
+        return $this->hasMany(DetallePedido::class);
+    }
+
 
     public function setNombreAttribute($value)
     {

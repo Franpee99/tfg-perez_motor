@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetallePedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Models\LineaCarrito;
+use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
 
 class PagoController extends Controller
@@ -40,12 +42,32 @@ class PagoController extends Controller
                 ], 400);
             }
         }
-
+        // Ya decrementamos el stock
         foreach ($lineas as $linea) {
             DB::table('producto_talla')
                 ->where('producto_id', $linea->producto_id)
                 ->where('talla_id', $linea->talla_id)
                 ->decrement('stock', $linea->cantidad);
+        }
+
+        // Creacion Pedido
+        $total = $request->input('detalles.purchase_units.0.amount.value');
+
+        $pedido = Pedido::create([
+            'user_id' => Auth::user()->id,
+            'estado' => 'procesado',
+            'total' => $total,
+        ]);
+
+        // Creacion de Detalle_Pedido
+        foreach ($lineas as $linea) {
+            DetallePedido::create([
+                'pedido_id'   => $pedido->id,
+                'producto_id' => $linea->producto_id,
+                'talla_id'    => $linea->talla_id,
+                'cantidad'    => $linea->cantidad,
+                'precio'      => $linea->producto->precio,
+            ]);
         }
 
         // Vacia el carrito

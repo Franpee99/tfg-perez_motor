@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pedido_id')->constrained();
             $table->foreignId('producto_id')->constrained();
+            $table->foreignId('talla_id')->constrained();
             $table->integer('cantidad');
             $table->decimal('precio', 8, 2);
             $table->softDeletes();
