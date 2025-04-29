@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\UpdatePedidoRequest;
 use App\Models\Pedido;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class PedidoController extends Controller
 {
@@ -13,7 +15,14 @@ class PedidoController extends Controller
      */
     public function index()
     {
-        //
+        $pedidos = Pedido::withCount('detalles')
+            ->where('user_id', Auth::id())
+            ->orderByDesc('created_at')
+            ->get();
+
+        return Inertia::render('Pedido/Index', [
+            'pedidos' => $pedidos
+        ]);
     }
 
     /**
