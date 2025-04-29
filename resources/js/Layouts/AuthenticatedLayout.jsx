@@ -69,6 +69,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                             </span>
                                         </Dropdown.Trigger>
                                         <Dropdown.Content>
+                                            {/* ADMIN */}
                                             {user?.can?.viewAny_productos && (
                                                 <Dropdown.Link href={route('productos.index')}>
                                                     Ver lista de productos
@@ -79,6 +80,10 @@ export default function AuthenticatedLayout({ header, children }) {
                                                     Crear producto
                                                 </Dropdown.Link>
                                             )}
+                                            {/* PEDIDOS */}
+                                            <Dropdown.Link href={route('pedidos.index')}>
+                                                Historial de pedidos
+                                            </Dropdown.Link>
                                             <Dropdown.Link href={route('profile.edit')}>
                                                 Perfil
                                             </Dropdown.Link>
