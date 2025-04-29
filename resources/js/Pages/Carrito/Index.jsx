@@ -133,7 +133,16 @@ export default function Index({ lineasCarrito, guardados }) {
 
         {/* CARRITO */}
         <section>
-          <h1 className="text-3xl font-bold text-[#040A2A] mb-6">Carrito</h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-[#040A2A]">Carrito</h1>
+
+            <Boton
+              texto="Ver historial de pedidos"
+              href={route('pedidos.index')}
+              color="primary"
+              tamaño="md"
+            />
+          </div>
 
           {lineasCarrito.length === 0 ? (
             <p className="text-gray-600">Tu carrito está vacío.</p>

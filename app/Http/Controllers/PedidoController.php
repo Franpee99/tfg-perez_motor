@@ -25,51 +25,17 @@ class PedidoController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePedidoRequest $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
      */
     public function show(Pedido $pedido)
     {
-        //
+        $pedido->load('detalles.producto.imagenes', 'detalles.producto.marca', 'detalles.talla');
+
+        return Inertia::render('Pedido/Show', [
+            'pedido' => $pedido
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePedidoRequest $request, Pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Pedido $pedido)
-    {
-        //
-    }
 }
