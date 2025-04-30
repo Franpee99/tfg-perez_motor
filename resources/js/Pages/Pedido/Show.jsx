@@ -11,7 +11,7 @@ export default function Show({ pedido }) {
           </h1>
 
           <Boton
-            texto="Volver al historial"
+            texto="Volver a mis pedidos"
             href={route('pedidos.index')}
             color="primary"
             tamaño="md"

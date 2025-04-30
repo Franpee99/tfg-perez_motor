@@ -15,7 +15,9 @@ class PedidoController extends Controller
      */
     public function index()
     {
-        $pedidos = Pedido::withCount('detalles') // 'detalles' -> relacion detalle_pedidos (modelo)
+        $pedidos = Pedido::with([
+            'detalles.producto.imagenes',
+        ])->withCount('detalles') // 'detalles' -> relacion detalle_pedidos (modelo)
             ->where('user_id', Auth::id())
             ->orderByDesc('created_at')
             ->get();

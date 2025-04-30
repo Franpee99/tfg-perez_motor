@@ -137,7 +137,7 @@ export default function Index({ lineasCarrito, guardados }) {
             <h1 className="text-3xl font-bold text-[#040A2A]">Carrito</h1>
 
             <Boton
-              texto="Ver historial de pedidos"
+              texto="Mis pedidos"
               href={route('pedidos.index')}
               color="primary"
               tamaño="md"
