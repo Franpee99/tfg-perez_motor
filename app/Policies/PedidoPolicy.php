@@ -21,7 +21,7 @@ class PedidoPolicy
      */
     public function view(User $user, Pedido $pedido): bool
     {
-        return false;
+        return $user->id === $pedido->user_id || strtolower($user->name) === 'admin';
     }
 
     /**
