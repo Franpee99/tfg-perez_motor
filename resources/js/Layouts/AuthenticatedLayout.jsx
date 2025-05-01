@@ -72,7 +72,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                             {/* ADMIN */}
                                             {user?.can?.viewAny_productos && (
                                                 <Dropdown.Link href={route('productos.index')}>
-                                                    Ver lista de productos
+                                                    Lista de productos
                                                 </Dropdown.Link>
                                             )}
                                             {user?.can?.create_productos && (

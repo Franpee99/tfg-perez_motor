@@ -287,7 +287,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
         <label className="block text-white font-semibold">Imágenes del Producto (Máx 3)</label>
         {/* Imágenes actuales */}
         <div className="mt-2">
-          <p className="font-semibold">Imágenes Actuales</p>
+          <p className="font-semibold text-white">Imágenes Actuales</p>
           <div className="flex flex-wrap gap-2 mt-1">
             {imagenesExistentes && imagenesExistentes.length > 0 ? (
               imagenesExistentes.map((img, indice) => (
