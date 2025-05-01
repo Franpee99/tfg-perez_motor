@@ -69,9 +69,10 @@ export default function AuthenticatedLayout({ header, children }) {
                                             </span>
                                         </Dropdown.Trigger>
                                         <Dropdown.Content>
+                                            {/* ADMIN */}
                                             {user?.can?.viewAny_productos && (
                                                 <Dropdown.Link href={route('productos.index')}>
-                                                    Ver lista de productos
+                                                    Lista de productos
                                                 </Dropdown.Link>
                                             )}
                                             {user?.can?.create_productos && (
@@ -79,6 +80,10 @@ export default function AuthenticatedLayout({ header, children }) {
                                                     Crear producto
                                                 </Dropdown.Link>
                                             )}
+                                            {/* PEDIDOS */}
+                                            <Dropdown.Link href={route('pedidos.index')}>
+                                                Mis pedidos
+                                            </Dropdown.Link>
                                             <Dropdown.Link href={route('profile.edit')}>
                                                 Perfil
                                             </Dropdown.Link>
@@ -129,6 +134,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                             {user?.can?.create_productos && (
                                                 <Link href={route('productos.create')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Crear producto</Link>
                                             )}
+                                            <Link href={route('pedidos.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Mis pedidos</Link>
                                             <Link href={route('profile.edit')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Perfil</Link>
                                             <Link href={route('logout')} method="post" as="button" onClick={() => setMenuAbierto(false)} className="hover:text-red-500">Cerrar sesión</Link>
                                         </>

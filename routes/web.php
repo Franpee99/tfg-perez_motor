@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LineaCarritoController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
@@ -64,4 +65,10 @@ Route::get('/contacto', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [PagoController::class, 'checkout'])->name('checkout');
     Route::post('/pagos/paypal', [PagoController::class, 'procesarPago']);
+});
+
+/* PEDIDOS */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 });

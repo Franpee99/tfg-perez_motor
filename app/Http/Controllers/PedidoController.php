@@ -5,62 +5,44 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\UpdatePedidoRequest;
 use App\Models\Pedido;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class PedidoController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $pedidos = Pedido::with([
+            'detalles.producto.imagenes',
+            ])
+            ->where('user_id', Auth::id())
+            ->orderByDesc('created_at')
+            ->get();
+
+        return Inertia::render('Pedido/Index', [
+            'pedidos' => $pedidos
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePedidoRequest $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
      */
     public function show(Pedido $pedido)
     {
-        //
+        $this->authorize('view', $pedido);
+
+        $pedido->load('detalles.producto.imagenes', 'detalles.producto.marca', 'detalles.talla');
+
+        return Inertia::render('Pedido/Show', [
+            'pedido' => $pedido
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePedidoRequest $request, Pedido $pedido)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Pedido $pedido)
-    {
-        //
-    }
 }

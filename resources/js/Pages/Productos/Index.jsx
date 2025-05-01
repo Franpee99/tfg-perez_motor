@@ -153,7 +153,7 @@ export default function Index({ productos }) {
 
   return (
     <AppLayout>
-      <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
         {/* Mensaje flash */}
         {mensaje && (
           <div className="transition-all duration-500 ease-out transform scale-100 opacity-100 mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">

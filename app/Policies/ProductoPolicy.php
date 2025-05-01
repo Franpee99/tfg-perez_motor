@@ -13,7 +13,7 @@ class ProductoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return strtolower($user->name) === 'admin';
+        return $user->is_admin;
     }
 
     /**
@@ -29,7 +29,7 @@ class ProductoPolicy
      */
     public function create(User $user): bool
     {
-        return strtolower($user->name) === 'admin';
+        return $user->is_admin;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProductoPolicy
      */
     public function update(User $user, Producto $producto): bool
     {
-        return strtolower($user->name) === 'admin';
+        return $user->is_admin;
     }
 
     /**
@@ -45,7 +45,7 @@ class ProductoPolicy
      */
     public function delete(User $user, Producto $producto): bool
     {
-        return strtolower($user->name) === 'admin';
+        return $user->is_admin;
     }
     /**
      * Determine whether the user can restore the model.
