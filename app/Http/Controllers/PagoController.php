@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DetallePedido;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use Illuminate\Support\Str;
 use App\Models\LineaCarrito;
 use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
@@ -53,10 +52,15 @@ class PagoController extends Controller
         // Creacion Pedido
         $total = $request->input('detalles.purchase_units.0.amount.value');
 
+        do {
+            $numeroFactura = 'FAC-' . date('Ymd') . '-' . Str::upper(Str::random(6));
+        } while (Pedido::where('numero_factura', $numeroFactura)->exists());
+
         $pedido = Pedido::create([
-            'user_id' => Auth::user()->id,
+            'user_id' => Auth::id(),
             'estado' => 'procesado',
             'total' => $total,
+            'numero_factura' => $numeroFactura,
         ]);
 
         // Creacion de Detalle_Pedido
