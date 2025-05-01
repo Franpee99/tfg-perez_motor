@@ -1,5 +1,5 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, useForm, usePage, useRemember } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 import DataTable from "react-data-table-component";
 import { useState, useEffect } from "react";
@@ -220,14 +220,22 @@ export default function Index({ productos }) {
               )}
             </div>
           ))}
+
+          <div className="flex items-end justify-end col-span-1 lg:col-start-5">
+            <Boton
+              texto="Limpiar filtros"
+              onClick={limpiarFiltros}
+              color="red"
+              tamaño="md"
+            />
+          </div>
         </div>
 
-        {/* Botón Limpiar Filtros */}
         <div className="flex justify-end mb-6">
           <Boton
-            texto="Limpiar filtros"
-            onClick={limpiarFiltros}
-            color="gray"
+            texto="Crear producto"
+            href="/productos/create"
+            color="green"
             tamaño="md"
           />
         </div>
