@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
 
 export default function Checkout({ total, cerrar }) {
   const [mostrarModal, setMostrarModal] = useState(true);
@@ -63,7 +64,7 @@ export default function Checkout({ total, cerrar }) {
   useEffect(() => {
     if (mostrarGracias) {
       const tiempo = setTimeout(() => {
-        window.location.href = '/';
+        router.visit('/');
       }, 3000);
       return () => clearTimeout(tiempo);
     }

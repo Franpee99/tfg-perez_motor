@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useForm, router } from "@inertiajs/react";
+import { useForm, router, usePage } from "@inertiajs/react";
 import FormularioTallas from "@/Components/FormularioTallas";
 import FormularioFichaTecnica from "@/Components/FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
-import { usePage } from "@inertiajs/react";
 
 
 export default function FormularioEditarProducto({ producto, categorias = [], marcas = [] }) {

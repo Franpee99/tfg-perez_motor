@@ -1,19 +1,28 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Link, useForm, usePage, useRemember } from "@inertiajs/react";
 import Boton from "@/Components/Boton";
 import DataTable from "react-data-table-component";
 import { useState, useEffect } from "react";
 
 export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
-  const { flash = {} } = usePage().props;
+  const { flash } = usePage().props;
   const [mensaje, setMensaje] = useState(flash.success || null);
+
+  useEffect(() => {
+    if (flash.success) {
+      // Mostramos el mensaje
+      setMensaje(flash.success);
+      // Borrar de flash de la sesion
+      history.replaceState({}, "", location.href);
+    }
+  }, []);
 
   useEffect(() => {
     if (mensaje) {
       const timer = setTimeout(() => {
         setMensaje(null);
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [mensaje]);
@@ -154,12 +163,23 @@ export default function Index({ productos }) {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-        {/* Mensaje flash */}
         {mensaje && (
-          <div className="transition-all duration-500 ease-out transform scale-100 opacity-100 mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            {mensaje}
+          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <div className="bg-[#040A2A] text-white text-xl font-bold px-8 py-6 rounded-2xl shadow-2xl animate-fadeInOut flex flex-col items-center">
+              <svg
+                className="w-10 h-10 mb-2 text-green-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              {mensaje}
+            </div>
           </div>
         )}
+
         <h1 className="text-xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
           Lista de Productos
         </h1>

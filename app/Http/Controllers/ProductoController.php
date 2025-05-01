@@ -31,7 +31,9 @@ class ProductoController extends Controller
             'imagenes',
             'tallas',
             'caracteristicas'
-        ])->get();
+        ])
+        ->orderByDesc('created_at')
+        ->get();
 
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
@@ -105,7 +107,7 @@ class ProductoController extends Controller
             }
         }
 
-        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente.');
+        return redirect()->route('productos.index')->with('success', 'Producto creado correctamente');
     }
 
     /**
@@ -217,7 +219,7 @@ class ProductoController extends Controller
         }
 
         return redirect()->route('productos.show', $producto->id)
-            ->with('success', 'Producto actualizado correctamente.');
+            ->with('success', 'Producto actualizado correctamente');
     }
 
     /**

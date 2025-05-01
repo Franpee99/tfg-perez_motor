@@ -56,6 +56,12 @@ class LineaCarritoController extends Controller
                         ->firstWhere('id', $linea->talla_id)
                 )->pivot->stock ?? 0;
 
+                // Restar el stock del carrito en caso de que el stock maximo baje y el usuario tuviese el max en el carrito
+                if ($linea->cantidad > $stock) {
+                    $linea->cantidad = $stock;
+                    $linea->save();
+                }
+
                 return [
                     'id'              => $linea->id,
                     'cantidad'        => $linea->cantidad,
