@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 
 export default function Index({ productos }) {
   const { delete: destroy, processing } = useForm();
+  const [productoAEliminar, setProductoAEliminar] = useState(null);
+
   const { flash } = usePage().props;
   const [mensaje, setMensaje] = useState(flash.success || null);
 
@@ -48,9 +50,7 @@ export default function Index({ productos }) {
   };
 
   const handleDelete = (id) => {
-    if (confirm("¿Seguro que quieres eliminar este producto?")) {
-      destroy(`/productos/${id}`);
-    }
+    setProductoAEliminar(id);
   };
 
   const columnas = [
@@ -176,6 +176,42 @@ export default function Index({ productos }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
               {mensaje}
+            </div>
+          </div>
+        )}
+
+        {productoAEliminar && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div className="bg-[#040A2A] text-white p-6 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center">
+              <svg
+                className="w-10 h-10 mb-2 text-red-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <h2 className="text-xl font-bold mb-2 text-center">¿Eliminar producto?</h2>
+              <p className="text-sm text-gray-200 text-center mb-6">Esta acción no se puede deshacer.</p>
+              <div className="flex justify-center gap-4 w-full">
+                <Boton
+                  texto="Cancelar"
+                  onClick={() => setProductoAEliminar(null)}
+                  color="gray"
+                  tamaño="sm"
+                />
+                <Boton
+                  texto="Eliminar"
+                  onClick={() => {
+                    destroy(`/productos/${productoAEliminar}`);
+                    setProductoAEliminar(null);
+                  }}
+                  color="red"
+                  tamaño="sm"
+                  disabled={processing}
+                />
+              </div>
             </div>
           </div>
         )}
