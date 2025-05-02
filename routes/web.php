@@ -72,3 +72,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 });
+
+/* PHPJASPER */
+Route::get('/factura', [\App\Http\Controllers\FacturaController::class, 'generar']);
