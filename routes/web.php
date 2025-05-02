@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\LineaCarritoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PedidoController;
@@ -74,4 +75,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /* PHPJASPER */
-Route::get('/factura', [\App\Http\Controllers\FacturaController::class, 'generar']);
+Route::get('/factura/{pedido}', [FacturaController::class, 'descargar'])
+    ->middleware(['auth'])
+    ->name('factura.descargar');

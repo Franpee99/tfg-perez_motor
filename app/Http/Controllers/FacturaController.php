@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedido;
 use Illuminate\Http\Request;
 use App\Services\JasperService;
-use Symfony\Component\HttpFoundation\Response;
 
 class FacturaController extends Controller
 {
-    public function generar(Request $request)
-    {
-        $servicio = new JasperService();
 
-        $rutaPdf = $servicio->generarFactura([
-            'ID_PEDIDO' => $request->input('id', 5),
+    public function descargar(Pedido $pedido, JasperService $jasperService)
+    {
+        $ruta = $jasperService->generarFactura([
+            'ID_PEDIDO' => $pedido->id,
         ]);
 
-        return response()->file($rutaPdf, [
+        return response()->file($ruta, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="factura.pdf"',
-        ]);
+        ])->deleteFileAfterSend(true);
     }
 }

@@ -1,0 +1,3 @@
+Cambiar en FacturaVenta.jrxml la direccion del subreport:
+
+	<subreportExpression><![CDATA["/home/fran/tfg-perez_motor/storage/informes/FacturaResumenIVA.jasper"]]></subreportExpression>

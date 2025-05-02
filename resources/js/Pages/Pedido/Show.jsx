@@ -22,6 +22,26 @@ export default function Show({ pedido }) {
           <p><span className="font-bold text-gray-700">Estado:</span> <span className="capitalize">{pedido.estado}</span></p>
           <p><span className="font-bold text-gray-700">Fecha:</span> {new Date(pedido.created_at).toLocaleDateString()}</p>
           <p><span className="font-bold text-gray-700">Total:</span> {pedido.total} €</p>
+          <a
+            href={route('factura.descargar', pedido.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`
+              bg-[#040A2A]
+              text-white
+              border border-[#040A2A]
+              hover:bg-red-600
+              hover:text-white
+              hover:border-red-600
+              transition
+              duration-200
+              px-4 py-2 text-base
+              font-semibold rounded-md shadow
+               mt-6 inline-block
+            `}
+          >
+            Ver factura
+          </a>
         </div>
 
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Productos:</h2>
