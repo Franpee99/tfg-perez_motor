@@ -69,6 +69,62 @@ export default function UpdateProfileInformation({
                     <InputError className="mt-2" message={errors.email} />
                 </div>
 
+                <div>
+                    <InputLabel htmlFor="direccion" value="Dirección" />
+
+                    <TextInput
+                        id="direccion"
+                        className="mt-1 block w-full"
+                        value={data.direccion}
+                        onChange={(e) => setData('direccion', e.target.value)}
+                        required
+                        isFocused
+                        autoComplete="direccion"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="provincia" value="Provincia" />
+
+                    <TextInput
+                        id="provincia"
+                        className="mt-1 block w-full"
+                        value={data.provincia}
+                        onChange={(e) => setData('provincia', e.target.value)}
+                        required
+                        isFocused
+                        autoComplete="provincia"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="codigo_postal" value="Código Postal" />
+
+                    <TextInput
+                        id="codigo_postal"
+                        className="mt-1 block w-full"
+                        value={data.codigo_postal}
+                        onChange={(e) => setData('codigo_postal', e.target.value)}
+                        required
+                        isFocused
+                        autoComplete="codigo_postal"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="telefono" value="Teléfono / Móvil" />
+
+                    <TextInput
+                        id="telefono"
+                        className="mt-1 block w-full"
+                        value={data.telefono}
+                        onChange={(e) => setData('telefono', e.target.value)}
+                        required
+                        isFocused
+                        autoComplete="telefono"
+                    />
+                </div>
+
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
                         <p className="mt-2 text-sm text-gray-800">
