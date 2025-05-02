@@ -53,6 +53,10 @@ ORDER BY M.iva]]>
   p.created_at AS fecha_pedido,
   u.name AS cliente_nombre,
   u.email AS cliente_email,
+  u.direccion,
+  u.provincia,
+  u.codigo_postal,
+  u.telefono,
 
   dp.cantidad,
   dp.precio AS precio_unitario,
@@ -105,6 +109,26 @@ ORDER BY dp.id;]]>
 	<field name="cliente_email" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="cliente_email"/>
 		<property name="com.jaspersoft.studio.field.label" value="cliente_email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="direccion"/>
+		<property name="com.jaspersoft.studio.field.label" value="direccion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="provincia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provincia"/>
+		<property name="com.jaspersoft.studio.field.label" value="provincia"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="codigo_postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codigo_postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="codigo_postal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="telefono" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="telefono"/>
+		<property name="com.jaspersoft.studio.field.label" value="telefono"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
 	</field>
 	<field name="cantidad" class="java.lang.Integer">
@@ -179,14 +203,14 @@ ORDER BY dp.id;]]>
 				<textFieldExpression><![CDATA[$F{numero_factura}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="314" y="113" width="220" height="10" uuid="ca668b38-7962-446b-b59d-f5ec94240704"/>
+				<reportElement x="314" y="113" width="146" height="10" uuid="ca668b38-7962-446b-b59d-f5ec94240704"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cliente_nombre}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="314" y="123" width="152" height="10" uuid="c3a0950b-023f-4d99-90e0-01ea15d04210"/>
+				<reportElement x="314" y="123" width="156" height="10" uuid="c3a0950b-023f-4d99-90e0-01ea15d04210"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
@@ -261,6 +285,27 @@ ORDER BY dp.id;]]>
 11540 Sanlúcar de Bda, Cádiz
 info@perez-moto.com]]></text>
 			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="314" y="133" width="221" height="10" uuid="58862734-1384-4722-87fc-72861205b257"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="314" y="143" width="78" height="10" uuid="fea59da7-08f9-435e-b42c-ad24f25608a5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{provincia} + ",  "+ $F{codigo_postal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="490" y="113" width="50" height="10" uuid="f98b5fa0-520c-4d47-8fff-4d96a497e22d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -322,7 +367,7 @@ info@perez-moto.com]]></text>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="75" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<textField>
 				<reportElement x="3" y="0" width="280" height="10" uuid="f3e36b01-ac59-4b21-afb1-c93fc8d6adfb">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cde753aa-737e-4f84-9586-c65f6ba0cfb3"/>
@@ -403,16 +448,7 @@ info@perez-moto.com]]></text>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="137" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="82" width="550" height="50" uuid="e4ef8b32-09fb-48d2-b9e5-de15bc7c3c80"/>
-				<textElement>
-					<font size="6"/>
-				</textElement>
-				<text><![CDATA[De acuerdo con lo establecido en el Reglamento General de Protección de Datos, le informamos que trataremos sus datos personales con la finalidad de realizar la gestión administrativa, contable y fiscal, así como enviarle comuniaciones comerciales sobre nuestro productos y/o servicos. Los datos proporcionados se consevarán en que exista una obligacion legal y lo trataremos en base a su consentimiento o a la ejecucción de un contrato o por obligación legal. Asimismo, le informamos de la posibilidad de ejercer los siguientes derechos sobre sus datos personales, derecho de acceso, rectificación, supresión u olvido, limitación, oposición, portabilidad y a retirar el consentimiento prestado. Para ello podrá enviar un email a: info@perez-moto.com
-Además, el interesado puede dirigirse a la Autoridad de Control en materia de Protección de Datos competente para obtener información adicional o presentar una reclamación.
-Datos identificativos del responsable: Guzcot, S.L.. B75541991-C/ Tartaneros, 2 11540 Sanlúcar de Bda, Cádiz]]></text>
-			</staticText>
+		<band height="140" splitType="Stretch">
 			<textField pattern="#,##0.00">
 				<reportElement x="470" y="10" width="81" height="10" uuid="f59cf283-46f5-40d7-8006-27b0f1770bb9"/>
 				<textElement textAlignment="Right">
@@ -427,8 +463,20 @@ Datos identificativos del responsable: Guzcot, S.L.. B75541991-C/ Tartaneros, 2 
 				</textElement>
 				<text><![CDATA[Suma y sigue ...]]></text>
 			</staticText>
+			<rectangle>
+				<reportElement x="-20" y="86" width="595" height="54" backcolor="#040A2A" uuid="e0ba1562-0fe8-4de0-9022-bdd68976349c"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="90" width="550" height="50" forecolor="#FFFFFF" uuid="8e0124f4-401c-4304-bd66-da473eff9d87"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[De acuerdo con lo establecido en el Reglamento General de Protección de Datos, le informamos que trataremos sus datos personales con la finalidad de realizar la gestión administrativa, contable y fiscal, así como enviarle comuniaciones comerciales sobre nuestro productos y/o servicos. Los datos proporcionados se consevarán en que exista una obligacion legal y lo trataremos en base a su consentimiento o a la ejecucción de un contrato o por obligación legal. Asimismo, le informamos de la posibilidad de ejercer los siguientes derechos sobre sus datos personales, derecho de acceso, rectificación, supresión u olvido, limitación, oposición, portabilidad y a retirar el consentimiento prestado. Para ello podrá enviar un email a: info@perez-moto.com
+Además, el interesado puede dirigirse a la Autoridad de Control en materia de Protección de Datos competente para obtener información adicional o presentar una reclamación.
+Datos identificativos del responsable: Guzcot, S.L.. B75541991-C/ Tartaneros, 2 11540 Sanlúcar de Bda, Cádiz]]></text>
+			</staticText>
 			<line>
-				<reportElement x="0" y="82" width="550" height="1" uuid="fa174b17-4035-42fa-ad4b-1d53bc656900">
+				<reportElement x="0" y="90" width="550" height="1" forecolor="#FFFFFF" uuid="784ec4f5-c8e0-47df-9c24-f4ffd5c80b44">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<graphicElement>
@@ -465,9 +513,7 @@ Datos identificativos del responsable: Guzcot, S.L.. B75541991-C/ Tartaneros, 2 
 					<subreportParameterExpression><![CDATA[$P{ID_PEDIDO}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-
 				<subreportExpression><![CDATA["/home/fran/tfg-perez_motor/storage/informes/FacturaResumenIVA.jasper"]]></subreportExpression>
-
 			</subreport>
 		</band>
 	</lastPageFooter>
