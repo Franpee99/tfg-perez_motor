@@ -16,6 +16,10 @@ export default function UpdateProfileInformation({
         useForm({
             name: user.name,
             email: user.email,
+            direccion: user.direccion,
+            provincia: user.provincia,
+            codigo_postal: user.codigo_postal,
+            telefono: user.telefono,
         });
 
     const submit = (e) => {
@@ -77,7 +81,6 @@ export default function UpdateProfileInformation({
                         className="mt-1 block w-full"
                         value={data.direccion}
                         onChange={(e) => setData('direccion', e.target.value)}
-                        required
                         isFocused
                         autoComplete="direccion"
                     />
@@ -91,7 +94,6 @@ export default function UpdateProfileInformation({
                         className="mt-1 block w-full"
                         value={data.provincia}
                         onChange={(e) => setData('provincia', e.target.value)}
-                        required
                         isFocused
                         autoComplete="provincia"
                     />
@@ -105,7 +107,6 @@ export default function UpdateProfileInformation({
                         className="mt-1 block w-full"
                         value={data.codigo_postal}
                         onChange={(e) => setData('codigo_postal', e.target.value)}
-                        required
                         isFocused
                         autoComplete="codigo_postal"
                     />
@@ -119,7 +120,6 @@ export default function UpdateProfileInformation({
                         className="mt-1 block w-full"
                         value={data.telefono}
                         onChange={(e) => setData('telefono', e.target.value)}
-                        required
                         isFocused
                         autoComplete="telefono"
                     />
