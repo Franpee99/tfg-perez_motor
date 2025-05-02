@@ -23,7 +23,7 @@ export default function Show({ pedido }) {
           <p><span className="font-bold text-gray-700">Fecha:</span> {new Date(pedido.created_at).toLocaleDateString()}</p>
           <p><span className="font-bold text-gray-700">Total:</span> {pedido.total} €</p>
           <a
-            href={route('factura.descargar', pedido.id)}
+            href={route('factura.ver', pedido.id)}
             target="_blank"
             rel="noopener noreferrer"
             className={`

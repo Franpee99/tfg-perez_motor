@@ -75,6 +75,6 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /* PHPJASPER */
-Route::get('/factura/{pedido}', [FacturaController::class, 'descargar'])
+Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])
     ->middleware(['auth'])
-    ->name('factura.descargar');
+    ->name('factura.ver');
