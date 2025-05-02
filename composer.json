@@ -11,7 +11,8 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
-        "tightenco/ziggy": "^2.0"
+        "tightenco/ziggy": "^2.0",
+        "phpjasper/phpjasper": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -71,6 +72,13 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "repositories": [
+    {
+        "type": "path",
+        "url": "packages/phpjasper/phpjasper"
+    }
+    ],
+
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
