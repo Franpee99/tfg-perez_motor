@@ -29,6 +29,13 @@ class PagoController extends Controller
             ->get();
 
         foreach ($lineas as $linea) {
+
+            // Si el producto ha sido eliminado
+            if (!$linea->producto) {
+                return response()->json([
+                    'mensaje' => 'Uno de los productos de tu carrito ya no está disponible. Por favor, actualiza tu carrito.'
+                ], 400);
+            }
             // Comprobar stock disponible antes de decrementar
             $stockDisponible = DB::table('producto_talla')
                 ->where('producto_id', $linea->producto_id)
