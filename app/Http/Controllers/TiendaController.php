@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetallePedido;
 use App\Models\LineaCarrito;
 use App\Models\Producto;
+use App\Models\Valoracion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -99,6 +101,26 @@ class TiendaController extends Controller
             ];
         });
 
+        $user = Auth::user();
+
+        // Comprobar si el usuario ha comprado el producto
+        $haComprado = false;
+        if ($user) {
+            $haComprado = DetallePedido::whereHas('pedido', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->where('producto_id', $producto->id)
+                ->exists();
+        }
+
+        // Obtener la valoración
+        $valoracion = null;
+        if ($user) {
+            $valoracion = Valoracion::where('user_id', $user->id)
+                ->where('producto_id', $producto->id)
+                ->first(['estrella', 'comentario']);
+        }
+
         return Inertia::render('Tienda/Show', [
             'producto' => [
                 'id'             => $producto->id,
@@ -110,6 +132,8 @@ class TiendaController extends Controller
                 'caracteristicas'=> $producto->caracteristicas,
                 'tallas'         => $tallasConStock,
             ],
+            'haComprado' => $haComprado,
+            'valoracion' => $valoracion,
         ]);
     }
 }
