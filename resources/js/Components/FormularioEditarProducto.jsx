@@ -164,7 +164,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
     <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6 bg-[#040A2A]">
       {/* Nombre */}
       <div>
-        <label className="block text-white font-semibold">Nombre</label>
+        <label className="block text-white font-semibold">Nombre*</label>
         <input
           type="text"
           name="nombre"
@@ -187,7 +187,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Precio */}
       <div>
-        <label className="block text-white font-semibold">Precio (€)</label>
+        <label className="block text-white font-semibold">Precio (€)*</label>
         <input
           type="number"
           name="precio"
@@ -199,7 +199,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Categoría */}
       <div>
-        <label className="block text-white font-semibold">Categoría</label>
+        <label className="block text-white font-semibold">Categoría*</label>
         <select
           name="categoria_id"
           value={datos.categoria_id}
@@ -215,7 +215,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Subcategoría */}
       <div>
-        <label className="block text-white font-semibold">Subcategoría</label>
+        <label className="block text-white font-semibold">Subcategoría*</label>
         <select
           name="subcategoria_id"
           value={datos.subcategoria_id}
@@ -232,7 +232,7 @@ export default function FormularioEditarProducto({ producto, categorias = [], ma
       </div>
       {/* Marca */}
       <div>
-        <label className="block text-white font-semibold">Marca</label>
+        <label className="block text-white font-semibold">Marca*</label>
         <select
           name="marca_id"
           value={datos.marca_id || ""}

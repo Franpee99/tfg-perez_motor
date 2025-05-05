@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\LineaCarritoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PedidoController;
@@ -72,3 +73,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 });
+
+/* PHPJASPER */
+Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])
+    ->middleware(['auth'])
+    ->name('factura.ver');

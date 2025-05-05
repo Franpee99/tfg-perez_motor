@@ -52,7 +52,7 @@ class TiendaController extends Controller
             $query->whereBetween('precio', [$precioMin, $precioMax]);
         }
 
-        $productos = $query->orderByDesc('created_at')->paginate(10)->withQueryString(); // conserva los filtros al cambiar de página
+        $productos = $query->orderByDesc('created_at')->paginate(12)->withQueryString(); // conserva los filtros al cambiar de página
 
         // Obtener todas las opciones únicas para filtros
         $todos = Producto::with(['marca', 'subcategoria', 'tallas', 'caracteristicas'])

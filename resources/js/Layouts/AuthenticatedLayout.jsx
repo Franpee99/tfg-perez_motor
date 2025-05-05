@@ -5,6 +5,7 @@ import NavLink           from '@/Components/NavLink';
 import Footer            from '@/Components/Footer';
 import { Link, usePage } from '@inertiajs/react';
 import { useState }      from 'react';
+import { ShoppingCart } from 'lucide-react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth?.user;
@@ -23,8 +24,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <ApplicationLogo />
                             </Link>
 
-                            {/* Botón hamburguesa visible hasta xl */}
-                            <div className="xl:hidden">
+                            {/* Botón hamburguesa + icono carrito móvil */}
+                            <div className="xl:hidden flex items-center space-x-4">
+                                {/* Botón hamburguesa visible hasta xl */}
                                 <button
                                     onClick={() => setMenuAbierto(!menuAbierto)}
                                     className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white/80 focus:outline-none"
@@ -37,17 +39,33 @@ export default function AuthenticatedLayout({ header, children }) {
                                         )}
                                     </svg>
                                 </button>
+
+                                {/* Icono carrito móvil */}
+                                <Link href={route('carrito.index')} className="relative inline-flex items-center">
+                                    <ShoppingCart className="h-7 w-7 text-white" />
+                                    {usePage().props.carritoCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold rounded-full px-1">
+                                            {usePage().props.carritoCount}
+                                        </span>
+                                    )}
+                                </Link>
                             </div>
 
                             {/* Menú de escritorio visible desde xl */}
                             <div className="hidden xl:flex space-x-6 ms-10">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>Inicio</NavLink>
                                 <NavLink href={route('tienda.index', 'cascos')} active={route().current('tienda.index', { categoria: 'cascos' })}>Cascos</NavLink>
                                 <NavLink href={route('tienda.index', 'chaquetas')} active={route().current('tienda.index', { categoria: 'chaquetas' })}>Chaquetas</NavLink>
                                 <NavLink href={route('tienda.index', 'pantalones')} active={route().current('tienda.index', { categoria: 'pantalones' })}>Pantalones</NavLink>
                                 <NavLink href={route('tienda.index', 'guantes')} active={route().current('tienda.index', { categoria: 'guantes' })}>Guantes</NavLink>
                                 <NavLink href={route('tienda.index', 'botas')} active={route().current('tienda.index', { categoria: 'botas' })}>Botas</NavLink>
-                                <NavLink href={route('carrito.index')} active={route().current('carrito.index')}>Carrito</NavLink>
+                                <Link href={route('carrito.index')} className="relative inline-flex items-center">
+                                    <ShoppingCart className="h-8 w-8 text-white" />
+                                    {usePage().props.carritoCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                                            {usePage().props.carritoCount}  {/*AppServiceProvider.php*/}
+                                        </span>
+                                    )}
+                                </Link>
                             </div>
 
                             {/* Dropdown usuario */}
@@ -115,13 +133,11 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="flex flex-col sm:flex-row sm:justify-between gap-10">
                                 {/* Navegación principal */}
                                 <nav className="flex flex-col space-y-3 text-base font-medium sm:w-1/2">
-                                    <Link href={route('dashboard')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Inicio</Link>
                                     <Link href={route('tienda.index', 'cascos')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Cascos</Link>
                                     <Link href={route('tienda.index', 'chaquetas')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Chaquetas</Link>
                                     <Link href={route('tienda.index', 'pantalones')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Pantalones</Link>
                                     <Link href={route('tienda.index', 'guantes')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Guantes</Link>
                                     <Link href={route('tienda.index', 'botas')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Botas</Link>
-                                    <Link href={route('carrito.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Carrito</Link>
                                 </nav>
 
                                 {/* Perfil / Usuario */}

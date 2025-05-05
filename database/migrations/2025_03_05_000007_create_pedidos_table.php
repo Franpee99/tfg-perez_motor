@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->enum('estado', ['pendiente', 'procesado', 'enviado', 'entregado'])->default('pendiente');
             $table->decimal('total', 8, 2);
+            $table->string('numero_factura')->unique();
             $table->softDeletes();
             $table->timestamps();
         });

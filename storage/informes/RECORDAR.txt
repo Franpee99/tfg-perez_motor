@@ -1,0 +1,12 @@
+Cambiar en FacturaVenta.jrxml la direccion del subreport:
+
+	<subreportExpression><![CDATA["/home/fran/tfg-perez_motor/storage/informes/FacturaResumenIVA.jasper"]]></subreportExpression>
+
+Comando para generar el archivo .jrxml compilado (.jasper):
+	(ejecutarlo desde tfg-perez_motor)
+
+	Report:
+	packages/phpjasper/phpjasper/bin/jasperstarter/bin/jasperstarter compile storage/informes/FacturaVenta.jrxml
+
+	Subreport:
+	packages/phpjasper/phpjasper/bin/jasperstarter/bin/jasperstarter compile storage/informes/FacturaResumenIVA.jrxml

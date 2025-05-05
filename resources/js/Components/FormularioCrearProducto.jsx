@@ -146,7 +146,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
       <form onSubmit={manejarEnvio} encType="multipart/form-data" className="space-y-6 bg-[#040A2A] pl-8 pr-8 pb-8 rounded-xl shadow-2xl">
         {/* Nombre */}
         <div>
-          <label className="block text-white font-bold mb-1">Nombre</label>
+          <label className="block text-white font-bold mb-1">Nombre*</label>
           <input type="text" name="nombre" value={datos.nombre} onChange={(e) => setDatos("nombre", e.target.value)} className={claseInput(errores.nombre)} />
           {errores.nombre && <p className="text-red-400 text-xs mt-1">{errores.nombre}</p>}
         </div>
@@ -160,14 +160,14 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
         {/* Precio */}
         <div>
-          <label className="block text-white font-bold mb-1">Precio (€)</label>
+          <label className="block text-white font-bold mb-1">Precio (€)*</label>
           <input type="number" name="precio" value={datos.precio} onChange={(e) => setDatos("precio", e.target.value)} className={claseInput(errores.precio)} />
           {errores.precio && <p className="text-red-400 text-xs mt-1">{errores.precio}</p>}
         </div>
 
         {/* Categoría */}
         <div>
-          <label className="block text-white font-bold mb-1">Categoría</label>
+          <label className="block text-white font-bold mb-1">Categoría*</label>
           <select name="categoria_id" value={datos.categoria_id} onChange={(e) => setDatos("categoria_id", e.target.value)} className={claseInput(errores.categoria_id)}>
             <option value="">Selecciona una categoría</option>
             {categorias.map((cat) => (
@@ -179,7 +179,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
         {/* Subcategoría */}
         <div>
-          <label className="block text-white font-bold mb-1">Subcategoría</label>
+          <label className="block text-white font-bold mb-1">Subcategoría*</label>
           <select name="subcategoria_id" value={datos.subcategoria_id} onChange={(e) => setDatos("subcategoria_id", e.target.value)} disabled={!subcategorias.length} className={claseInput(errores.subcategoria_id)}>
             <option value="">Selecciona una subcategoría</option>
             {subcategorias.map((subcat) => (
@@ -191,7 +191,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
         {/* Marca */}
         <div>
-          <label className="block text-white font-bold mb-1">Marca</label>
+          <label className="block text-white font-bold mb-1">Marca*</label>
           <select name="marca_id" value={datos.marca_id} onChange={(e) => setDatos("marca_id", e.target.value)} className={claseInput(errores.marca_id)}>
             <option value="">Selecciona una marca</option>
             {marcas.map((marca) => (

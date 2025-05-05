@@ -5,6 +5,7 @@ export default function Checkout({ total, cerrar }) {
   const [mostrarModal, setMostrarModal] = useState(true);
   const [mostrarGracias, setMostrarGracias] = useState(false);
   const [mostrarErrorPago, setMostrarErrorPago] = useState(false);
+  const [mensajeErrorPago, setMensajeErrorPago] = useState('');
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -38,9 +39,10 @@ export default function Checkout({ total, cerrar }) {
                 detalles: details
               })
             })
-              .then(res => {
+              .then(async res => {
                 if (!res.ok) {
-                  throw new Error('Pago fallido');
+                  const error = await res.json();
+                  throw new Error(error.mensaje || 'Pago fallido');
                 }
                 return res.json();
               })
@@ -48,9 +50,10 @@ export default function Checkout({ total, cerrar }) {
                 setMostrarModal(false);
                 setMostrarGracias(true);
               })
-              .catch(error => {
-                console.error('Error en pago:', error);
-                setMostrarModal(false);
+              .catch(async error => {
+                const mensaje = error.message || 'Error desconocido';
+                console.error('Error en pago:', mensaje);
+                setMensajeErrorPago(mensaje);
                 setMostrarErrorPago(true);
               });
           });
@@ -74,6 +77,7 @@ export default function Checkout({ total, cerrar }) {
     if (mostrarErrorPago) {
       const tiempo = setTimeout(() => {
         setMostrarErrorPago(false);
+        setMostrarModal(false);
       }, 3000);
       return () => clearTimeout(tiempo);
     }
@@ -130,7 +134,7 @@ export default function Checkout({ total, cerrar }) {
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div className="bg-[#040A2A] text-white text-xl font-bold px-8 py-6 rounded-2xl shadow-2xl animate-fadeInOut flex flex-col items-center">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              ERROR EN EL PAGO
+              {mensajeErrorPago || 'ERROR EN EL PAGO'}
           </div>
         </div>
       )}

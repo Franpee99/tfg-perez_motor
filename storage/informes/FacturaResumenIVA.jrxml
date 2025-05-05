@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FacturaResumenIVA" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11ca11ea-093a-4173-a97c-3bceca60ae98">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Perez Motor"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="36"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="953"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="383"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="602"/>
+	<parameter name="ID_PEDIDO" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+  dp.pedido_id,
+  
+  -- Total con IVA (ya incluido)
+  SUM(dp.precio * dp.cantidad) AS total_con_iva,
+
+  -- Base imponible: deshacer el IVA del 21%
+  ROUND(SUM((dp.precio * dp.cantidad) / 1.21), 2) AS base_imponible,
+
+  -- Cuota IVA = diferencia entre total y base
+  ROUND(SUM(dp.precio * dp.cantidad) - SUM((dp.precio * dp.cantidad) / 1.21), 2) AS cuota_iva,
+
+  -- Tipo IVA fijo
+  21 AS tipo_iva
+
+FROM detalle_pedidos dp
+WHERE dp.pedido_id = $P{ID_PEDIDO}
+GROUP BY dp.pedido_id;
+]]>
+	</queryString>
+	<field name="pedido_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="pedido_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="pedido_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="detalle_pedidos"/>
+	</field>
+	<field name="total_con_iva" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="total_con_iva"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_con_iva"/>
+	</field>
+	<field name="base_imponible" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="base_imponible"/>
+		<property name="com.jaspersoft.studio.field.label" value="base_imponible"/>
+	</field>
+	<field name="cuota_iva" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="cuota_iva"/>
+		<property name="com.jaspersoft.studio.field.label" value="cuota_iva"/>
+	</field>
+	<field name="tipo_iva" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_iva"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_iva"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="esi_invoice_items"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="16">
+			<staticText>
+				<reportElement mode="Opaque" x="40" y="0" width="60" height="14" forecolor="#FF0905" backcolor="#040A2A" uuid="961405ea-3d0e-4978-9a50-6cf3ddf101e7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[% IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="-20" y="0" width="60" height="14" forecolor="#FF0905" backcolor="#040A2A" uuid="d5ca1250-334d-40d2-adcd-9ae115177008"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Base Imponible]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="100" y="0" width="60" height="14" forecolor="#FF0905" backcolor="#040A2A" uuid="159afd5b-4a60-4c78-a32b-d74a349e9b8a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Cuota IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="160" y="0" width="370" height="14" forecolor="#FF0905" backcolor="#040A2A" uuid="c0ab685d-d8e9-42c9-96da-b15e6097f027"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Total Factura]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="40" y="0" width="60" height="10" uuid="97da5ab8-4e82-48de-8257-8055f30f7ed2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="75893758-4ddf-4aab-a435-11eb4680ba00"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_iva}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="-20" y="0" width="60" height="10" uuid="3f9c78e9-3cab-4a0a-b454-67a40d0e7aa3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2ca42c84-37c1-4e5f-88f1-444e25da9093"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{base_imponible} + "€"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="100" y="0" width="60" height="10" uuid="d8ea6031-fa2c-4350-8c1c-cc5f2901fdae">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="edc478c2-8812-4bd6-9aab-d14b265e3006"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cuota_iva} + "€"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="360" y="-10" width="170" height="22" uuid="dbd7ca1e-9264-4913-977b-72e6e0f08a61"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_con_iva} + "€"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

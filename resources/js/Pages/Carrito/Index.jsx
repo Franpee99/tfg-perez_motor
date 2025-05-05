@@ -1,11 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import { router, usePage } from '@inertiajs/react';
 import Boton from '@/Components/Boton';
 import Checkout from '../Checkout';
 
 export default function Index({ lineasCarrito, guardados }) {
+  // Modal de checkout
   const [mostrarModal, setMostrarModal] = useState(false);
+
+  // Modal de rellenar la dirección (profile)
+  const [mostrarErrorDireccion, setMostrarErrorDireccion] = useState(false);
+  const [mensajeErrorDireccion, setMensajeErrorDireccion] = useState('');
+
+
+  const user = usePage().props.auth.user;
+
+  const finalizarCompra = () => {
+    if (!user.direccion || !user.provincia || !user.codigo_postal || !user.telefono) {
+      setMensajeErrorDireccion('Debes completar tu dirección antes de finalizar la compra');
+      setMostrarErrorDireccion(true);
+      return;
+    }
+
+    setMostrarModal(true);
+  };
+
+  useEffect(() => {
+    if (mostrarErrorDireccion) {
+      const timeout = setTimeout(() => {
+        setMostrarErrorDireccion(false);
+        router.visit(route('profile.edit'));
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [mostrarErrorDireccion]);
 
   const modificarCantidad = (linea, nuevaCantidad) => {
     if (nuevaCantidad < 1) {
@@ -169,7 +197,7 @@ export default function Index({ lineasCarrito, guardados }) {
 
                   <Boton
                     texto="Finalizar compra"
-                    onClick={() => setMostrarModal(true)}
+                    onClick={() => finalizarCompra()}
                     tamaño="md"
                     className="bg-green-600 text-white hover:bg-green-700 transition"
                   />
@@ -193,6 +221,23 @@ export default function Index({ lineasCarrito, guardados }) {
             </div>
           )}
         </section>
+
+        {mostrarErrorDireccion && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <div className="bg-[#040A2A] text-white text-xl font-bold px-8 py-6 rounded-2xl shadow-2xl animate-fadeInOut flex flex-col items-center">
+              <svg
+                className="w-10 h-10 mb-2 text-yellow-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
+              </svg>
+              <p className="text-center">{mensajeErrorDireccion}</p>
+            </div>
+          </div>
+        )}
       </main>
     </AppLayout>
   );

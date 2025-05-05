@@ -8,6 +8,12 @@ use Illuminate\Auth\Access\Response;
 
 class PedidoPolicy
 {
+
+    public function verFactura(User $user, Pedido $pedido): bool
+    {
+        return $pedido->user_id === $user->id || $user->is_admin;
+    }
+
     /**
      * Determine whether the user can view any models.
      */

@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DetallePedido;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use Illuminate\Support\Str;
 use App\Models\LineaCarrito;
 use App\Models\Pedido;
 use Illuminate\Support\Facades\DB;
@@ -30,13 +29,20 @@ class PagoController extends Controller
             ->get();
 
         foreach ($lineas as $linea) {
+
+            // Si el producto ha sido eliminado
+            if (!$linea->producto) {
+                return response()->json([
+                    'mensaje' => 'Uno de los productos de tu carrito ya no está disponible. Por favor, actualiza tu carrito.'
+                ], 400);
+            }
             // Comprobar stock disponible antes de decrementar
             $stockDisponible = DB::table('producto_talla')
                 ->where('producto_id', $linea->producto_id)
                 ->where('talla_id', $linea->talla_id)
                 ->value('stock');
 
-            if ($stockDisponible < $linea->cantidad) {
+            if ($stockDisponible < $linea->cantidad || $linea->cantidad <= 0) {
                 return response()->json([
                     'mensaje' => 'No hay suficiente stock disponible para completar la compra.'
                 ], 400);
@@ -53,10 +59,15 @@ class PagoController extends Controller
         // Creacion Pedido
         $total = $request->input('detalles.purchase_units.0.amount.value');
 
+        do {
+            $numeroFactura = 'FAC-' . date('Ymd') . '-' . Str::upper(Str::random(6));
+        } while (Pedido::where('numero_factura', $numeroFactura)->exists());
+
         $pedido = Pedido::create([
-            'user_id' => Auth::user()->id,
+            'user_id' => Auth::id(),
             'estado' => 'procesado',
             'total' => $total,
+            'numero_factura' => $numeroFactura,
         ]);
 
         // Creacion de Detalle_Pedido
