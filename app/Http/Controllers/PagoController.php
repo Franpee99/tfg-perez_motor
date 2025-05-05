@@ -35,7 +35,7 @@ class PagoController extends Controller
                 ->where('talla_id', $linea->talla_id)
                 ->value('stock');
 
-            if ($stockDisponible < $linea->cantidad) {
+            if ($stockDisponible < $linea->cantidad || $linea->cantidad <= 0) {
                 return response()->json([
                     'mensaje' => 'No hay suficiente stock disponible para completar la compra.'
                 ], 400);
