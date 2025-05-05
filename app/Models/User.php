@@ -60,5 +60,9 @@ class User extends Authenticatable
         return $this->hasMany(Pedido::class);
     }
 
+    public function valoraciones()
+    {
+        return $this->hasMany(Valoracion::class);
+    }
 
 }

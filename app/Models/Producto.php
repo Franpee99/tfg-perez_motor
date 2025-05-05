@@ -49,4 +49,9 @@ class Producto extends Model
         return $this->hasMany(Imagen::class);
     }
 
+    public function valoraciones()
+    {
+        return $this->hasMany(Valoracion::class);
+    }
+
 }
