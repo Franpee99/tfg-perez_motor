@@ -12,6 +12,8 @@ class Valoracion extends Model
 
     protected $table = 'valoraciones';
 
+    protected $fillable = ['user_id', 'producto_id', 'estrella', 'comentario'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

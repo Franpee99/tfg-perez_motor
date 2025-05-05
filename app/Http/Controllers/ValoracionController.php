@@ -7,8 +7,7 @@ use App\Http\Requests\UpdateValoracionRequest;
 use App\Models\DetallePedido;
 use App\Models\Producto;
 use App\Models\Valoracion;
-use Illuminate\Support\Facades\Request;
-
+use Illuminate\Http\Request;
 class ValoracionController extends Controller
 {
     /**

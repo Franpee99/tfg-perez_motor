@@ -44,6 +44,19 @@ export default function Show({ producto }) {
   };
   /* */
 
+  /* VALORACIÓN */
+  const { haComprado, valoracion } = usePage().props;
+
+  const {
+    data: valoracionData,
+    setData: setValoracionData,
+    post: enviarValoracion,
+    processing: procesandoValoracion
+  } = useForm({
+    estrella: valoracion?.estrella || '',
+    comentario: valoracion?.comentario || '',
+  });
+
   return (
     <AppLayout>
       <main className="max-w-[90vw] xl:max-w-6xl mx-auto overflow-x-hidden">
@@ -214,6 +227,58 @@ export default function Show({ producto }) {
             </div>
           </div>
         </section>
+        {haComprado && (
+          <div className="w-full flex justify-center py-16">
+            <div className="w-full max-w-xl px-4 border-t pt-10">
+              <h2 className="text-2xl font-semibold mb-6 text-center">
+                {valoracion ? 'Editar tu valoración' : 'Valora este producto'}
+              </h2>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  enviarValoracion(route('productos.valorar', producto.id));
+                }}
+                className="flex flex-col gap-4"
+              >
+                <div>
+                  <label className="block mb-1 font-medium">Estrellas</label>
+                  <select
+                    value={valoracionData.estrella}
+                    onChange={(e) => setValoracionData('estrella', e.target.value)}
+                    className="w-full border px-3 py-2 rounded"
+                  >
+                    <option value="">Selecciona una puntuación</option>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <option key={n} value={n}>
+                        {n} estrella{n > 1 ? 's' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium">Comentario</label>
+                  <textarea
+                    value={valoracionData.comentario}
+                    onChange={(e) => setValoracionData('comentario', e.target.value)}
+                    rows="4"
+                    className="w-full border px-3 py-2 rounded"
+                    placeholder="¿Qué te ha parecido el producto?"
+                  />
+                </div>
+
+                <Boton
+                  texto={valoracion ? 'Actualizar valoración' : 'Enviar valoración'}
+                  tipo="submit"
+                  color="blue"
+                  tamaño="md"
+                  disabled={procesandoValoracion}
+                />
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </AppLayout>
   );
