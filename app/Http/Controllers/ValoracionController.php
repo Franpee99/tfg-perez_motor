@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreValoracionRequest;
-use App\Http\Requests\UpdateValoracionRequest;
 use App\Models\DetallePedido;
 use App\Models\Producto;
 use App\Models\Valoracion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 class ValoracionController extends Controller
 {
     /**
@@ -47,56 +47,17 @@ class ValoracionController extends Controller
         return back()->with('success', 'Gracias por tu valoración');
     }
 
-    public function index()
+    public function eliminarValoracion(Request $request, Producto $producto)
     {
-        //
+        $valoracion = $producto->valoraciones()
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($valoracion) {
+            $valoracion->delete();
+        }
+
+        return back()->with('success', 'Valoración eliminada');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreValoracionRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Valoracion $valoracion)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Valoracion $valoracion)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateValoracionRequest $request, Valoracion $valoracion)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Valoracion $valoracion)
-    {
-        //
-    }
 }

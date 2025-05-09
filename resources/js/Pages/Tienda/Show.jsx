@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import FichaTecnica from '@/Components/FichaTecnica';
 import Boton from '@/Components/Boton';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage, router } from '@inertiajs/react';
+import ReactStars from 'react-stars';
 
 export default function Show({ producto }) {
   const imagenes = producto.imagenes || [];
@@ -45,7 +46,22 @@ export default function Show({ producto }) {
   /* */
 
   /* VALORACIÓN */
-  const { haComprado, valoracion } = usePage().props;
+  const { auth, haComprado, valoracion, valoracionesPublicas } = usePage().props;
+
+  // Obtener id del usuario logueado
+  const userId = auth?.user?.id;
+
+  const valoracionesOrdenadas = [...valoracionesPublicas];
+
+  if (userId) {
+    const index = valoracionesOrdenadas.findIndex(v => v.user.id === userId);
+    if (index !== -1) {
+      const [miValoracion] = valoracionesOrdenadas.splice(index, 1); // La quitamos de todas las valoraciones
+      valoracionesOrdenadas.unshift(miValoracion); // Ponerla al principio
+    }
+  }
+
+  const [errorEstrella, setErrorEstrella] = useState('');
 
   const {
     data: valoracionData,
@@ -57,31 +73,30 @@ export default function Show({ producto }) {
     comentario: valoracion?.comentario || '',
   });
 
+  const [mostrarFormularioValoracion, setMostrarFormularioValoracion] = useState(false);
+  const [mostrarModalValoracionEliminar, setMostrarModalValoracionEliminar] = useState(false);
+
+
+
   return (
     <AppLayout>
       <main className="max-w-[90vw] xl:max-w-6xl mx-auto overflow-x-hidden">
 
-        {/* Mensaje de producto añadido */}
+        {/* Mensaje de producto y valoracion añadido */}
         {mensaje && (
-          <div className="fixed bottom-6 right-6 z-50 animate-slide-in bg-green-100 border border-green-400 text-green-800 px-6 py-4 rounded-lg shadow-xl flex items-start gap-3 transition-opacity duration-300">
-            <svg
-              className="w-6 h-6 mt-1 flex-shrink-0 text-green-600"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <div className="flex-1 text-sm font-medium">{mensaje}</div>
-            <Boton
-              texto="X"
-              tipo="button"
-              onClick={() => setMensaje(null)}
-              color="green"
-              tamaño="sm"
-              className="ml-4 px-2 py-1 font-bold"
-            />
+          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <div className="bg-[#040A2A] text-white text-xl font-bold px-8 py-6 rounded-2xl shadow-2xl animate-fadeInOut flex flex-col items-center">
+              <svg
+                className="w-10 h-10 mb-2 text-green-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              {mensaje}
+            </div>
           </div>
         )}
 
@@ -227,55 +242,161 @@ export default function Show({ producto }) {
             </div>
           </div>
         </section>
-        {haComprado && (
-          <div className="w-full flex justify-center py-16">
-            <div className="w-full max-w-xl px-4 border-t pt-10">
-              <h2 className="text-2xl font-semibold mb-6 text-center">
-                {valoracion ? 'Editar tu valoración' : 'Valora este producto'}
-              </h2>
+        {(haComprado || valoracionesPublicas.length > 0) && (
+          <div className="w-full max-w-3xl mx-auto py-16 border-t">
+            <h2 className="text-2xl font-semibold mb-6 text-center">Opiniones de clientes</h2>
 
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  enviarValoracion(route('productos.valorar', producto.id));
-                }}
-                className="flex flex-col gap-4"
-              >
-                <div>
-                  <label className="block mb-1 font-medium">Estrellas</label>
-                  <select
-                    value={valoracionData.estrella}
-                    onChange={(e) => setValoracionData('estrella', e.target.value)}
-                    className="w-full border px-3 py-2 rounded"
-                  >
-                    <option value="">Selecciona una puntuación</option>
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <option key={n} value={n}>
-                        {n} estrella{n > 1 ? 's' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium">Comentario</label>
-                  <textarea
-                    value={valoracionData.comentario}
-                    onChange={(e) => setValoracionData('comentario', e.target.value)}
-                    rows="4"
-                    className="w-full border px-3 py-2 rounded"
-                    placeholder="¿Qué te ha parecido el producto?"
-                  />
-                </div>
-
+            {haComprado && (
+              <div className="mb-10">
                 <Boton
-                  texto={valoracion ? 'Actualizar valoración' : 'Enviar valoración'}
-                  tipo="submit"
+                  texto={mostrarFormularioValoracion ? 'Ocultar valoración' : (valoracion ? 'Editar tu valoración' : 'Valorar producto')}
+                  tipo="button"
                   color="blue"
                   tamaño="md"
-                  disabled={procesandoValoracion}
+                  className="mb-4 mx-auto block"
+                  onClick={() => setMostrarFormularioValoracion(prev => !prev)}
                 />
-              </form>
+
+                {mostrarFormularioValoracion && (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+
+                      if (!valoracionData.estrella) {
+                        setErrorEstrella('Debes seleccionar una valoración en estrellas.');
+                        return;
+                      }
+                      setErrorEstrella('');
+
+                      enviarValoracion(route('productos.valorar', producto.id), {
+                        preserveScroll: true,
+                        preserveState: false,
+                      });
+                    }}
+                    className="flex flex-col gap-4 bg-white shadow-md p-6 rounded-lg border"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2 text-center">
+                      {valoracion ? 'Editar tu valoración' : 'Valora este producto'}
+                    </h3>
+
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-600">Estrellas*</label>
+                      <ReactStars
+                        count={5}
+                        value={valoracionData.estrella}
+                        onChange={(nuevoValor) => setValoracionData('estrella', nuevoValor)}
+                        size={32}
+                        color1="#E5E7EB"
+                        color2="#FACC15"
+                        half={false}
+                      />
+                      {errorEstrella && (
+                        <p className="text-red-500 text-sm mt-1">{errorEstrella}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block mb-1 font-medium">Comentario</label>
+                      <textarea
+                        value={valoracionData.comentario}
+                        onChange={(e) => setValoracionData('comentario', e.target.value)}
+                        rows="4"
+                        className="w-full border px-3 py-2 rounded focus:border-[#040A2A] focus:ring-[#040A2A] focus:outline-none"
+                        placeholder="¿Qué te ha parecido el producto?"
+                      />
+                    </div>
+
+                    <Boton
+                      texto={valoracion ? 'Actualizar valoración' : 'Publicar valoración'}
+                      tipo="submit"
+                      color="blue"
+                      tamaño="md"
+                      disabled={procesandoValoracion}
+                    />
+
+                    {valoracion && (
+                      <Boton
+                        texto="Eliminar valoración"
+                        tipo="button"
+                        color="red"
+                        tamaño="md"
+                        className="w-fit mt-2"
+                        onClick={() => setMostrarModalValoracionEliminar(true)}
+                      />
+                    )}
+                  </form>
+                )}
+              </div>
+            )}
+
+            {valoracionesOrdenadas.length > 0 && (
+              <ul className="space-y-8">
+                {valoracionesOrdenadas.map((v, index) => (
+                  <li key={index} className="bg-white shadow-md p-6 rounded-lg border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-semibold">
+                        {v.user.name}
+                        {v.user.id === auth?.user?.id && <span> (Tú)</span>}
+                        </span>
+                      <span className="text-sm text-gray-400">
+                        {new Date(v.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center mb-2">
+                      <ReactStars
+                        count={5}
+                        value={v.estrella}
+                        size={24}
+                        color2="#FACC15"
+                        edit={false}
+                      />
+                    </div>
+
+                    {v.comentario && (
+                      <p className="text-gray-700">{v.comentario}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {mostrarModalValoracionEliminar && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div className="bg-[#040A2A] text-white p-6 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center">
+              <svg
+                className="w-10 h-10 mb-2 text-red-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <h2 className="text-xl font-bold mb-2 text-center">¿Eliminar valoración?</h2>
+              <p className="text-sm text-gray-200 text-center mb-6">Esta acción no se puede deshacer.</p>
+              <div className="flex justify-center gap-4 w-full">
+                <Boton
+                  texto="Cancelar"
+                  onClick={() => setMostrarModalValoracionEliminar(false)}
+                  color="gray"
+                  tamaño="sm"
+                />
+                <Boton
+                  texto="Eliminar"
+                  onClick={() => {
+                    router.delete(route('productos.eliminarValoracion', producto.id), {
+                      preserveScroll: true,
+                      preserveState: false,
+                      onSuccess: () => setMostrarModalValoracionEliminar(false),
+                    });
+                  }}
+                  color="red"
+                  tamaño="sm"
+                />
+              </div>
             </div>
           </div>
         )}

@@ -121,6 +121,12 @@ class TiendaController extends Controller
                 ->first(['estrella', 'comentario']);
         }
 
+        // Obtener las valoraciones de todos los usuarios
+        $valoraciones = Valoracion::with('user')
+            ->where('producto_id', $producto->id)
+            ->orderBy('created_at', 'desc')
+            ->get(['user_id', 'producto_id', 'estrella', 'comentario', 'created_at']);
+
         return Inertia::render('Tienda/Show', [
             'producto' => [
                 'id'             => $producto->id,
@@ -134,6 +140,7 @@ class TiendaController extends Controller
             ],
             'haComprado' => $haComprado,
             'valoracion' => $valoracion,
+            'valoracionesPublicas' => $valoraciones,
         ]);
     }
 }
