@@ -18,8 +18,8 @@ export default function Boton({
 }) {
 
     const colores = {
-      blue: "bg-blue-500 hover:bg-blue-600",
-      red: "bg-red-500 hover:bg-red-600",
+      blue: "bg-blue-700 hover:bg-blue-800",
+      red: "bg-red-600 hover:bg-red-800",
       green: "bg-green-600 hover:bg-green-700",
       gray: "bg-gray-500 hover:bg-gray-600",
       primary: `

@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TiendaController;
+use App\Http\Controllers\ValoracionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -78,3 +79,10 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])
     ->middleware(['auth'])
     ->name('factura.ver');
+
+/* VALORACIÓN */
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/productos/{producto}/valorar', [ValoracionController::class, 'guardar'])->name('productos.valorar');
+    Route::delete('/productos/{producto}/valorar', [ValoracionController::class, 'eliminarValoracion'])->name('productos.eliminarValoracion');
+});
