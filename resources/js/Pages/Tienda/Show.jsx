@@ -4,6 +4,7 @@ import FichaTecnica from '@/Components/FichaTecnica';
 import Boton from '@/Components/Boton';
 import { useForm, usePage, router } from '@inertiajs/react';
 import ReactStars from 'react-stars';
+import Paginacion from '@/Components/Paginacion';
 
 export default function Show({ producto }) {
   const imagenes = producto.imagenes || [];
@@ -46,20 +47,9 @@ export default function Show({ producto }) {
   /* */
 
   /* VALORACIÓN */
-  const { auth, haComprado, valoracion, valoracionesPublicas, promedioEstrellas } = usePage().props;
+  const { auth, haComprado, valoracion, valoracionesPublicas } = usePage().props;
 
-  // Obtener id del usuario logueado
-  const userId = auth?.user?.id;
-
-  const valoracionesOrdenadas = [...valoracionesPublicas];
-
-  if (userId) {
-    const index = valoracionesOrdenadas.findIndex(v => v.user.id === userId);
-    if (index !== -1) {
-      const [miValoracion] = valoracionesOrdenadas.splice(index, 1); // La quitamos de todas las valoraciones
-      valoracionesOrdenadas.unshift(miValoracion); // Ponerla al principio
-    }
-  }
+  const valoraciones = valoracionesPublicas?.data || [];
 
   const [errorEstrella, setErrorEstrella] = useState('');
 
@@ -103,28 +93,25 @@ export default function Show({ producto }) {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
           <div className="flex flex-col items-end">
             <h2 className="text-4xl font-bold self-start mb-6">{producto.nombre}</h2>
-
-            <div className="flex justify-between items-center w-full mb-6">
-              {producto.marca?.nombre && (
-                <span className="text-sm text-gray-500 font-medium tracking-wide border border-gray-200 rounded-md px-3 py-1 bg-white shadow-sm">
+            {producto.marca?.nombre && (
+              <div className="self-start mb-6 w-full flex justify-between items-center">
+                <span className="inline-block text-sm text-gray-500 font-medium tracking-wide border border-gray-200 rounded-md px-3 py-1 bg-white shadow-sm hover:shadow-md transition">
                   {producto.marca.nombre}
                 </span>
-              )}
 
-              {promedioEstrellas ? (
-                <div className="flex items-center gap-2">
-                  <ReactStars
-                    count={5}
-                    value={promedioEstrellas}
-                    size={24}
-                    edit={false}
-                    color2={'#ffd700'}
-                  />
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">Sin valoraciones aún</p>
-              )}
-            </div>
+                {valoraciones.length > 0 && (
+                  <div className="flex items-center">
+                    <ReactStars
+                      count={5}
+                      value={valoraciones.reduce((acc, v) => acc + v.estrella, 0) / valoraciones.length}
+                      size={25}
+                      color2="#FACC15"
+                      edit={false}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Galería */}
             <div className="flex flex-col sm:flex-row gap-4 w-full">
@@ -257,7 +244,8 @@ export default function Show({ producto }) {
             </div>
           </div>
         </section>
-        {(haComprado || valoracionesPublicas.length > 0) && (
+
+        {(valoraciones.length > 0 || (auth?.user && haComprado)) && (
           <div className="w-full max-w-3xl mx-auto py-16 border-t">
             <h2 className="text-2xl font-semibold mb-6 text-center">Opiniones de clientes</h2>
 
@@ -344,15 +332,48 @@ export default function Show({ producto }) {
               </div>
             )}
 
-            {valoracionesOrdenadas.length > 0 && (
+          {valoraciones.length > 0 && (
+            <>
+              {/* Mostrar valoracion del usuario logeado primero */}
+              {valoracion && (
+              <div className="mb-8">
+                <div className="bg-white border-2 border-[#040A2A] shadow p-6 rounded-xl relative">
+                  <div className="absolute bottom-0 right-0 bg-[#040A2A] text-white text-xs font-semibold px-3 py-1 rounded-tl-xl">
+                    Tu valoración
+                  </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-[#040A2A]">{auth.user.name} (Tú)</span>
+                    <span className="text-sm text-gray-400">
+                      {new Date(valoracion.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <ReactStars
+                      count={5}
+                      value={valoracion.estrella}
+                      size={24}
+                      color2="#FACC15"
+                      edit={false}
+                    />
+                  </div>
+                  {valoracion.comentario && (
+                    <p className="text-gray-800">{valoracion.comentario}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+
               <ul className="space-y-8">
-                {valoracionesOrdenadas.map((v, index) => (
+                {valoraciones
+                .filter(v => v.user.id !== auth?.user?.id)
+                .map((v, index) => (
                   <li key={index} className="bg-white shadow-md p-6 rounded-lg border">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-semibold">
                         {v.user.name}
                         {v.user.id === auth?.user?.id && <span> (Tú)</span>}
-                        </span>
+                      </span>
                       <span className="text-sm text-gray-400">
                         {new Date(v.created_at).toLocaleDateString()}
                       </span>
@@ -374,7 +395,10 @@ export default function Show({ producto }) {
                   </li>
                 ))}
               </ul>
-            )}
+
+              <Paginacion links={valoracionesPublicas.links} />
+            </>
+          )}
           </div>
         )}
 
