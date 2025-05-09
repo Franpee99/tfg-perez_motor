@@ -127,6 +127,8 @@ class TiendaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get(['user_id', 'producto_id', 'estrella', 'comentario', 'created_at']);
 
+        $promedioEstrellas = round((float) Valoracion::where('producto_id', $producto->id)->avg('estrella'), 1);
+
         return Inertia::render('Tienda/Show', [
             'producto' => [
                 'id'             => $producto->id,
@@ -141,6 +143,7 @@ class TiendaController extends Controller
             'haComprado' => $haComprado,
             'valoracion' => $valoracion,
             'valoracionesPublicas' => $valoraciones,
+            'promedioEstrellas' => $promedioEstrellas
         ]);
     }
 }

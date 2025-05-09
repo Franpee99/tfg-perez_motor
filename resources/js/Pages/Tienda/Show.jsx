@@ -46,7 +46,7 @@ export default function Show({ producto }) {
   /* */
 
   /* VALORACIÓN */
-  const { auth, haComprado, valoracion, valoracionesPublicas } = usePage().props;
+  const { auth, haComprado, valoracion, valoracionesPublicas, promedioEstrellas } = usePage().props;
 
   // Obtener id del usuario logueado
   const userId = auth?.user?.id;
@@ -103,13 +103,28 @@ export default function Show({ producto }) {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 py-12">
           <div className="flex flex-col items-end">
             <h2 className="text-4xl font-bold self-start mb-6">{producto.nombre}</h2>
-            {producto.marca?.nombre && (
-              <div className="self-start mb-6">
-                <span className="inline-block text-sm text-gray-500 font-medium tracking-wide border border-gray-200 rounded-md px-3 py-1 bg-white shadow-sm hover:shadow-md transition">
+
+            <div className="flex justify-between items-center w-full mb-6">
+              {producto.marca?.nombre && (
+                <span className="text-sm text-gray-500 font-medium tracking-wide border border-gray-200 rounded-md px-3 py-1 bg-white shadow-sm">
                   {producto.marca.nombre}
                 </span>
-              </div>
-            )}
+              )}
+
+              {promedioEstrellas ? (
+                <div className="flex items-center gap-2">
+                  <ReactStars
+                    count={5}
+                    value={promedioEstrellas}
+                    size={24}
+                    edit={false}
+                    color2={'#ffd700'}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Sin valoraciones aún</p>
+              )}
+            </div>
 
             {/* Galería */}
             <div className="flex flex-col sm:flex-row gap-4 w-full">
