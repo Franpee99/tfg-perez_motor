@@ -118,14 +118,15 @@ class TiendaController extends Controller
         if ($user) {
             $valoracion = Valoracion::where('user_id', $user->id)
                 ->where('producto_id', $producto->id)
-                ->first(['estrella', 'comentario']);
+                ->first(['estrella', 'comentario', 'created_at']);
         }
 
         // Obtener las valoraciones de todos los usuarios
         $valoraciones = Valoracion::with('user')
-            ->where('producto_id', $producto->id)
-            ->orderBy('created_at', 'desc')
-            ->get(['user_id', 'producto_id', 'estrella', 'comentario', 'created_at']);
+        ->where('producto_id', $producto->id)
+        ->orderByDesc('created_at')
+        ->paginate(6)
+        ->withQueryString();
 
         return Inertia::render('Tienda/Show', [
             'producto' => [
