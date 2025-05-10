@@ -5,7 +5,22 @@ export default function Index({ pedidos }) {
   return (
     <AppLayout>
       <div className="max-w-5xl mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold text-[#040A2A] mb-10 text-center">Mis Pedidos</h1>
+      <h1 className="text-3xl font-bold text-[#040A2A] mb-4 text-center">Mis Pedidos</h1>
+
+      <div className="relative max-w-xl mx-auto mb-10 flex items-center justify-between pt-6">
+        <div className="absolute top-9 left-1/2 transform -translate-x-1/2 w-[88%] h-0.5 bg-[#040A2A] z-0" />
+        {[
+          { estado: "pendiente", color: "bg-gray-400", label: "Pendiente" },
+          { estado: "procesado", color: "bg-yellow-400", label: "Procesado" },
+          { estado: "enviado", color: "bg-blue-500", label: "Enviado" },
+          { estado: "entregado", color: "bg-green-500", label: "Entregado" },
+        ].map(({ estado, color, label }) => (
+          <div key={estado} className="z-10 flex flex-col items-center">
+            <div className={`w-6 h-6 rounded-full ${color} shadow-md`} />
+            <span className="mt-2 text-xs text-gray-600">{label}</span>
+          </div>
+        ))}
+      </div>
 
         {pedidos.length === 0 ? (
           <p className="text-center text-gray-500">No has realizado ningún pedido aún.</p>

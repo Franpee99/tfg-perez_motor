@@ -22,4 +22,19 @@ class Pedido extends Model
     {
         return $this->hasMany(DetallePedido::class);
     }
+
+
+    public function actualizarEstadoAutomaticamente()
+    {
+        if($this->estado === 'entregado') return;
+
+        if($this->estado === 'enviado' && $this->created_at->diffInMinutes(now()) >= 2){
+            $this->estado = 'entregado';
+            $this->save();
+        } elseif($this->estado === 'procesado' && $this->created_at->diffInMinutes(now()) >= 1) {
+            $this->estado = 'enviado';
+            $this->save();
+        }
+    }
+
 }
