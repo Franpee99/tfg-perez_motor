@@ -25,6 +25,10 @@ class PedidoController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
+        foreach ($pedidos as $pedido) {
+            $pedido->actualizarEstadoAutomaticamente();
+        }
+
         return Inertia::render('Pedido/Index', [
             'pedidos' => $pedidos
         ]);
@@ -37,6 +41,8 @@ class PedidoController extends Controller
     public function show(Pedido $pedido)
     {
         $this->authorize('view', $pedido);
+
+        $pedido->actualizarEstadoAutomaticamente();
 
         $pedido->load('detalles.producto.imagenes', 'detalles.producto.marca', 'detalles.talla');
 

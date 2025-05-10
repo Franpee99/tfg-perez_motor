@@ -81,7 +81,6 @@ Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])
     ->name('factura.ver');
 
 /* VALORACIÓN */
-
 Route::middleware(['auth'])->group(function () {
     Route::post('/productos/{producto}/valorar', [ValoracionController::class, 'guardar'])->name('productos.valorar');
     Route::delete('/productos/{producto}/valorar', [ValoracionController::class, 'eliminarValoracion'])->name('productos.eliminarValoracion');
