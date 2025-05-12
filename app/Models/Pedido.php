@@ -37,4 +37,8 @@ class Pedido extends Model
         }
     }
 
+    public function devoluciones()
+    {
+        return $this->hasMany(Devolucion::class);
+    }
 }
