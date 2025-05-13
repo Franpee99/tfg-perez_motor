@@ -53,6 +53,6 @@ class DevolucionController extends Controller
             'acepta'    => true,
         ]);
 
-        return redirect()->route('devoluciones.formulario')->with('success', 'Tu solicitud de devolución ha sido enviada correctamente');
+        return back()->with('success', 'Tu solicitud de devolución ha sido enviada correctamente');
     }
 }
