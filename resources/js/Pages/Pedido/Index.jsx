@@ -7,6 +7,15 @@ export default function Index({ pedidos }) {
       <div className="max-w-5xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold text-[#040A2A] mb-4 text-center">Mis Pedidos</h1>
 
+      <div className="text-right mb-8">
+        <Boton
+          texto="Solicitar devolución"
+          href={route('devoluciones.formulario')}
+          color="primary"
+          tamaño="md"
+        />
+      </div>
+
       <div className="relative max-w-xl mx-auto mb-10 flex items-center justify-between pt-6">
         <div className="absolute top-9 left-1/2 transform -translate-x-1/2 w-[88%] h-0.5 bg-[#040A2A] z-0" />
         {[

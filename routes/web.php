@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\LineaCarritoController;
 use App\Http\Controllers\PagoController;
@@ -84,4 +85,10 @@ Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])
 Route::middleware(['auth'])->group(function () {
     Route::post('/productos/{producto}/valorar', [ValoracionController::class, 'guardar'])->name('productos.valorar');
     Route::delete('/productos/{producto}/valorar', [ValoracionController::class, 'eliminarValoracion'])->name('productos.eliminarValoracion');
+});
+
+/* DEVOLUCIÓN */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/devoluciones', [DevolucionController::class, 'formulario'])->name('devoluciones.formulario');
+    Route::post('/devoluciones', [DevolucionController::class, 'guardar'])->name('devoluciones.guardar');
 });
