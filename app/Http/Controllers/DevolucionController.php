@@ -7,9 +7,12 @@ use App\Models\Pedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DevolucionController extends Controller
 {
+    use AuthorizesRequests;
+
     public function formulario()
     {
         $user = Auth::user();
@@ -54,5 +57,30 @@ class DevolucionController extends Controller
         ]);
 
         return back()->with('success', 'Tu solicitud de devolución ha sido enviada correctamente');
+    }
+
+    public function indexAdmin()
+    {
+        $this->authorize('viewAny', Devolucion::class);
+
+        $devoluciones = Devolucion::with(['user', 'pedido'])->latest()->paginate(10);
+
+        return Inertia::render('Pedido/Devolucion/DevolucionAdmin', [
+            'devoluciones' => $devoluciones
+        ]);
+    }
+
+    public function actualizarEstado(Request $request, Devolucion $devolucion)
+    {
+        $this->authorize('update', Devolucion::class);
+
+        $request->validate([
+            'estado' => 'required|in:aprobada,denegada'
+        ]);
+
+        $devolucion->estado = $request->estado;
+        $devolucion->save();
+
+        return back()->with('success', 'Estado actualizado correctamente.');
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('motivo');
             $table->text('mensaje');
             $table->boolean('acepta');
+            $table->enum('estado', ['pendiente', 'aprobada', 'denegada'])->default('pendiente');
             $table->timestamps();
         });
     }
