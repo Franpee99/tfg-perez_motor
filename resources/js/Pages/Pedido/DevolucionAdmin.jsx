@@ -41,7 +41,7 @@ export default function DevolucionAdmin({ devoluciones }) {
 
   const columnas = [
     {
-      name: "Fecha solicitud",
+      name: "Fecha",
       selector: (row) => row.created_at,
       sortable: true,
       cell: (row) =>
@@ -75,11 +75,6 @@ export default function DevolucionAdmin({ devoluciones }) {
       wrap: true,
     },
     {
-      name: "Motivo",
-      selector: (row) => row.motivo,
-      wrap: true,
-    },
-    {
       name: "Mensaje",
       selector: (row) => row.mensaje,
       wrap: true,
@@ -102,24 +97,29 @@ export default function DevolucionAdmin({ devoluciones }) {
       ),
     },
     {
-      name: "Acciones",
-      cell: (row) => (
-        <div className="flex flex-col gap-2 items-center pt-1 pb-1">
-          <Boton
-            texto="Aprobar"
-            onClick={() => actualizarEstado(row.id, "aprobada")}
-            tamaño="sm"
-            color="green"
-          />
-          <Boton
-            texto="Denegar"
-            onClick={() => actualizarEstado(row.id, "denegada")}
-            tamaño="sm"
-            color="red"
-          />
-        </div>
-      ),
-    },
+        name: "Acciones",
+        cell: (row) => (
+          row.estado === "pendiente" ? (
+            <div className="flex flex-col gap-2 items-center pt-1 pb-1">
+              <Boton
+                texto="Aprobar"
+                onClick={() => actualizarEstado(row.id, "aprobada")}
+                tamaño="sm"
+                color="green"
+              />
+              <Boton
+                texto="Denegar"
+                onClick={() => actualizarEstado(row.id, "denegada")}
+                tamaño="sm"
+                color="red"
+              />
+            </div>
+          ) : (
+            <span className="text-sm text-gray-400 italic">Ya gestionada</span>
+          )
+        ),
+      },
+
   ];
 
   const paginacionES = {
@@ -167,6 +167,29 @@ export default function DevolucionAdmin({ devoluciones }) {
           highlightOnHover
           striped
           noDataComponent="No hay solicitudes de devolución"
+          customStyles={{
+            table: {
+              style: {
+                minWidth: '1000px',
+                fontSize: '15px',
+              },
+            },
+            headCells: {
+              style: {
+                fontSize: '15px',
+                fontWeight: 'bold',
+                backgroundColor: '#f3f4f6',
+              },
+            },
+            cells: {
+              style: {
+                paddingTop: '14px',
+                paddingBottom: '14px',
+                paddingLeft: '12px',
+                paddingRight: '12px',
+              },
+            },
+          }}
         />
       </div>
     </AppLayout>

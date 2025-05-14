@@ -67,7 +67,7 @@ export default function Checkout({ total, cerrar }) {
   useEffect(() => {
     if (mostrarGracias) {
       const tiempo = setTimeout(() => {
-        router.visit('/');
+        router.visit('/pedidos');
       }, 3000);
       return () => clearTimeout(tiempo);
     }

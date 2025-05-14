@@ -74,6 +74,10 @@ class DevolucionController extends Controller
     {
         $this->authorize('update', $devolucion);
 
+        if ($devolucion->estado !== 'pendiente') {
+            return back();
+        }
+
         $request->validate([
             'estado' => 'required|in:aprobada,denegada'
         ]);
