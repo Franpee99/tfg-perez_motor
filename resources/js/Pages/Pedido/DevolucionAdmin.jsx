@@ -23,6 +23,48 @@ export default function DevolucionAdmin({ devoluciones }) {
     }
   }, [mensaje]);
 
+  /* Filtrado */
+  const [filtroFecha, setFiltroFecha] = useState("");
+  const [filtroUsuario, setFiltroUsuario] = useState("");
+  const [filtroCorreo, setFiltroCorreo] = useState("");
+  const [filtroTelefono, setFiltroTelefono] = useState("");
+  const [filtroPedido, setFiltroPedido] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("");
+
+
+  const limpiarFiltros = () => {
+    setFiltroFecha("");
+    setFiltroUsuario("");
+    setFiltroCorreo("");
+    setFiltroTelefono("");
+    setFiltroPedido("");
+    setFiltroEstado("");
+  };
+
+
+  const devolucionesFiltradas = devoluciones.filter((d) => {
+
+    const fechaOk = new Date(d.created_at)
+    .toLocaleString("es-ES", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+    .toLowerCase()
+    .includes(filtroFecha.toLowerCase());
+
+    const usuarioOk = (d.usuario || "").toLowerCase().includes(filtroUsuario.toLowerCase());
+    const correoOk = (d.correo || "").toLowerCase().includes(filtroCorreo.toLowerCase());
+    const telefonoOk = (d.telefono || "").toLowerCase().includes(filtroTelefono.toLowerCase());
+    const pedidoOk = (d.pedido?.numero_factura || "").toLowerCase().includes(filtroPedido.toLowerCase());
+    const estadoOk = filtroEstado === "" || d.estado === filtroEstado;
+
+    return fechaOk && usuarioOk && correoOk && telefonoOk && pedidoOk && estadoOk;
+  });
+
   const actualizarEstado = (id, estado) => {
     router.put(
       route("admin.devoluciones.update", id),
@@ -46,9 +88,9 @@ export default function DevolucionAdmin({ devoluciones }) {
       sortable: true,
       cell: (row) =>
         new Date(row.created_at).toLocaleDateString("es-ES", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
+          year: "2-digit",
+          month: "2-digit",
+          day: "2-digit",
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
@@ -158,9 +200,54 @@ export default function DevolucionAdmin({ devoluciones }) {
           Solicitudes de Devolución
         </h1>
 
+        {/* Filtros */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 text-sm text-gray-700">
+        {[
+            ["Fecha", filtroFecha, setFiltroFecha, "text", "Buscar por Fecha"],
+            ["Usuario", filtroUsuario, setFiltroUsuario, "text", "Buscar por Usuario"],
+            ["Correo", filtroCorreo, setFiltroCorreo, "text", "Buscar por correo"],
+            ["Teléfono", filtroTelefono, setFiltroTelefono, "text", "Buscar por teléfono"],
+            ["Pedido", filtroPedido, setFiltroPedido, "text", "Buscar por pedido"],
+            ["Estado", filtroEstado, setFiltroEstado, "select", ["pendiente", "aprobada", "denegada"]],
+        ].map(([label, value, setter, type, extra], i) => (
+            <div key={i} className="bg-gray-50 border rounded px-3 py-2">
+            <label className="block mb-1 font-semibold text-[#040A2A]">{label}:</label>
+            {type === "select" ? (
+                <select
+                value={value}
+                onChange={e => setter(e.target.value)}
+                className="border rounded px-3 py-2 h-[40px] w-full"
+                >
+                <option value="">Todos</option>
+                {extra.map(op => (
+                    <option key={op} value={op}>{op.charAt(0).toUpperCase() + op.slice(1)}</option>
+                ))}
+                </select>
+            ) : (
+                <input
+                type={type}
+                value={value}
+                onChange={e => setter(e.target.value)}
+                className="border rounded px-3 py-2 h-[40px] w-full"
+                placeholder={extra}
+                />
+            )}
+            </div>
+        ))}
+
+        <div className="flex items-end justify-end col-span-1 lg:col-start-5">
+            <Boton
+            texto="Limpiar filtros"
+            onClick={limpiarFiltros}
+            color="red"
+            tamaño="md"
+            />
+        </div>
+        </div>
+
         <DataTable
           columns={columnas}
-          data={devoluciones.data}
+          data={devolucionesFiltradas}
           pagination
           paginationComponentOptions={paginacionES}
           responsive

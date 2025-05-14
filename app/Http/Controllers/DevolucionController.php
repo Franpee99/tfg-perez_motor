@@ -63,7 +63,7 @@ class DevolucionController extends Controller
     {
         $this->authorize('viewAny', Devolucion::class);
 
-        $devoluciones = Devolucion::with(['user', 'pedido'])->latest()->paginate(10);
+        $devoluciones = Devolucion::with(['user', 'pedido'])->latest()->get();
 
         return Inertia::render('Pedido/DevolucionAdmin', [
             'devoluciones' => $devoluciones
