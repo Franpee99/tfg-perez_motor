@@ -81,6 +81,6 @@ class DevolucionController extends Controller
         $devolucion->estado = $request->estado;
         $devolucion->save();
 
-        return back()->with('success', 'Estado actualizado correctamente.');
+        return back()->with('success', 'Estado de solicitud actualizado');
     }
 }

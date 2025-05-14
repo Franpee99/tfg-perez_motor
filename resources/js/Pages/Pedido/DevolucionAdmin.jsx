@@ -5,18 +5,38 @@ import { router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function DevolucionAdmin({ devoluciones }) {
-  const { flash } = usePage().props;
-  const [mensaje, setMensaje] = useState(flash.success || null);
+  const { flash = {} } = usePage().props;
+  const [mensaje, setMensaje] = useState(null);
+
+  useEffect(() => {
+    if (flash.success) {
+      setMensaje(flash.success);
+    }
+  }, [flash.success]);
 
   useEffect(() => {
     if (mensaje) {
-      const timer = setTimeout(() => setMensaje(null), 3000);
+      const timer = setTimeout(() => {
+        setMensaje(null);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [mensaje]);
 
   const actualizarEstado = (id, estado) => {
-    router.put(route("admin.devoluciones.update", id), { estado });
+    router.put(
+      route("admin.devoluciones.update", id),
+      { estado },
+      {
+        preserveScroll: true,
+        onSuccess: (page) => {
+          const nuevoMensaje = page.props.flash?.success;
+          if (nuevoMensaje) {
+            setMensaje(nuevoMensaje);
+          }
+        },
+      }
+    );
   };
 
   const columnas = [
@@ -114,8 +134,23 @@ export default function DevolucionAdmin({ devoluciones }) {
     <AppLayout>
       <div className="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
         {mensaje && (
-          <div className="bg-green-100 text-green-800 p-4 rounded mb-4 shadow text-center font-semibold">
-            {mensaje}
+          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <div className="bg-[#040A2A] text-white text-xl font-bold px-8 py-6 rounded-2xl shadow-2xl animate-fadeInOut flex flex-col items-center">
+              <svg
+                className="w-10 h-10 mb-2 text-green-400"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              {mensaje}
+            </div>
           </div>
         )}
 
