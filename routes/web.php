@@ -89,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
 
 /* DEVOLUCIÓN */
 Route::middleware(['auth'])->group(function () {
-    Route::get('/devoluciones', [DevolucionController::class, 'formulario'])->name('devoluciones.formulario');
+    Route::get('/devoluciones/formulario', [DevolucionController::class, 'formulario'])->name('devoluciones.formulario');
     Route::post('/devoluciones', [DevolucionController::class, 'guardar'])->name('devoluciones.guardar');
+
+    /* ADMIN */
+    Route::get('/devoluciones/admin', [DevolucionController::class, 'indexAdmin'])->name('admin.devoluciones.index');
+    Route::put('/devoluciones//admin/{devolucion}', [DevolucionController::class, 'actualizarEstado'])->name('admin.devoluciones.update');
 });

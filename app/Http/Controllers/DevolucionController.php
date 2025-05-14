@@ -65,14 +65,14 @@ class DevolucionController extends Controller
 
         $devoluciones = Devolucion::with(['user', 'pedido'])->latest()->paginate(10);
 
-        return Inertia::render('Pedido/Devolucion/DevolucionAdmin', [
+        return Inertia::render('Pedido/DevolucionAdmin', [
             'devoluciones' => $devoluciones
         ]);
     }
 
     public function actualizarEstado(Request $request, Devolucion $devolucion)
     {
-        $this->authorize('update', Devolucion::class);
+        $this->authorize('update', $devolucion);
 
         $request->validate([
             'estado' => 'required|in:aprobada,denegada'
