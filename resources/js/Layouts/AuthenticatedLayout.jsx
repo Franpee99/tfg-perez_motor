@@ -98,6 +98,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                                     Crear producto
                                                 </Dropdown.Link>
                                             )}
+                                            {user?.can?.viewAny_devoluciones && (
+                                                <Dropdown.Link href={route('admin.devoluciones.index')}>
+                                                    Solicitudes de devolución
+                                                </Dropdown.Link>
+                                            )}
                                             {/* PEDIDOS */}
                                             <Dropdown.Link href={route('pedidos.index')}>
                                                 Mis pedidos
