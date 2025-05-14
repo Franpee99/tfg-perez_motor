@@ -52,7 +52,7 @@ export default function Index({ pedidos }) {
                       : 'bg-gray-400'
                   }`} />
                   <div className="text-sm text-gray-600">
-                    <p className="font-semibold text-[#040A2A]">Pedido #{pedido.id}</p>
+                    <p className="font-semibold text-[#040A2A]">Pedido #{pedido.numero_factura}</p>
                     <p>{new Date(pedido.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>

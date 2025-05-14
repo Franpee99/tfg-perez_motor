@@ -56,7 +56,7 @@ export default function DevolucionAdmin({ devoluciones }) {
     .toLowerCase()
     .includes(filtroFecha.toLowerCase());
 
-    const usuarioOk = (d.usuario || "").toLowerCase().includes(filtroUsuario.toLowerCase());
+    const usuarioOk = (d.nombre || "").toLowerCase().includes(filtroUsuario.toLowerCase());
     const correoOk = (d.correo || "").toLowerCase().includes(filtroCorreo.toLowerCase());
     const telefonoOk = (d.telefono || "").toLowerCase().includes(filtroTelefono.toLowerCase());
     const pedidoOk = (d.pedido?.numero_factura || "").toLowerCase().includes(filtroPedido.toLowerCase());
@@ -247,7 +247,7 @@ export default function DevolucionAdmin({ devoluciones }) {
             <Boton
             texto="Limpiar filtros"
             onClick={limpiarFiltros}
-            color="red"
+            color="gray"
             tamaño="md"
             />
         </div>

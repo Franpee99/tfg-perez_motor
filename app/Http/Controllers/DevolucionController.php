@@ -19,7 +19,14 @@ class DevolucionController extends Controller
 
         $pedidos = $user->pedidos()
             ->where('created_at', '>=', now()->subDays(30))
+            ->whereDoesntHave('devoluciones', function ($q) { // excluir las aprobadas
+                $q->where('estado', 'aprobada');
+            })
+            ->with(['devoluciones' => function ($q) {
+                $q->where('estado', '!=', 'aprobada');
+            }])
             ->get(['id', 'numero_factura', 'created_at']);
+
 
         return Inertia::render('Pedido/Devolucion', [
             'user' => $user,
@@ -42,7 +49,7 @@ class DevolucionController extends Controller
 
         $pedido = Pedido::where('numero_factura', $validados['pedido'])->first();
         if ($pedido->created_at->diffInDays(now()) > 30) {
-            return back()->withErrors(['pedido' => 'No puedes devolver un pedido con más de 30 días']);
+            return back();
         }
 
         Devolucion::create([
@@ -82,8 +89,16 @@ class DevolucionController extends Controller
             'estado' => 'required|in:aprobada,denegada'
         ]);
 
-        $devolucion->estado = $request->estado;
-        $devolucion->save();
+        if ($request->estado === 'aprobada') {
+            // En caso de que haya varias, se aceptan todas de ese pedido
+            Devolucion::where('pedido_id', $devolucion->pedido_id)
+                ->where('estado', '!=', 'aprobada')
+                ->update(['estado' => 'aprobada']);
+        } else {
+            // Si se deniega, solo se actualiza esta
+            $devolucion->estado = 'denegada';
+            $devolucion->save();
+        }
 
         return back()->with('success', 'Estado de solicitud actualizado');
     }
