@@ -16,7 +16,7 @@ export default function Index({ lineasCarrito, guardados }) {
   const user = usePage().props.auth.user;
 
   const finalizarCompra = () => {
-    if (!user.direccion || !user.provincia || !user.codigo_postal || !user.telefono) {
+    if (!user.direccion || !user.provincia || !user.codigo_postal) {
       setMensajeErrorDireccion('Debes completar tu dirección antes de finalizar la compra');
       setMostrarErrorDireccion(true);
       return;

@@ -44,7 +44,7 @@ class PedidoController extends Controller
 
         $pedido->actualizarEstadoAutomaticamente();
 
-        $pedido->load('detalles.producto.imagenes', 'detalles.producto.marca', 'detalles.talla');
+        $pedido->load('detalles.producto.imagenes', 'detalles.producto.marca', 'detalles.talla', 'devoluciones');
 
         return Inertia::render('Pedido/Show', [
             'pedido' => $pedido

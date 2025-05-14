@@ -115,6 +115,14 @@ export default function DevolucionAdmin({ devoluciones }) {
       selector: (row) => row.pedido?.numero_factura || "N/A",
       sortable: true,
       wrap: true,
+      /*cell: row => (
+        <Boton
+          href={`/pedidos/${row.pedido.id}`}
+          className="text-blue-500 hover:underline"
+        >
+          {row.nombre}
+        </Boton>
+      ),*/
     },
     {
       name: "Mensaje",
