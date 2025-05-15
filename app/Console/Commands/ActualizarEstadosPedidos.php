@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Pedido;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class ActualizarEstadosPedidos extends Command
 {
@@ -31,8 +32,11 @@ class ActualizarEstadosPedidos extends Command
         foreach ($pedidos as $pedido) {
             $estadoAnterior = $pedido->estado;
             $pedido->actualizarEstado();
+
             if ($estadoAnterior !== $pedido->estado) {
-                $this->info("Pedido #{$pedido->numero_factura} actualizado de {$estadoAnterior} a {$pedido->estado}");
+                $mensaje = "Pedido #{$pedido->numero_factura} actualizado de {$estadoAnterior} a {$pedido->estado}";
+                $this->info($mensaje);
+                Log::channel('pedidos')->info($mensaje);
             }
         }
 
