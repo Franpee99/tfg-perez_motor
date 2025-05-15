@@ -24,7 +24,7 @@ class Pedido extends Model
     }
 
 
-    public function actualizarEstadoAutomaticamente()
+    public function actualizarEstado()
     {
         if($this->estado === 'entregado') return;
 

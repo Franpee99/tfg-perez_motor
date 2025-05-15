@@ -27,17 +27,14 @@ export default function Show({ pedido }) {
             target="_blank"
             rel="noopener noreferrer"
             className={`
-              bg-[#040A2A]
+              bg-blue-700
+              hover:bg-blue-800
               text-white
-              border border-[#040A2A]
-              hover:bg-red-600
-              hover:text-white
-              hover:border-red-600
               transition
               duration-200
               px-4 py-2 text-base
               font-semibold rounded-md shadow
-               mt-6 inline-block
+              mt-6 inline-block
             `}
           >
             Ver factura
