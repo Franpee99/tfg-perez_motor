@@ -45,4 +45,20 @@ class PedidoController extends Controller
         ]);
     }
 
+    public function cancelar(Pedido $pedido)
+    {
+        $this->authorize('update', $pedido);
+
+        if ($pedido->estado === 'enviado' || $pedido->estado === 'entregado' ||  $pedido->created_at < now()->subDays(30)) {
+            return back()->with('error', 'No se puede cancelar un pedido enviado, entregado o con más de 30 días');
+        }
+
+        $pedido->estado = 'cancelado';
+        $pedido->save();
+
+        // Aqui me falta por poner que devuelva el dinero
+
+        return redirect()->back()->with('success', 'Pedido cancelado y reembolso procesado');
+    }
+
 }

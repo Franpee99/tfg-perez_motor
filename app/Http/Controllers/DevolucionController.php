@@ -19,6 +19,7 @@ class DevolucionController extends Controller
 
         $pedidos = $user->pedidos()
             ->where('created_at', '>=', now()->subDays(30))
+            ->whereNotIn('estado', ['pendiente', 'procesado', 'cancelado'])
             ->whereDoesntHave('devoluciones', function ($q) { // excluir las aprobadas
                 $q->where('estado', 'aprobada');
             })

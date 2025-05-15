@@ -43,7 +43,7 @@ class PedidoPolicy
      */
     public function update(User $user, Pedido $pedido): bool
     {
-        return false;
+        return $user->id === $pedido->user_id || $user->is_admin;
     }
 
     /**
