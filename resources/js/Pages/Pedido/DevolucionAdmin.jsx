@@ -1,7 +1,7 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import DataTable from "react-data-table-component";
 import Boton from "@/Components/Boton";
-import { router, usePage } from "@inertiajs/react";
+import { router, usePage, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function DevolucionAdmin({ devoluciones }) {
@@ -115,14 +115,14 @@ export default function DevolucionAdmin({ devoluciones }) {
       selector: (row) => row.pedido?.numero_factura || "N/A",
       sortable: true,
       wrap: true,
-      /*cell: row => (
-        <Boton
-          href={`/pedidos/${row.pedido.id}`}
-          className="text-blue-500 hover:underline"
+      cell: row => (
+        <Link
+          href={route("pedidos.show", row.pedido.id)}
+          className="text-blue-600 hover:underline"
         >
-          {row.nombre}
-        </Boton>
-      ),*/
+          {row.pedido?.numero_factura}
+        </Link>
+      ),
     },
     {
       name: "Mensaje",

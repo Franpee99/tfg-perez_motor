@@ -19,7 +19,7 @@ class PedidoController extends Controller
     public function index()
     {
         $pedidos = Pedido::with([
-            'detalles.producto.imagenes',
+            'detalles.producto.imagenes', 'devoluciones',
             ])
             ->where('user_id', Auth::id())
             ->orderByDesc('created_at')

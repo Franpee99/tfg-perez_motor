@@ -1,5 +1,6 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import Boton from "@/Components/Boton";
+import { FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 
 export default function Index({ pedidos }) {
   return (
@@ -54,6 +55,23 @@ export default function Index({ pedidos }) {
                   <div className="text-sm text-gray-600">
                     <p className="font-semibold text-[#040A2A]">Pedido #{pedido.numero_factura}</p>
                     <p>{new Date(pedido.created_at).toLocaleDateString()}</p>
+
+                    {/* Estado de la devolución */}
+                    {pedido.devoluciones?.length > 0 &&
+                      (pedido.devoluciones.some(d => d.estado === "aprobada") ? (
+                        <p className="text-xs text-green-600 font-medium flex items-center gap-1">
+                          <FaCheckCircle className="text-green-600" /> Devolución aprobada
+                        </p>
+                      ) : pedido.devoluciones.some(d => d.estado === "pendiente") ? (
+                        <p className="text-xs text-yellow-600 font-medium flex items-center gap-1">
+                          <FaClock className="text-yellow-600" /> Solicitud de devolución pendiente
+                        </p>
+                      ) : (
+                        <p className="text-xs text-red-600 font-medium flex items-center gap-1">
+                          <FaTimesCircle className="text-red-600" /> Devolución denegada
+                        </p>
+                      ))
+                    }
                   </div>
                 </div>
 
@@ -83,7 +101,7 @@ export default function Index({ pedidos }) {
                   <Boton
                     texto="Ver detalles"
                     href={route('pedidos.show', pedido.id)}
-                    color="primary"
+                    color="blue"
                     tamaño="sm"
                   />
                 </div>
