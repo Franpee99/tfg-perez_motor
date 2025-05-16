@@ -26,8 +26,6 @@ export default function Checkout({ total, cerrar }) {
           return actions.order.capture().then(details => {
             console.log('Pago exitoso (detalles):', details);
 
-            //details.status = 'ERROR_SIMULADO';
-
             axios.post('/pagos/paypal', {
               orderID: data.orderID,
               detalles: details,

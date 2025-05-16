@@ -15,7 +15,7 @@ class PagoController extends Controller
 
     public function procesarPago(Request $request)
     {
-        $estadoPago = $request->input('detalles.status');
+        $estadoPago = $request->input('detalles.purchase_units.0.payments.captures.0.status');
 
         if ($estadoPago !== 'COMPLETED') {
             return response()->json([
