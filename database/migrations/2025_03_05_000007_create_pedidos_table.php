@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('estado', ['pendiente', 'procesado', 'enviado', 'entregado', 'cancelado'])->default('pendiente');
             $table->decimal('total', 8, 2);
             $table->string('numero_factura')->unique();
+            $table->string('paypal_capture_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

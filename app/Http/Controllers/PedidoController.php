@@ -8,6 +8,8 @@ use App\Models\Pedido;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class PedidoController extends Controller
 {
@@ -52,6 +54,47 @@ class PedidoController extends Controller
         if ($pedido->estado === 'enviado' || $pedido->estado === 'entregado' ||  $pedido->created_at < now()->subDays(30)) {
             return back()->with('error', 'No se puede cancelar un pedido enviado, entregado o con más de 30 días');
         }
+
+        // REEMBOLSO
+        if ($pedido->paypal_capture_id) {
+            try {
+                // Crear cliente HTTP (usando Guzzle para hacer llamadas externas)
+                $clienteHttp = new Client();
+
+                // Solicitar token de acceso a paypal (para solicitar el reembolso)
+                $respuestaToken = $clienteHttp->post(
+                    "https://api-m." . config('services.paypal.mode') . ".paypal.com/v1/oauth2/token",
+                    [
+                        'auth' => [config('services.paypal.client_id'), config('services.paypal.secret')],
+                        'form_params' => ['grant_type' => 'client_credentials'],
+                    ]
+                );
+
+                // Extraer el access token de la respuesta
+                $tokenAcceso = json_decode($respuestaToken->getBody(), true)['access_token'];
+
+                // Enviar solicitud de reembolso usando el capture_id del pedido
+                $respuestaReembolso = $clienteHttp->post(
+                    "https://api-m." . config('services.paypal.mode') . ".paypal.com/v2/payments/captures/{$pedido->paypal_capture_id}/refund",
+                    [
+                        'headers' => [
+                            'Authorization' => "Bearer $tokenAcceso",
+                            'Content-Type' => 'application/json',
+                        ],
+                    ]
+                );
+
+                // Convertir la respuesta JSON del reembolso a array
+                $datosReembolso = json_decode($respuestaReembolso->getBody(), true);
+
+                Log::info('Reembolso de PayPal realizado con éxito:', $datosReembolso);
+
+            } catch (\Exception $excepcion) {
+                Log::error('Error al procesar reembolso con PayPal: ' . $excepcion->getMessage());
+                return redirect()->back()->with('error', 'Error al procesar el reembolso con PayPal.');
+            }
+        }
+
 
         $pedido->estado = 'cancelado';
         $pedido->save();

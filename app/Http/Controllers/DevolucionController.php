@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class DevolucionController extends Controller
 {
@@ -90,11 +92,53 @@ class DevolucionController extends Controller
             'estado' => 'required|in:aprobada,denegada'
         ]);
 
+        $pedido = $devolucion->pedido;
+
         if ($request->estado === 'aprobada') {
             // En caso de que haya varias, se aceptan todas de ese pedido
             Devolucion::where('pedido_id', $devolucion->pedido_id)
                 ->where('estado', '!=', 'aprobada')
                 ->update(['estado' => 'aprobada']);
+
+                // REEMBOLSO
+                if ($pedido->paypal_capture_id) {
+                    try {
+                        // Crear cliente HTTP (usando Guzzle para hacer llamadas externas)
+                        $clienteHttp = new Client();
+
+                        // Solicitar token de acceso a paypal (para solicitar el reembolso)
+                        $respuestaToken = $clienteHttp->post(
+                            "https://api-m." . config('services.paypal.mode') . ".paypal.com/v1/oauth2/token",
+                            [
+                                'auth' => [config('services.paypal.client_id'), config('services.paypal.secret')],
+                                'form_params' => ['grant_type' => 'client_credentials'],
+                            ]
+                        );
+
+                        // Extraer el access token de la respuesta
+                        $tokenAcceso = json_decode($respuestaToken->getBody(), true)['access_token'];
+
+                        // Enviar solicitud de reembolso usando el capture_id del pedido
+                        $respuestaReembolso = $clienteHttp->post(
+                            "https://api-m." . config('services.paypal.mode') . ".paypal.com/v2/payments/captures/{$pedido->paypal_capture_id}/refund",
+                            [
+                                'headers' => [
+                                    'Authorization' => "Bearer $tokenAcceso",
+                                    'Content-Type' => 'application/json',
+                                ],
+                            ]
+                        );
+
+                        // Convertir la respuesta JSON del reembolso a array
+                        $datosReembolso = json_decode($respuestaReembolso->getBody(), true);
+
+                        Log::info('Reembolso de PayPal realizado con éxito:', $datosReembolso);
+
+                    } catch (\Exception $excepcion) {
+                        Log::error('Error al procesar reembolso con PayPal: ' . $excepcion->getMessage());
+                        return redirect()->back()->with('error', 'Error al procesar el reembolso con PayPal.');
+                    }
+                }
         } else {
             // Si se deniega, solo se actualiza esta
             $devolucion->estado = 'denegada';

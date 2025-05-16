@@ -36,7 +36,8 @@ export default function Checkout({ total, cerrar }) {
               credentials: 'same-origin',
               body: JSON.stringify({
                 orderID: data.orderID,
-                detalles: details
+                detalles: details,
+                captureID: details?.purchase_units?.[0]?.payments?.captures?.[0]?.id || null
               })
             })
               .then(async res => {

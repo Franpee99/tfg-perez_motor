@@ -11,7 +11,7 @@ class Pedido extends Model
     /** @use HasFactory<\Database\Factories\PedidoFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'estado', 'total', 'numero_factura'];
+    protected $fillable = ['user_id', 'estado', 'total', 'numero_factura', 'paypal_capture_id',];
 
     public function user()
     {
