@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
+import axios from 'axios';
 
 export default function Checkout({ total, cerrar }) {
   const [mostrarModal, setMostrarModal] = useState(true);
@@ -20,45 +21,31 @@ export default function Checkout({ total, cerrar }) {
             }]
           });
         },
+
         onApprove: (data, actions) => {
           return actions.order.capture().then(details => {
             console.log('Pago exitoso (detalles):', details);
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             //details.status = 'ERROR_SIMULADO';
 
-            fetch('/pagos/paypal', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-              },
-              credentials: 'same-origin',
-              body: JSON.stringify({
-                orderID: data.orderID,
-                detalles: details,
-                captureID: details?.purchase_units?.[0]?.payments?.captures?.[0]?.id || null
-              })
+            axios.post('/pagos/paypal', {
+              orderID: data.orderID,
+              detalles: details,
+              captureID: details?.purchase_units?.[0]?.payments?.captures?.[0]?.id || null
             })
-              .then(async res => {
-                if (!res.ok) {
-                  const error = await res.json();
-                  throw new Error(error.mensaje || 'Pago fallido');
-                }
-                return res.json();
-              })
-              .then(() => {
-                setMostrarModal(false);
-                setMostrarGracias(true);
-              })
-              .catch(async error => {
-                const mensaje = error.message || 'Error desconocido';
-                console.error('Error en pago:', mensaje);
-                setMensajeErrorPago(mensaje);
-                setMostrarErrorPago(true);
-              });
+            .then(() => {
+              setMostrarModal(false);
+              setMostrarGracias(true);
+            })
+            .catch(error => {
+              const mensaje = error.response?.data?.mensaje || error.message || 'Error desconocido';
+              console.error('Error en pago:', mensaje);
+              setMensajeErrorPago(mensaje);
+              setMostrarErrorPago(true);
+            });
           });
         }
+
       }).render('#paypal-modal-container');
     });
 
