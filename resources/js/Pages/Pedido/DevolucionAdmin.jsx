@@ -29,7 +29,7 @@ export default function DevolucionAdmin({ devoluciones }) {
   const [filtroCorreo, setFiltroCorreo] = useState("");
   const [filtroTelefono, setFiltroTelefono] = useState("");
   const [filtroPedido, setFiltroPedido] = useState("");
-  const [filtroEstado, setFiltroEstado] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("pendiente");
 
 
   const limpiarFiltros = () => {

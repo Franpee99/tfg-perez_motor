@@ -73,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
 /* PEDIDOS */
 Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/admin', [PedidoController::class, 'indexAdmin'])->name('admin.pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
     Route::post('/pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])->name('pedidos.cancelar');
 });

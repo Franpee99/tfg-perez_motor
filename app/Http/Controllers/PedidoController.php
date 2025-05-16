@@ -104,4 +104,17 @@ class PedidoController extends Controller
         return redirect()->back()->with('success', 'Pedido cancelado y reembolso procesado');
     }
 
+    public function indexAdmin()
+    {
+        $this->authorize('viewAny', Pedido::class);
+
+        $pedidos = Pedido::with(['user', 'detalles.producto.imagenes', 'detalles.talla', 'devoluciones'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Pedido/IndexAdmin', [
+            'pedidos' => $pedidos,
+        ]);
+    }
+
 }

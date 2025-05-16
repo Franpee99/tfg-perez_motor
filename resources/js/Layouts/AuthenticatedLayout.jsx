@@ -98,6 +98,11 @@ export default function AuthenticatedLayout({ header, children }) {
                                                     Crear producto
                                                 </Dropdown.Link>
                                             )}
+                                            {user?.can?.viewAny_pedidos && (
+                                                <Dropdown.Link href={route('admin.pedidos.index')}>
+                                                    Gestión de pedidos
+                                                </Dropdown.Link>
+                                            )}
                                             {user?.can?.viewAny_devoluciones && (
                                                 <Dropdown.Link href={route('admin.devoluciones.index')}>
                                                     Solicitudes de devolución
@@ -154,6 +159,9 @@ export default function AuthenticatedLayout({ header, children }) {
                                             )}
                                             {user?.can?.create_productos && (
                                                 <Link href={route('productos.create')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Crear producto</Link>
+                                            )}
+                                            {user?.can?.viewAny_pedidos && (
+                                                <Link href={route('admin.pedidos.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Gestión de pedidos</Link>
                                             )}
                                             {user?.can?.viewAny_devoluciones && (
                                                 <Link href={route('admin.devoluciones.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Solicitudes de devolución</Link>
