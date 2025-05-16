@@ -15,7 +15,7 @@ class PagoController extends Controller
 
     public function procesarPago(Request $request)
     {
-        $estadoPago = $request->input('detalles.status');
+        $estadoPago = $request->input('detalles.purchase_units.0.payments.captures.0.status');
 
         if ($estadoPago !== 'COMPLETED') {
             return response()->json([
@@ -58,6 +58,7 @@ class PagoController extends Controller
 
         // Creacion Pedido
         $total = $request->input('detalles.purchase_units.0.amount.value');
+        $captureID = $request->input('captureID');
 
         do {
             $numeroFactura = 'FAC-' . date('Ymd') . '-' . Str::upper(Str::random(6));
@@ -68,6 +69,7 @@ class PagoController extends Controller
             'estado' => 'procesado',
             'total' => $total,
             'numero_factura' => $numeroFactura,
+            'paypal_capture_id' => $captureID,
         ]);
 
         // Creacion de Detalle_Pedido

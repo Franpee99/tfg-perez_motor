@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->enum('estado', ['pendiente', 'procesado', 'enviado', 'entregado'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'procesado', 'enviado', 'entregado', 'cancelado'])->default('pendiente');
             $table->decimal('total', 8, 2);
             $table->string('numero_factura')->unique();
+            $table->string('paypal_capture_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

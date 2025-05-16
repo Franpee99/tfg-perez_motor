@@ -127,6 +127,12 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'pedidos' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/pedidos.log'),
+            'level' => 'info',
+        ],
+
     ],
 
 ];

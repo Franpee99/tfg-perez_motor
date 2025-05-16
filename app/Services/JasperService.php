@@ -27,12 +27,12 @@ class JasperService
             'params' => $params,
             'locale' => 'es_ES',
             'db_connection' => [
-                'driver' => 'postgres',
-                'username' => env('DB_USERNAME'),
-                'password' => env('DB_PASSWORD'),
-                'host' => env('DB_HOST'),
-                'database' => env('DB_DATABASE'),
-                'port' => env('DB_PORT', 5432),
+                'driver'   => 'postgres',
+                'username' => config('database.connections.pgsql.username'),
+                'password' => config('database.connections.pgsql.password'),
+                'host'     => config('database.connections.pgsql.host'),
+                'database' => config('database.connections.pgsql.database'),
+                'port'     => config('database.connections.pgsql.port', 5432),
             ]
         ];
 

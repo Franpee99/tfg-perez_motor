@@ -11,7 +11,7 @@ class Pedido extends Model
     /** @use HasFactory<\Database\Factories\PedidoFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'estado', 'total', 'numero_factura'];
+    protected $fillable = ['user_id', 'estado', 'total', 'numero_factura', 'paypal_capture_id',];
 
     public function user()
     {
@@ -24,7 +24,7 @@ class Pedido extends Model
     }
 
 
-    public function actualizarEstadoAutomaticamente()
+    public function actualizarEstado()
     {
         if($this->estado === 'entregado') return;
 
@@ -37,4 +37,8 @@ class Pedido extends Model
         }
     }
 
+    public function devoluciones()
+    {
+        return $this->hasMany(Devolucion::class);
+    }
 }

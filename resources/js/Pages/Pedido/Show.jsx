@@ -7,7 +7,7 @@ export default function Show({ pedido }) {
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">
-            Pedido #{pedido.id}
+            Pedido #{pedido.numero_factura}
           </h1>
 
           <Boton
@@ -27,21 +27,42 @@ export default function Show({ pedido }) {
             target="_blank"
             rel="noopener noreferrer"
             className={`
-              bg-[#040A2A]
+              bg-blue-700
+              hover:bg-blue-800
               text-white
-              border border-[#040A2A]
-              hover:bg-red-600
-              hover:text-white
-              hover:border-red-600
               transition
               duration-200
               px-4 py-2 text-base
               font-semibold rounded-md shadow
-               mt-6 inline-block
+              mt-6 inline-block
             `}
           >
             Ver factura
           </a>
+
+          {pedido.devoluciones?.length > 0 && (
+            pedido.devoluciones.length === 1 ? (
+              <div className="mt-4 p-4 border border-yellow-400 bg-yellow-100 rounded text-yellow-800">
+                <p className="font-semibold">Este pedido tiene una solicitud de devolución.</p>
+                <p>Estado de la devolución: <span className="capitalize font-bold">{pedido.devoluciones[0].estado}</span></p>
+                <p>Fecha: {new Date(pedido.devoluciones[0].created_at).toLocaleDateString()}</p>
+                <p>Motivo: {pedido.devoluciones[0].mensaje}</p>
+              </div>
+            ) : (
+              <div className="mt-4 p-4 border border-yellow-400 bg-yellow-100 rounded text-yellow-800 space-y-3">
+                <p className="font-semibold">Este pedido tiene {pedido.devoluciones.length} intentos de devolución:</p>
+
+                {pedido.devoluciones.map((devolucion, i) => (
+                  <div key={devolucion.id} className="border-t border-yellow-300 pt-2">
+                    <p><span className="font-bold">Intento #{i + 1}:</span></p>
+                    <p>Estado: <span className="capitalize font-bold">{devolucion.estado}</span></p>
+                    <p>Fecha: {new Date(devolucion.created_at).toLocaleDateString()}</p>
+                    <p>Motivo: {devolucion.mensaje}</p>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
         </div>
 
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Productos:</h2>

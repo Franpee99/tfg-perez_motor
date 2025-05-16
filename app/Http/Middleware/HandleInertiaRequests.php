@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Devolucion;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -37,6 +38,7 @@ class HandleInertiaRequests extends Middleware
                         'can' => [
                             'create_productos' => $request->user()->can('create', Producto::class),
                             'viewAny_productos' => $request->user()->can('viewAny', Producto::class),
+                            'viewAny_devoluciones' => $request->user()->can('viewAny', Devolucion::class),
                         ],
                     ])
                     : null,
