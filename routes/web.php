@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos/admin', [PedidoController::class, 'indexAdmin'])->name('admin.pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
     Route::post('/pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])->name('pedidos.cancelar');
+    Route::put('/pedidos/{pedido}/cambiar-estado', [PedidoController::class, 'cambiarEstado'])->name('admin.pedidos.cambiarEstado');
 });
 
 /* PHPJASPER */

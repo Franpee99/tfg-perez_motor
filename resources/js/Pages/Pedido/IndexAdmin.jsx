@@ -1,7 +1,7 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import DataTable from "react-data-table-component";
 import Boton from "@/Components/Boton";
-import { usePage, Link } from "@inertiajs/react";
+import { usePage, Link, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Clock, Ban } from "lucide-react";
 
@@ -15,7 +15,7 @@ export default function IndexAdmin({ pedidos }) {
 
   useEffect(() => {
     if (mensaje) {
-      const timer = setTimeout(() => setMensaje(null), 3000);
+      const timer = setTimeout(() => setMensaje(null), 5000);
       return () => clearTimeout(timer);
     }
   }, [mensaje]);
@@ -24,6 +24,24 @@ export default function IndexAdmin({ pedidos }) {
     return acc + (pedido.devoluciones?.filter(d => d.estado === "pendiente").length || 0);
   }, 0);
 
+  const cambiarEstado = (pedidoId, nuevoEstado) => {
+    router.post(
+      route("admin.pedidos.cambiarEstado", pedidoId),
+      {
+        _method: "put",
+        estado: nuevoEstado,
+      },
+      {
+        preserveScroll: true,
+        onSuccess: (page) => {
+          const nuevoMensaje = page.props.flash?.success;
+          if (nuevoMensaje) {
+            setMensaje(nuevoMensaje);
+          }
+        },
+      }
+    );
+  };
 
   const [filtroFecha, setFiltroFecha] = useState("");
   const [filtroUsuario, setFiltroUsuario] = useState("");
@@ -98,23 +116,45 @@ export default function IndexAdmin({ pedidos }) {
       ),
     },
     {
-      name: "Estado de envío",
-      selector: row => row.estado,
-      cell: row => (
-        <span className={`capitalize font-semibold ${
-          row.estado === "entregado"
-            ? "text-green-600"
-            : row.estado === "enviado"
-            ? "text-blue-600"
-            : row.estado === "procesado"
-            ? "text-yellow-500"
-            : row.estado === "pendiente"
-            ? "text-gray-500"
-            : "text-red-600"
-        }`}>
-          {row.estado}
-        </span>
-      ),
+        name: "Estado de envío",
+        selector: row => row.estado,
+        cell: row => {
+        const estado = row.estado;
+
+        const colores = {
+        entregado: "text-green-600",
+        enviado: "text-blue-600",
+        procesado: "text-yellow-500",
+        pendiente: "text-gray-500",
+        cancelado: "text-red-600"
+        };
+
+        return (
+        <div className="flex flex-col gap-1">
+            <span className={`capitalize font-semibold ${colores[estado]}`}>
+            {estado}
+            </span>
+
+            {estado === "pendiente" && (
+            <Boton
+                texto="Marcar como procesado"
+                onClick={() => cambiarEstado(row.id, "procesado")}
+                tamaño="xs"
+                color="gray"
+            />
+            )}
+
+            {estado === "procesado" && (
+            <Boton
+                texto="Marcar como enviado"
+                onClick={() => cambiarEstado(row.id, "enviado")}
+                tamaño="xs"
+                color="blue"
+            />
+            )}
+        </div>
+        );
+    }
     },
     {
       name: "Estado devolución",

@@ -28,11 +28,8 @@ class Pedido extends Model
     {
         if($this->estado === 'entregado') return;
 
-        if($this->estado === 'enviado' && $this->created_at->diffInMinutes(now()) >= 2){
+        if($this->estado === 'enviado' && $this->created_at->diffInMinutes(now()) >= 5){
             $this->estado = 'entregado';
-            $this->save();
-        } elseif($this->estado === 'procesado' && $this->created_at->diffInMinutes(now()) >= 1) {
-            $this->estado = 'enviado';
             $this->save();
         }
     }
