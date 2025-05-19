@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PedidoController extends Controller
@@ -102,6 +103,40 @@ class PedidoController extends Controller
         // Aqui me falta por poner que devuelva el dinero
 
         return redirect()->back()->with('success', 'Pedido cancelado y reembolso procesado');
+    }
+
+    public function indexAdmin()
+    {
+        $this->authorize('viewAny', Pedido::class);
+
+        $pedidos = Pedido::with(['user', 'detalles.producto.imagenes', 'detalles.talla', 'devoluciones'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Pedido/IndexAdmin', [
+            'pedidos' => $pedidos,
+        ]);
+    }
+
+    public function cambiarEstado(Request $request, Pedido $pedido)
+    {
+        $this->authorize('update', $pedido);
+
+        $estado = $request->input('estado');
+
+        $cambiosPermitidos = [
+            'pendiente' => 'procesado',
+            'procesado' => 'enviado',
+        ];
+
+        if (!isset($cambiosPermitidos[$pedido->estado]) || $cambiosPermitidos[$pedido->estado] !== $estado) {
+            return back()->with('error', 'Cambio de estado no permitido.');
+        }
+
+        $pedido->estado = $estado;
+        $pedido->save();
+
+        return back()->with('success', "Pedido #{$pedido->numero_factura} marcado como '{$estado}'.");
     }
 
 }

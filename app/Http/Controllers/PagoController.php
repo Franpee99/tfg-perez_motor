@@ -66,7 +66,7 @@ class PagoController extends Controller
 
         $pedido = Pedido::create([
             'user_id' => Auth::id(),
-            'estado' => 'procesado',
+            'estado' => 'pendiente',
             'total' => $total,
             'numero_factura' => $numeroFactura,
             'paypal_capture_id' => $captureID,

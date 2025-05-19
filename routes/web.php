@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\LineaCarritoController;
@@ -25,9 +26,7 @@ Route::get('/', function () {
 });
 */
 
-Route::get('/', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -36,6 +35,11 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+/* ADMIN: PANEL DE ADMINISTRACIÓN */
+Route::get('/admin', function () {
+    return Inertia::render('PanelAdmin');
+})->middleware(['auth', 'verified'])->name('admin.panel');
 
 /*ADMIN: Productos*/
 Route::resource('productos', ProductoController::class)->middleware('auth');
@@ -73,8 +77,10 @@ Route::middleware(['auth'])->group(function () {
 /* PEDIDOS */
 Route::middleware(['auth'])->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/admin', [PedidoController::class, 'indexAdmin'])->name('admin.pedidos.index');
     Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
     Route::post('/pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])->name('pedidos.cancelar');
+    Route::put('/pedidos/{pedido}/cambiar-estado', [PedidoController::class, 'cambiarEstado'])->name('admin.pedidos.cambiarEstado');
 });
 
 /* PHPJASPER */

@@ -27,7 +27,7 @@ class ActualizarEstadosPedidos extends Command
      */
     public function handle()
     {
-        $pedidos = Pedido::whereIn('estado', ['procesado', 'enviado'])->get();
+        $pedidos = Pedido::whereIn('estado', ['enviado'])->get();
 
         foreach ($pedidos as $pedido) {
             $estadoAnterior = $pedido->estado;
