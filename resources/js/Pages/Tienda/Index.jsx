@@ -4,6 +4,7 @@ import ProductoGrid from "@/Components/ProductoGrid";
 import Boton from "@/Components/Boton";
 import { Range } from "react-range";
 import { useState, useEffect } from "react";
+import { FaFilter, FaTimes } from "react-icons/fa";
 
 // Para eliminar valores nulos y duplicados
 const obtenerUnicos = (lista) => [...new Set(lista.filter(Boolean))];
@@ -51,6 +52,9 @@ export default function Index({ productosConFiltro, productosTodos, categoriaAct
     setRangoPrecioLocal(rangoInicial);
   }, [filtrosActivos]); // Cada vez que cambie filtroActivos actualizamos el slider
 
+  // Estado para controlar si el panel de filtros móvil está visible
+  const [filtrosVisibles, setFiltrosVisibles] = useState(false);
+
   const cambiarFiltro = (tipo, valor) => {
     const nuevosFiltros = { ...filtrosActivos };
 
@@ -93,9 +97,96 @@ export default function Index({ productosConFiltro, productosTodos, categoriaAct
           {categoriaActual.toUpperCase()}
         </h1>
 
-        <div className="lg:flex gap-8">
+        {/* BOTÓN FILTRO SOLO EN MÓVIL */}
+        <button
+          className="fixed z-30 bottom-6 right-6 bg-[#C42424] text-white flex items-center gap-2 px-5 py-3 rounded-full shadow-lg lg:hidden"
+          onClick={() => setFiltrosVisibles(true)}
+          aria-label="Mostrar filtros"
+        >
+          <FaFilter className="text-lg" />
+          Filtros
+        </button>
 
-          <aside className="w-full lg:w-1/4 space-y-6 text-sm text-gray-700">
+        {/* PANEL DESPLEGABLE DE FILTROS EN MÓVIL */}
+        {filtrosVisibles && (
+          <div className="fixed inset-0 z-40 bg-black/40 flex justify-end lg:hidden">
+            {/* Drawer de filtros */}
+            <div className="bg-white w-11/12 max-w-xs h-full p-6 flex flex-col relative overflow-y-auto">
+              {/* Botón cerrar */}
+              <button
+                className="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-2xl"
+                onClick={() => setFiltrosVisibles(false)}
+                aria-label="Cerrar filtros"
+              >
+                <FaTimes />
+              </button>
+              <h2 className="text-xl font-bold text-[#C42424] mb-6">Filtros</h2>
+              <Boton
+                texto="Limpiar filtros"
+                onClick={() => { limpiarFiltros(); setFiltrosVisibles(false); }}
+                color="gray"
+                tamaño="md"
+                className="mb-4"
+              />
+              <SeccionFiltro titulo="Marca" tipo="marcas" valores={opciones.marcas} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
+              <SeccionFiltro titulo="Modelo" tipo="subcategorias" valores={opciones.subcategorias} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
+              <SeccionFiltro titulo="Talla" tipo="tallas" valores={opciones.tallas} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
+
+              {/* RANGO PRECIO */}
+              {precioMaximoGlobal > 0 && (
+                <div className="border-b pb-3">
+                  <h3 className="text-red-600 font-bold uppercase mb-2">Precio</h3>
+                  <p className="text-xs text-gray-600 mb-2">
+                    {rangoPrecioLocal[0].toLocaleString("es-ES", { style: "currency", currency: "EUR" })} -{" "}
+                    {rangoPrecioLocal[1].toLocaleString("es-ES", { style: "currency", currency: "EUR" })}
+                  </p>
+                  <Range
+                    step={5}
+                    min={0}
+                    max={precioMaximoGlobal}
+                    values={rangoPrecioLocal}
+                    onChange={setRangoPrecioLocal}
+                    onFinalChange={cambiarRangoPrecio} //me ejecuta un array con dos elementos (nuevoRango)
+                    renderTrack={({ props, children }) => (
+                      <div
+                        {...props}
+                        style={{
+                          ...props.style,
+                          height: "6px",
+                          background: "#ccc",
+                          borderRadius: "4px",
+                        }}
+                        className="mb-4"
+                      >
+                        {children}
+                      </div>
+                    )}
+                    renderThumb={({ props, index }) => (
+                      <div
+                        {...props}
+                        key={`thumb-${index}`}
+                        style={{
+                          ...props.style,
+                          height: "18px",
+                          width: "18px",
+                          backgroundColor: "#333",
+                          borderRadius: "50%",
+                        }}
+                      />
+                    )}
+                  />
+                </div>
+              )}
+              <SeccionFiltro titulo="Características" tipo="caracteristicas" valores={opciones.caracteristicas} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
+            </div>
+            {/* Haz clic fuera para cerrar */}
+            <div className="flex-1" onClick={() => setFiltrosVisibles(false)} />
+          </div>
+        )}
+
+        {/* DESKTOP: Filtros siempre visibles */}
+        <div className="lg:flex gap-8">
+          <aside className="hidden lg:block w-1/4 space-y-6 text-sm text-gray-700">
             <div className="pt-2">
               <Boton
                 texto="Limpiar filtros"
@@ -104,7 +195,6 @@ export default function Index({ productosConFiltro, productosTodos, categoriaAct
                 tamaño="md"
               />
             </div>
-
             <SeccionFiltro titulo="Marca" tipo="marcas" valores={opciones.marcas} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
             <SeccionFiltro titulo="Modelo" tipo="subcategorias" valores={opciones.subcategorias} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
             <SeccionFiltro titulo="Talla" tipo="tallas" valores={opciones.tallas} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
@@ -123,7 +213,7 @@ export default function Index({ productosConFiltro, productosTodos, categoriaAct
                   max={precioMaximoGlobal}
                   values={rangoPrecioLocal}
                   onChange={setRangoPrecioLocal}
-                  onFinalChange={cambiarRangoPrecio} //me ejecuta un array con dos elementos (nuevoRango)
+                  onFinalChange={cambiarRangoPrecio}
                   renderTrack={({ props, children }) => (
                     <div
                       {...props}
@@ -154,13 +244,12 @@ export default function Index({ productosConFiltro, productosTodos, categoriaAct
                 />
               </div>
             )}
-
             <SeccionFiltro titulo="Características" tipo="caracteristicas" valores={opciones.caracteristicas} filtros={filtrosActivos} cambiarFiltro={cambiarFiltro} />
           </aside>
 
           {/* TARJETA PRODUCTOS */}
           <section className="flex-1 mt-6 lg:mt-0">
-          <ProductoGrid productos={productosConFiltro.data} paginacion={productosConFiltro.links} />
+            <ProductoGrid productos={productosConFiltro.data} paginacion={productosConFiltro.links} />
           </section>
         </div>
       </div>

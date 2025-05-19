@@ -6,6 +6,8 @@ import Footer            from '@/Components/Footer';
 import { Link, usePage } from '@inertiajs/react';
 import { useState }      from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { FaUserShield, FaBoxOpen, FaPlus, FaTruck, FaUndoAlt, FaList, FaUser, FaSignOutAlt, FaClipboardList } from "react-icons/fa";
+
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth?.user;
@@ -88,35 +90,72 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </Dropdown.Trigger>
                                         <Dropdown.Content>
                                             {/* ADMIN */}
+                                            {(user?.can?.viewAny_productos ||
+                                            user?.can?.create_productos ||
+                                            user?.can?.viewAny_pedidos ||
+                                            user?.can?.viewAny_devoluciones) && (
+                                                <Dropdown.Link href={route('admin.panel')}>
+                                                <span className="inline-flex items-center gap-2">
+                                                    <FaUserShield className="text-[#040A2A]" />
+                                                    Panel de Administración
+                                                </span>
+                                                </Dropdown.Link>
+                                            )}
+
                                             {user?.can?.viewAny_productos && (
-                                                <Dropdown.Link href={route('productos.index')}>
-                                                    Lista de productos
-                                                </Dropdown.Link>
+                                            <Dropdown.Link href={route('productos.index')}>
+                                                <span className="inline-flex items-center gap-2">
+                                                <FaList className="text-[#040A2A]" />
+                                                Lista de productos
+                                                </span>
+                                            </Dropdown.Link>
                                             )}
+
                                             {user?.can?.create_productos && (
-                                                <Dropdown.Link href={route('productos.create')}>
-                                                    Crear producto
-                                                </Dropdown.Link>
+                                            <Dropdown.Link href={route('productos.create')}>
+                                                <span className="inline-flex items-center gap-2">
+                                                <FaPlus className="text-[#040A2A]" />
+                                                Añadir producto
+                                                </span>
+                                            </Dropdown.Link>
                                             )}
+
                                             {user?.can?.viewAny_pedidos && (
-                                                <Dropdown.Link href={route('admin.pedidos.index')}>
-                                                    Gestión de pedidos
-                                                </Dropdown.Link>
+                                            <Dropdown.Link href={route('admin.pedidos.index')}>
+                                                <span className="inline-flex items-center gap-2">
+                                                <FaTruck className="text-[#040A2A]" />
+                                                Gestión de pedidos
+                                                </span>
+                                            </Dropdown.Link>
                                             )}
+
                                             {user?.can?.viewAny_devoluciones && (
-                                                <Dropdown.Link href={route('admin.devoluciones.index')}>
-                                                    Solicitudes de devolución
-                                                </Dropdown.Link>
+                                            <Dropdown.Link href={route('admin.devoluciones.index')}>
+                                                <span className="inline-flex items-center gap-2">
+                                                <FaUndoAlt className="text-[#040A2A]" />
+                                                Solicitudes de devolución
+                                                </span>
+                                            </Dropdown.Link>
                                             )}
+
                                             {/* PEDIDOS */}
                                             <Dropdown.Link href={route('pedidos.index')}>
+                                            <span className="inline-flex items-center gap-2">
+                                                <FaClipboardList className="text-[#040A2A]" />
                                                 Mis pedidos
+                                            </span>
                                             </Dropdown.Link>
                                             <Dropdown.Link href={route('profile.edit')}>
+                                            <span className="inline-flex items-center gap-2">
+                                                <FaUser className="text-[#040A2A]" />
                                                 Perfil
+                                            </span>
                                             </Dropdown.Link>
                                             <Dropdown.Link href={route('logout')} method="post" as="button">
+                                            <span className="inline-flex items-center gap-2">
+                                                <FaSignOutAlt className="text-[#C42424]" />
                                                 Cerrar sesión
+                                            </span>
                                             </Dropdown.Link>
                                         </Dropdown.Content>
                                     </Dropdown>
@@ -152,27 +191,106 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                 {/* Perfil / Usuario */}
                                 <nav className="flex flex-col space-y-3 text-base font-medium sm:w-1/2">
-                                    {user ? (
-                                        <>
-                                            {user?.can?.viewAny_productos && (
-                                                <Link href={route('productos.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Ver lista de productos</Link>
-                                            )}
-                                            {user?.can?.create_productos && (
-                                                <Link href={route('productos.create')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Crear producto</Link>
-                                            )}
-                                            {user?.can?.viewAny_pedidos && (
-                                                <Link href={route('admin.pedidos.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Gestión de pedidos</Link>
-                                            )}
-                                            {user?.can?.viewAny_devoluciones && (
-                                                <Link href={route('admin.devoluciones.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Solicitudes de devolución</Link>
-                                            )}
-                                            <Link href={route('pedidos.index')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Mis pedidos</Link>
-                                            <Link href={route('profile.edit')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500 border-b border-white/10 pb-2">Perfil</Link>
-                                            <Link href={route('logout')} method="post" as="button" onClick={() => setMenuAbierto(false)} className="hover:text-red-500">Cerrar sesión</Link>
-                                        </>
-                                    ) : (
-                                        <Link href={route('login')} onClick={() => setMenuAbierto(false)} className="hover:text-red-500">Iniciar sesión</Link>
+                                {user ? (
+                                    <>
+                                    {/* Panel de Administración */}
+                                    {(user?.can?.viewAny_productos ||
+                                        user?.can?.create_productos ||
+                                        user?.can?.viewAny_pedidos ||
+                                        user?.can?.viewAny_devoluciones) && (
+                                        <Link
+                                        href={route('admin.panel')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                        >
+                                        <FaUserShield className="text-white" />
+                                        Panel de Administración
+                                        </Link>
                                     )}
+
+                                    {user?.can?.viewAny_productos && (
+                                        <Link
+                                        href={route('productos.index')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                        >
+                                        <FaList className="text-white" />
+                                        Ver lista de productos
+                                        </Link>
+                                    )}
+
+                                    {user?.can?.create_productos && (
+                                        <Link
+                                        href={route('productos.create')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                        >
+                                        <FaPlus className="text-white" />
+                                        Crear producto
+                                        </Link>
+                                    )}
+
+                                    {user?.can?.viewAny_pedidos && (
+                                        <Link
+                                        href={route('admin.pedidos.index')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                        >
+                                        <FaTruck className="text-white" />
+                                        Gestión de pedidos
+                                        </Link>
+                                    )}
+
+                                    {user?.can?.viewAny_devoluciones && (
+                                        <Link
+                                        href={route('admin.devoluciones.index')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                        >
+                                        <FaUndoAlt className="text-white" />
+                                        Solicitudes de devolución
+                                        </Link>
+                                    )}
+
+                                    <Link
+                                        href={route('pedidos.index')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                    >
+                                        <FaClipboardList className="text-white" />
+                                        Mis pedidos
+                                    </Link>
+
+                                    <Link
+                                        href={route('profile.edit')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                    >
+                                        <FaUser className="text-white" />
+                                        Perfil
+                                    </Link>
+
+                                    <Link
+                                        href={route('logout')}
+                                        method="post"
+                                        as="button"
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500"
+                                    >
+                                        <FaSignOutAlt className="text-[#C42424]" />
+                                        Cerrar sesión
+                                    </Link>
+                                    </>
+                                ) : (
+                                    <Link
+                                    href={route('login')}
+                                    onClick={() => setMenuAbierto(false)}
+                                    className="flex items-center gap-2 hover:text-red-500"
+                                    >
+                                    <FaUser className="text-white" />
+                                    Iniciar sesión
+                                    </Link>
+                                )}
                                 </nav>
                             </div>
                         </div>
