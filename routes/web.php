@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\ValoracionController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -38,8 +39,11 @@ require __DIR__.'/auth.php';
 
 /* ADMIN: PANEL DE ADMINISTRACIÓN */
 Route::get('/admin', function () {
+    if (!Auth::user()->is_admin) {
+        abort(403, 'No tienes permisos para acceder');
+    }
     return Inertia::render('PanelAdmin');
-})->middleware(['auth', 'verified'])->name('admin.panel');
+})->middleware(['auth'])->name('admin.panel');
 
 /*ADMIN: Productos*/
 Route::resource('productos', ProductoController::class)->middleware('auth');
