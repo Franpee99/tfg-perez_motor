@@ -70,4 +70,8 @@ class User extends Authenticatable
         return $this->hasMany(Devolucion::class);
     }
 
+    public function citasTaller()
+    {
+        return $this->hasMany(CitaTaller::class);
+    }
 }
