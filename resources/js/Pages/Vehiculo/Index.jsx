@@ -1,8 +1,10 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
-import { Link, usePage, router } from "@inertiajs/react";
-import { FaMotorcycle, FaEdit, FaTrashAlt, FaRegIdCard } from "react-icons/fa";
+import { usePage, router } from "@inertiajs/react";
+import { FaMotorcycle, FaTrashAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Boton from "@/Components/Boton";
+import VehiculoCard from "@/Components/VehiculoCard";
+
 
 export default function Index({ vehiculos }) {
   // FLASH MODAL
@@ -32,16 +34,33 @@ export default function Index({ vehiculos }) {
 
   return (
     <AppLayout>
+      {/* FLASH MODAL */}
       {mensaje && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div className={`text-white text-xl font-bold px-8 py-6 rounded-2xl shadow-2xl animate-fadeInOut flex flex-col items-center ${
             flash.success ? 'bg-[#040A2A]' : 'bg-red-600'
           }`}>
-            <svg className="w-10 h-10 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg
+              className="w-10 h-10 mb-2"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
               {flash.success ? (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" className="text-green-400" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                  className="text-green-400"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" className="text-red-400" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                  className="text-red-400"
+                />
               )}
             </svg>
             {mensaje}
@@ -52,53 +71,54 @@ export default function Index({ vehiculos }) {
       {/* Modal de confirmación */}
       {vehiculoEliminar && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
-          onClick={cerrarModalEliminar}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+            onClick={cerrarModalEliminar}
         >
-          <div
+            <div
             className="bg-[#040A2A] text-white p-6 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center"
             onClick={e => e.stopPropagation()}
-          >
+            >
+            {/* Icono papelera */}
             <FaTrashAlt className="text-4xl text-red-400 mb-3" />
+
             <h2 className="text-xl font-bold mb-2 text-center">¿Eliminar vehículo?</h2>
             <p className="text-sm text-gray-200 text-center mb-6">
-              ¿Seguro que quieres eliminar este vehículo?
+                ¿Seguro que quieres eliminar este vehículo?
             </p>
             <div className="flex justify-center gap-4 w-full">
-              <Boton
+                <Boton
                 texto="Cancelar"
                 onClick={cerrarModalEliminar}
                 color="gray"
                 tamaño="sm"
-              />
-              <Boton
+                />
+                <Boton
                 texto="Sí, eliminar"
                 onClick={confirmarEliminar}
                 color="red"
                 tamaño="sm"
-              />
+                />
             </div>
-          </div>
+            </div>
         </div>
-      )}
+        )}
+
 
       <section className="py-10 px-4 min-h-screen bg-[#f6f7fb]">
         <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <h1 className="text-4xl font-extrabold text-[#040A2A] tracking-tight whitespace-nowrap">
-                Mis vehículos
+              Mis vehículos
             </h1>
             <Boton
-                texto="+ Registrar vehículo"
-                href={route("vehiculos.create")}
-                color="primary"
-                tamaño="md"
-                className="inline-block mt-6 font-bold shadow"
+              texto="+ Registrar vehículo"
+              href={route("vehiculos.create")}
+              color="primary"
+              tamaño="md"
+              className="inline-block mt-6 font-bold shadow"
             />
-            </div>
-
-            <div className="w-full h-1 bg-red-600 rounded-full my-6" />
-
+          </div>
+          <div className="w-full h-1 bg-red-600 rounded-full my-6" />
 
           {vehiculos.length === 0 ? (
             <div className="text-center py-20">
@@ -110,58 +130,17 @@ export default function Index({ vehiculos }) {
                 color="blue"
                 tamaño="md"
                 className="inline-block mt-6 font-bold shadow"
-                />
+              />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {vehiculos.map((v) => (
-                <div
+                <VehiculoCard
                   key={v.id}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-200 p-6 relative flex flex-col gap-2"
-                >
-                  <span className="absolute top-0 right-0 bg-red-600 text-white rounded-bl-xl rounded-tr-2xl px-4 py-1 text-xs font-bold shadow">
-                    <FaRegIdCard className="inline mr-1" />
-                    {v.matricula}
-                  </span>
-                  <div className="flex items-center gap-3 mb-3">
-                    <FaMotorcycle className="text-3xl text-[#040A2A]" />
-                    <span className="text-2xl font-semibold text-[#040A2A]">{v.marca} {v.modelo}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-gray-700 mb-3">
-                    <div>
-                      <span className="block font-bold text-xs text-[#040A2A]">Año</span>
-                      <span>{v.anio || <span className="text-gray-400">-</span>}</span>
-                    </div>
-                    <div>
-                      <span className="block font-bold text-xs text-[#040A2A]">Color</span>
-                      <span>{v.color || <span className="text-gray-400">-</span>}</span>
-                    </div>
-                    <div>
-                      <span className="block font-bold text-xs text-[#040A2A]">Cilindrada</span>
-                      <span>{v.cilindrada || <span className="text-gray-400">-</span>}</span>
-                    </div>
-                    <div>
-                      <span className="block font-bold text-xs text-[#040A2A]">VIN</span>
-                      <span className="break-all">{v.vin || <span className="text-gray-400">-</span>}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-3 mt-auto">
-                    <Boton
-                        texto="Editar"
-                        //onClick={() => abrirModalEliminar(v.id)}
-                        color="blue"
-                        tamaño="md"
-                        icono={<FaEdit />}
-                    />
-                    <Boton
-                      texto="Eliminar"
-                      onClick={() => abrirModalEliminar(v.id)}
-                      color="red"
-                      tamaño="sm"
-                      icono={<FaTrashAlt />}
-                    />
-                  </div>
-                </div>
+                  vehiculo={v}
+                  onEditar={() => router.visit(route('vehiculos.edit', v.id))}
+                  onEliminar={() => abrirModalEliminar(v.id)}
+                />
               ))}
             </div>
           )}

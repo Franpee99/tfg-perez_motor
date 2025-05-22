@@ -6,7 +6,7 @@ import Footer            from '@/Components/Footer';
 import { Link, usePage } from '@inertiajs/react';
 import { useState }      from 'react';
 import { ShoppingCart } from 'lucide-react';
-import { FaUserShield, FaBoxOpen, FaPlus, FaTruck, FaUndoAlt, FaList, FaUser, FaSignOutAlt, FaClipboardList } from "react-icons/fa";
+import { FaUserShield, FaBoxOpen, FaPlus, FaTruck, FaUndoAlt, FaList, FaUser, FaSignOutAlt, FaClipboardList, FaMotorcycle } from "react-icons/fa";
 
 
 export default function AuthenticatedLayout({ header, children }) {
@@ -145,6 +145,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 Mis pedidos
                                             </span>
                                             </Dropdown.Link>
+                                            {/* VEHICULOS */}
+                                            <Dropdown.Link href={route('vehiculos.index')}>
+                                            <span className="inline-flex items-center gap-2">
+                                                <FaMotorcycle className="text-[#040A2A]" />
+                                                Mis vehículos
+                                            </span>
+                                            </Dropdown.Link>
                                             <Dropdown.Link href={route('profile.edit')}>
                                             <span className="inline-flex items-center gap-2">
                                                 <FaUser className="text-[#040A2A]" />
@@ -259,6 +266,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                     >
                                         <FaClipboardList className="text-white" />
                                         Mis pedidos
+                                    </Link>
+
+                                    <Link
+                                        href={route('vehiculos.index')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                    >
+                                        <FaMotorcycle className="text-white" />
+                                        Mis vehículos
                                     </Link>
 
                                     <Link

@@ -29,7 +29,7 @@ class VehiculoPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->id || $user->is_admin;
     }
 
     /**
@@ -37,7 +37,7 @@ class VehiculoPolicy
      */
     public function update(User $user, Vehiculo $vehiculo): bool
     {
-        return false;
+        return $user->id === $vehiculo->user_id || $user->is_admin;
     }
 
     /**

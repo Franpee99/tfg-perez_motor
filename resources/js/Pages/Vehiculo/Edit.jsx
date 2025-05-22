@@ -3,37 +3,26 @@ import { useEffect, useState } from "react";
 import { router, usePage } from '@inertiajs/react';
 import Boton from "@/Components/Boton";
 
-const campos = [
-  { nombre: 'marca', label: 'Marca*', requerido: true },
-  { nombre: 'modelo', label: 'Modelo*', requerido: true },
-  { nombre: 'cilindrada', label: 'Cilindrada', requerido: false },
-  { nombre: 'matricula', label: 'Matrícula*', requerido: true },
-  { nombre: 'anio', label: 'Año', requerido: false },
-  { nombre: 'color', label: 'Color', requerido: false },
-  { nombre: 'vin', label: 'VIN (Nº bastidor)', requerido: false }
-];
-
-export default function Create() {
+export default function Edit({ vehiculo }) {
   const [datos, setDatos] = useState({
-    marca: '',
-    modelo: '',
-    cilindrada: '',
-    matricula: '',
-    anio: '',
-    color: '',
-    vin: ''
+    marca: vehiculo.marca || '',
+    modelo: vehiculo.modelo || '',
+    cilindrada: vehiculo.cilindrada || '',
+    matricula: vehiculo.matricula || '',
+    anio: vehiculo.anio || '',
+    color: vehiculo.color || '',
+    vin: vehiculo.vin || '',
   });
   const [errores, setErrores] = useState({});
   const [animarBarra, setAnimarBarra] = useState(false);
 
   useEffect(() => {
-    const tiempo = setTimeout(() => setAnimarBarra(true), 200);
-    return () => clearTimeout(tiempo);
+    const timer = setTimeout(() => setAnimarBarra(true), 200);
+    return () => clearTimeout(timer);
   }, []);
 
   const validar = () => {
     const nuevosErrores = {};
-
     if (!datos.marca.trim()) nuevosErrores.marca = "La marca es obligatoria.";
     if (!datos.modelo.trim()) nuevosErrores.modelo = "El modelo es obligatorio.";
     if (!datos.matricula.trim()) nuevosErrores.matricula = "La matrícula es obligatoria.";
@@ -45,8 +34,8 @@ export default function Create() {
 
   const manejarCambio = (e) => {
     const { name, value } = e.target;
-    setDatos(anterior => ({
-      ...anterior,
+    setDatos(prev => ({
+      ...prev,
       [name]: name === "matricula" ? value.toUpperCase() : value
     }));
   };
@@ -57,7 +46,7 @@ export default function Create() {
     setErrores(nuevosErrores);
 
     if (Object.keys(nuevosErrores).length === 0) {
-      router.post(route('vehiculos.store'), datos, {
+      router.put(route('vehiculos.update', vehiculo.id), datos, {
         onError: (errors) => setErrores(errors),
       });
     }
@@ -73,7 +62,7 @@ export default function Create() {
       const timer = setTimeout(() => {
         setMensaje(null);
         router.visit(route('vehiculos.index'));
-      }, 2500);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -117,6 +106,7 @@ export default function Create() {
 
       <section className="bg-[#040A2A] text-white py-12 px-4 min-h-screen flex items-center">
         <div className="max-w-3xl w-full mx-auto bg-white/95 rounded-xl shadow-lg p-8 relative">
+
           <div className="flex justify-end mb-2">
             <Boton
               texto="Volver a mis vehículos"
@@ -128,12 +118,12 @@ export default function Create() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-extrabold text-[#040A2A] relative w-fit z-10">Registrar vehículo</h1>
+            <h1 className="text-3xl font-extrabold text-[#040A2A] relative w-fit z-10">Editar vehículo</h1>
             <div className="relative mt-2">
               <div className={`h-[4px] bg-red-600 rounded-full transition-all duration-1000 ease-out ${animarBarra ? 'w-full' : 'w-0'}`} />
             </div>
             <p className="mt-3 text-gray-700 text-sm">
-              Rellena los datos de tu moto o vehículo. Solo los campos obligatorios (<span className="text-red-600">*</span>) son necesarios.
+              Modifica los datos de tu moto o vehículo. Solo los campos obligatorios (<span className="text-red-600">*</span>) son necesarios.
             </p>
           </div>
 
@@ -237,7 +227,7 @@ export default function Create() {
 
             <div className="md:col-span-2 mt-8">
               <Boton
-                texto="Registrar vehículo"
+                texto="Guardar cambios"
                 tipo="submit"
                 color="red"
                 tamaño="lg"

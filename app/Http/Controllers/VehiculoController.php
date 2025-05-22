@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreVehiculoRequest;
 use App\Http\Requests\UpdateVehiculoRequest;
 use App\Models\Vehiculo;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class VehiculoController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $vehiculos = Auth::user()->vehiculos()->latest()->get();
+        $vehiculos = Auth::user()->vehiculos()->get();
         return Inertia::render('Vehiculo/Index', [
             'vehiculos' => $vehiculos,
         ]);
@@ -26,6 +29,8 @@ class VehiculoController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Vehiculo::class);
+
         return Inertia::render('Vehiculo/Create');
     }
 
@@ -61,7 +66,10 @@ class VehiculoController extends Controller
      */
     public function edit(Vehiculo $vehiculo)
     {
-        //
+        $this->authorize('update', $vehiculo);
+        return Inertia::render('Vehiculo/Edit', [
+            'vehiculo' => $vehiculo,
+        ]);
     }
 
     /**
@@ -69,7 +77,19 @@ class VehiculoController extends Controller
      */
     public function update(UpdateVehiculoRequest $request, Vehiculo $vehiculo)
     {
-        //
+        $this->authorize('update', $vehiculo);
+
+        $vehiculo->update([
+            'marca' => $request->marca,
+            'modelo' => $request->modelo,
+            'cilindrada' => $request->cilindrada,
+            'matricula' => strtoupper($request->matricula),
+            'anio' => $request->anio,
+            'color' => $request->color,
+            'vin' => $request->vin,
+        ]);
+
+        return redirect()->back()->with('success', 'Vehículo actualizado');
     }
 
     /**
@@ -78,6 +98,6 @@ class VehiculoController extends Controller
     public function destroy(Vehiculo $vehiculo)
     {
         $vehiculo->delete();
-        return redirect()->route('vehiculos.index')->with('success', 'Vehículo eliminado correctamente');
+        return redirect()->back()->with('success', 'Vehículo eliminado');
     }
 }
