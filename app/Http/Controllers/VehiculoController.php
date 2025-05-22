@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreVehiculoRequest;
 use App\Http\Requests\UpdateVehiculoRequest;
 use App\Models\Vehiculo;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class VehiculoController extends Controller
 {
@@ -13,7 +15,10 @@ class VehiculoController extends Controller
      */
     public function index()
     {
-        //
+        $vehiculos = Auth::user()->vehiculos()->latest()->get();
+        return Inertia::render('Vehiculo/Index', [
+            'vehiculos' => $vehiculos,
+        ]);
     }
 
     /**
@@ -21,7 +26,7 @@ class VehiculoController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Vehiculo/Create');
     }
 
     /**
@@ -29,7 +34,18 @@ class VehiculoController extends Controller
      */
     public function store(StoreVehiculoRequest $request)
     {
-        //
+        Vehiculo::create([
+            'user_id' => Auth::id(),
+            'marca' => $request->marca,
+            'modelo' => $request->modelo,
+            'cilindrada' => $request->cilindrada,
+            'matricula' => strtoupper($request->matricula),
+            'anio' => $request->anio,
+            'color' => $request->color,
+            'vin' => $request->vin,
+        ]);
+
+        return redirect()->back()->with('success', '¡Vehículo registrado correctamente!');
     }
 
     /**
@@ -61,6 +77,7 @@ class VehiculoController extends Controller
      */
     public function destroy(Vehiculo $vehiculo)
     {
-        //
+        $vehiculo->delete();
+        return redirect()->route('vehiculos.index')->with('success', 'Vehículo eliminado correctamente');
     }
 }

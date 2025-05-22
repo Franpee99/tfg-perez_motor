@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreVehiculoRequest extends FormRequest
 {
@@ -11,7 +12,8 @@ class StoreVehiculoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = Auth::user();
+        return $user->id || $user->is_admin;
     }
 
     /**
@@ -22,7 +24,13 @@ class StoreVehiculoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'marca' => 'required|string|max:100',
+            'modelo' => 'required|string|max:100',
+            'cilindrada' => 'nullable|string|max:50',
+            'matricula' => 'required|string|max:20|unique:vehiculos,matricula',
+            'anio' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
+            'color' => 'nullable|string|max:30',
+            'vin' => 'nullable|string|max:50',
         ];
     }
 }

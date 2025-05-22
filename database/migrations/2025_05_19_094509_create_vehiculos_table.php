@@ -21,6 +21,7 @@ return new class extends Migration
             $table->year('anio')->nullable();
             $table->string('color')->nullable();
             $table->string('vin')->nullable(); // Número de bastidor
+            $table->softDeletes();
             $table->timestamps();
         });
     }
