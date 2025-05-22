@@ -3,16 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class StoreCitaTallerRequest extends FormRequest
+class UpdateMantenimientoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::user()->is_admin;
+        return false;
     }
 
     /**
@@ -23,8 +22,7 @@ class StoreCitaTallerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fechas' => ['required', 'array', 'min:1'],
-            'horas' => ['required', 'array', 'min:1'],
+            //
         ];
     }
 }

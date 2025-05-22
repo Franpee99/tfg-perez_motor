@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('citas_taller', function (Blueprint $table) {
+        Schema::create('mantenimientos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained();
             $table->foreignId('vehiculo_id')->constrained();
+            $table->foreignId('cita_taller_id')->nullable()->constrained('citas_taller');
+            $table->foreignId('tipo_mantenimiento_id')->constrained('tipos_mantenimiento');
             $table->date('fecha');
-            $table->time('hora');
-            $table->enum('estado', ['disponible', 'reservada', 'finalizada', 'cancelada'])->default('disponible');
-            $table->enum('motivo', ['mantenimiento', 'reparacion', 'otro'])->nullable();
-            $table->text('mensaje')->nullable();
+            $table->integer('kilometros')->nullable();
+            $table->text('observaciones')->nullable();
+            $table->string('factura')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('citas_taller');
+        Schema::dropIfExists('mantenimientos');
     }
 };

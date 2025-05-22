@@ -28,4 +28,15 @@ class CitaTaller extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function vehiculo()
+    {
+        return $this->belongsTo(Vehiculo::class);
+    }
+
+    public function mantenimiento()
+    {
+        return $this->hasOne(Mantenimiento::class);
+    }
+
 }

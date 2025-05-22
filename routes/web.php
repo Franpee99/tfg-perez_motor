@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CitaTallerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\FacturaController;
@@ -106,4 +107,10 @@ Route::middleware(['auth'])->group(function () {
     /* ADMIN */
     Route::get('/devoluciones/admin', [DevolucionController::class, 'indexAdmin'])->name('admin.devoluciones.index');
     Route::put('/devoluciones//admin/{devolucion}', [DevolucionController::class, 'actualizarEstado'])->name('admin.devoluciones.update');
+});
+
+/* CITA TALLER */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/citas-taller/crear', [CitaTallerController::class, 'create'])->name('citas.create');
+    Route::post('/citas-taller', [CitaTallerController::class, 'store'])->name('citas.store');
 });

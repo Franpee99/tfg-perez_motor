@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCitaTallerRequest;
 use App\Http\Requests\UpdateCitaTallerRequest;
 use App\Models\CitaTaller;
+use Inertia\Inertia;
 
 class CitaTallerController extends Controller
 {
@@ -21,7 +22,15 @@ class CitaTallerController extends Controller
      */
     public function create()
     {
-        //
+        $citas = CitaTaller::where('fecha', '>=', now()->startOfWeek())
+            ->where('fecha', '<=', now()->endOfWeek())
+            ->orderBy('fecha')
+            ->orderBy('hora')
+            ->get();
+
+        return Inertia::render('CitasTaller/Create', [
+            'citas' => $citas,
+        ]);
     }
 
     /**
@@ -29,7 +38,23 @@ class CitaTallerController extends Controller
      */
     public function store(StoreCitaTallerRequest $request)
     {
-        //
+        foreach ($request->fechas as $fecha) {
+            foreach ($request->horas as $hora) {
+                CitaTaller::firstOrCreate([
+                    'fecha' => $fecha,
+                    'hora' => $hora,
+                ], [
+                    'estado' => 'disponible',
+                    'user_id' => null,
+                    'marca' => null,
+                    'modelo' => null,
+                    'matricula' => null,
+                    'motivo' => null,
+                    'mensaje' => null,
+                ]);
+            }
+        }
+        return back()->with('success', 'Agenda abierta correctamente');
     }
 
     /**
