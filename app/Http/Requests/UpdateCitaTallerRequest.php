@@ -25,6 +25,7 @@ class UpdateCitaTallerRequest extends FormRequest
         return [
             'fecha'   => ['required', 'date'],
             'hora'    => ['required', 'date_format:H:i'],
+            'estado' => ['required', 'in:disponible,reservada,finalizada,cancelada'],
         ];
     }
 }

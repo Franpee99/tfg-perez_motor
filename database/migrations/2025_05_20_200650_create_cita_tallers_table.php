@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('estado', ['disponible', 'reservada', 'finalizada', 'cancelada'])->default('disponible');
             $table->enum('motivo', ['mantenimiento', 'reparacion', 'otro'])->nullable();
             $table->text('mensaje')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

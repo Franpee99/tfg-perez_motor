@@ -64,7 +64,7 @@ class CitaTallerController extends Controller
                 ]);
             }
         }
-        return back()->with('success', 'Agenda abierta correctamente');
+        return back()->with('success', 'Agenda abierta');
     }
 
     /**
@@ -88,7 +88,10 @@ class CitaTallerController extends Controller
      */
     public function update(UpdateCitaTallerRequest $request, CitaTaller $citaTaller)
     {
-        //
+        $citaTaller->update($request->validated());
+
+        return redirect()->route('admin.citas.index')
+            ->with('success', 'Cita actualizada');
     }
 
     /**
@@ -96,6 +99,9 @@ class CitaTallerController extends Controller
      */
     public function destroy(CitaTaller $citaTaller)
     {
-        //
+        $citaTaller->delete();
+
+        return redirect()->route('admin.citas.index')
+            ->with('success', 'Cita eliminada');
     }
 }

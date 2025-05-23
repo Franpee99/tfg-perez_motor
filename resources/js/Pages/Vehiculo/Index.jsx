@@ -4,7 +4,7 @@ import { FaMotorcycle, FaTrashAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Boton from "@/Components/Boton";
 import VehiculoCard from "@/Components/VehiculoCard";
-
+import ModalEliminar from "@/Components/ModalEliminar";
 
 export default function Index({ vehiculos }) {
   // FLASH MODAL
@@ -69,38 +69,14 @@ export default function Index({ vehiculos }) {
       )}
 
       {/* Modal de confirmación */}
-      {vehiculoEliminar && (
-        <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
-            onClick={cerrarModalEliminar}
-        >
-            <div
-            className="bg-[#040A2A] text-white p-6 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center"
-            onClick={e => e.stopPropagation()}
-            >
-            <FaTrashAlt className="text-4xl text-red-400 mb-3" />
-
-            <h2 className="text-xl font-bold mb-2 text-center">¿Eliminar vehículo?</h2>
-            <p className="text-sm text-gray-200 text-center mb-6">
-                ¿Seguro que quieres eliminar este vehículo?
-            </p>
-            <div className="flex justify-center gap-4 w-full">
-                <Boton
-                texto="Cancelar"
-                onClick={cerrarModalEliminar}
-                color="gray"
-                tamaño="sm"
-                />
-                <Boton
-                texto="Sí, eliminar"
-                onClick={confirmarEliminar}
-                color="red"
-                tamaño="sm"
-                />
-            </div>
-            </div>
-        </div>
-        )}
+      <ModalEliminar
+        abierta={!!vehiculoEliminar}
+        onClose={cerrarModalEliminar}
+        onConfirm={confirmarEliminar}
+        icono={<FaTrashAlt className="text-4xl text-red-400 mb-3" />}
+        titulo="¿Eliminar vehículo?"
+        descripcion="¿Seguro que quieres eliminar este vehículo?"
+      />
 
 
       <section className="py-10 px-4 min-h-screen bg-[#f6f7fb]">

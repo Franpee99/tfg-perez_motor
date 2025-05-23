@@ -50,7 +50,7 @@ class VehiculoController extends Controller
             'vin' => $request->vin,
         ]);
 
-        return redirect()->back()->with('success', '¡Vehículo registrado correctamente!');
+        return redirect()->back()->with('success', '¡Vehículo registrado!');
     }
 
     /**

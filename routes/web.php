@@ -113,10 +113,9 @@ Route::middleware(['auth'])->group(function () {
 /* CITA TALLER */
 Route::middleware(['auth'])->group(function () {
     Route::get('/citas-taller', [CitaTallerController::class, 'indexAdmin'])->name('admin.citas.index');
-    Route::get('/citas-taller/crear', [CitaTallerController::class, 'create'])->name('citas.create');
     Route::post('/citas-taller', [CitaTallerController::class, 'store'])->name('citas.store');
-    Route::get('/admin/citas/{cita}/edit', [CitaTallerController::class, 'edit'])->name('admin.citas.edit');
-    Route::put('/admin/citas/{cita}', [CitaTallerController::class, 'update'])->name('admin.citas.update');
+    Route::put('/citas/{citaTaller}', [CitaTallerController::class, 'update'])->name('admin.citas.update');
+    Route::delete('/citas/{citaTaller}', [CitaTallerController::class, 'destroy'])->name('admin.citas.destroy');
 });
 
 /* VEHICULO */

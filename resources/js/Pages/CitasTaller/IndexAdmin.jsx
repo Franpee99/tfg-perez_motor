@@ -4,24 +4,10 @@ import Boton from "@/Components/Boton";
 import { usePage, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Clock, ChevronDown, ChevronUp } from "lucide-react";
-
-// Lógica de horas y días
-function generarHorasMediaHora() {
-  const tramos = [
-    { inicio: 9, fin: 13 },
-    { inicio: 15.5, fin: 19.5 }
-  ];
-  let horas = [];
-  tramos.forEach(({ inicio, fin }) => {
-    for (let t = inicio; t <= fin; t += 0.5) {
-      const h = Math.floor(t);
-      const m = t % 1 === 0 ? "00" : "30";
-      horas.push(`${h.toString().padStart(2, "0")}:${m}`);
-    }
-  });
-  return horas;
-}
-const HORAS_LABORALES = generarHorasMediaHora();
+import { FaTrashAlt } from "react-icons/fa";
+import AgendaCreate from "@/Components/AgendaCreate";
+import ModalEditarCita from "@/Components/ModalEditarCita";
+import ModalEliminar from "@/Components/ModalEliminar";
 
 export default function IndexAdmin({ citas }) {
 
@@ -29,82 +15,35 @@ export default function IndexAdmin({ citas }) {
   const [mensaje, setMensaje] = useState(null);
   const [animarBarra, setAnimarBarra] = useState(false);
 
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+
   useEffect(() => { if (flash.success) setMensaje(flash.success); }, [flash.success]);
   useEffect(() => { if (mensaje) { const timer = setTimeout(() => setMensaje(null), 3500); return () => clearTimeout(timer); } }, [mensaje]);
   useEffect(() => { const tiempo = setTimeout(() => setAnimarBarra(true), 300); return () => clearTimeout(tiempo); }, []);
 
-  // Estado para mostrar formulario
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  /* ---- EDITAR UNA CITA ---- */
+  const [citaEditar, setCitaEditar] = useState(null);
+  const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
+  const [citaEliminar, setCitaEliminar] = useState(null);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
 
-  // Formulario crear citas
-  const [fechaInicio, setFechaInicio] = useState("");
-  const [fechaFin, setFechaFin] = useState("");
-  const [horasSeleccionadas, setHorasSeleccionadas] = useState([]);
-  const [horaPersonalizada, setHoraPersonalizada] = useState("");
-  const [horasPersonalizadas, setHorasPersonalizadas] = useState([]);
-
-  // Funciones horas
-  const alternarHora = (hora) => {
-    setHorasSeleccionadas((prev) =>
-      prev.includes(hora)
-        ? prev.filter((h) => h !== hora)
-        : [...prev, hora]
-    );
+  // Abrir/cerrar modales
+  const abrirModalEditar = (cita) => {
+    setCitaEditar(cita);
+    setMostrarModalEditar(true);
+  };
+  const cerrarModalEditar = () => {
+    setCitaEditar(null);
+    setMostrarModalEditar(false);
   };
 
-  const agregarHoraPersonalizada = () => {
-    if (
-      horaPersonalizada &&
-      !horasPersonalizadas.includes(horaPersonalizada) &&
-      !HORAS_LABORALES.includes(horaPersonalizada)
-    ) {
-      setHorasPersonalizadas([...horasPersonalizadas, horaPersonalizada]);
-      setHorasSeleccionadas([...horasSeleccionadas, horaPersonalizada]);
-      setHoraPersonalizada("");
-    }
+  const abrirModalEliminar = (cita) => {
+    setCitaEliminar(cita);
+    setMostrarModalEliminar(true);
   };
-
-  const eliminarHoraPersonalizada = (hora) => {
-    setHorasPersonalizadas(horasPersonalizadas.filter((h) => h !== hora));
-    setHorasSeleccionadas(horasSeleccionadas.filter((h) => h !== hora));
-  };
-
-  const seleccionarTodas = () => {
-    setHorasSeleccionadas([
-      ...HORAS_LABORALES,
-      ...horasPersonalizadas.filter((h) => !HORAS_LABORALES.includes(h)),
-    ]);
-  };
-
-  const quitarTodas = () => setHorasSeleccionadas([]);
-
-  const enviarFormulario = (e) => {
-    e.preventDefault();
-    if (fechaInicio && fechaFin && horasSeleccionadas.length) {
-      const fechas = [];
-      let fecha = new Date(fechaInicio);
-      const fechaFinObj = new Date(fechaFin);
-      while (fecha <= fechaFinObj) {
-        const dia = fecha.getDay();
-        if (dia >= 1 && dia <= 5) {
-          fechas.push(fecha.toISOString().slice(0, 10));
-        }
-        fecha.setDate(fecha.getDate() + 1);
-      }
-      router.post(route("citas.store"), {
-        fechas,
-        horas: horasSeleccionadas,
-      }, {
-        onSuccess: () => {
-          setMostrarFormulario(false);
-          setFechaInicio("");
-          setFechaFin("");
-          setHorasSeleccionadas([]);
-          setHoraPersonalizada("");
-          setHorasPersonalizadas([]);
-        }
-      });
-    }
+  const cerrarModalEliminar = () => {
+    setCitaEliminar(null);
+    setMostrarModalEliminar(false);
   };
 
   // Filtros
@@ -192,6 +131,29 @@ export default function IndexAdmin({ citas }) {
       wrap: true,
       grow: 2,
     },
+    {
+      name: "Acciones",
+      cell: row => (
+        <div className="flex gap-2">
+          <Boton
+            texto="Editar"
+            tamaño="xs"
+            color="blue"
+            onClick={() => abrirModalEditar(row)}
+          />
+          <Boton
+            texto="Eliminar"
+            tamaño="xs"
+            color="red"
+            onClick={() => abrirModalEliminar(row)}
+          />
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      width: "130px"
+    }
   ];
 
   const paginacionES = {
@@ -204,6 +166,34 @@ export default function IndexAdmin({ citas }) {
 
   return (
     <AppLayout>
+      {/* MODAL EDITAR CITA */}
+      <ModalEditarCita
+        abierta={mostrarModalEditar}
+        cita={citaEditar}
+        onClose={cerrarModalEditar}
+        onSubmit={({ fecha, hora, estado }) => {
+          router.put(
+            route("admin.citas.update", citaEditar.id),
+            { fecha, hora, estado },
+            { onSuccess: () => cerrarModalEditar() }
+          );
+        }}
+      />
+
+      {/* MODAL ELIMINAR CITA */}
+      <ModalEliminar
+        abierta={mostrarModalEliminar}
+        onClose={cerrarModalEliminar}
+        onConfirm={() => {
+          router.delete(route("admin.citas.destroy", citaEliminar.id), {
+            onSuccess: () => cerrarModalEliminar()
+          });
+        }}
+        icono={<FaTrashAlt className="text-4xl text-red-400" />}
+        titulo="¿Eliminar cita?"
+        descripcion="¿Seguro que quieres eliminar esta cita?"
+      />
+
       <section className="bg-[#040A2A] text-white py-10 px-6 pt-20 min-h-screen">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10">
@@ -238,103 +228,17 @@ export default function IndexAdmin({ citas }) {
               icono={mostrarFormulario ? <ChevronUp className="inline-block ml-2 w-5 h-5" /> : <ChevronDown className="inline-block ml-2 w-5 h-5" />}
             />
             {mostrarFormulario && (
-              <div className="bg-white text-[#040A2A] rounded-lg shadow-lg p-6 mt-2 animate-fadeIn">
-                <form onSubmit={enviarFormulario}>
-                  <div className="mb-4 flex gap-4 flex-wrap">
-                    <div>
-                      <label>Desde:</label>
-                      <input
-                        type="date"
-                        value={fechaInicio}
-                        onChange={(e) => setFechaInicio(e.target.value)}
-                        className="border px-2 py-1 rounded ml-2"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label>Hasta:</label>
-                      <input
-                        type="date"
-                        value={fechaFin}
-                        min={fechaInicio}
-                        onChange={(e) => setFechaFin(e.target.value)}
-                        className="border px-2 py-1 rounded ml-2"
-                        required
-                      />
-                    </div>
-                    <div className="flex items-end gap-2">
-                      <Boton
-                        tipo="button"
-                        color="green"
-                        texto="Seleccionar todas"
-                        onClick={seleccionarTodas}
-                      />
-                      <Boton
-                        tipo="button"
-                        color="red"
-                        texto="Quitar todas"
-                        onClick={quitarTodas}
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <strong>Selecciona las horas:</strong>
-                    <div className="grid grid-cols-5 gap-2 mt-2">
-                      {HORAS_LABORALES.map((hora) => (
-                        <label key={hora} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={horasSeleccionadas.includes(hora)}
-                            onChange={() => alternarHora(hora)}
-                          />
-                          <span>{hora}</span>
-                        </label>
-                      ))}
-                    </div>
-                    <div className="flex items-center mt-4 gap-2">
-                      <input
-                        type="time"
-                        value={horaPersonalizada}
-                        onChange={(e) => setHoraPersonalizada(e.target.value)}
-                        className="border px-2 py-1 rounded"
-                        step={1800}
-                      />
-                      <Boton
-                        tipo="button"
-                        color="blue"
-                        texto="Añadir hora personalizada"
-                        onClick={agregarHoraPersonalizada}
-                      />
-                    </div>
-                    {horasPersonalizadas.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {horasPersonalizadas.map((hora) => (
-                          <span key={hora} className="bg-yellow-100 px-3 py-1 rounded flex items-center gap-1">
-                            {hora}
-                            <button
-                              type="button"
-                              className="ml-1 text-red-600 font-bold"
-                              onClick={() => eliminarHoraPersonalizada(hora)}
-                            >
-                              ×
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <Boton
-                    tipo="submit"
-                    color="blue"
-                    texto="Abrir agenda"
-                    disabled={!fechaInicio || !fechaFin || !horasSeleccionadas.length}
-                    className={`mt-2 ${(!fechaInicio || !fechaFin || !horasSeleccionadas.length)
-                      ? "opacity-60 cursor-not-allowed"
-                      : ""
-                      }`}
-                  />
-                </form>
-              </div>
+              <AgendaCreate
+                onSubmit={({ fechas, horas, limpiar }) => {
+                  router.post(route("citas.store"), { fechas, horas }, {
+                    onSuccess: () => {
+                      limpiar();
+                      setMostrarFormulario(false);
+                    }
+                  });
+                }}
+                onCancel={() => setMostrarFormulario(false)}
+              />
             )}
           </div>
 
