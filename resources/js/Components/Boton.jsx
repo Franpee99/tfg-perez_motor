@@ -16,21 +16,20 @@ export default function Boton({
   absolute = false,
   posicion = "top-0 right-0"
 }) {
-
-    const colores = {
-      blue: "bg-blue-700 hover:bg-blue-800",
-      red: "bg-red-600 hover:bg-red-800",
-      green: "bg-green-600 hover:bg-green-700",
-      gray: "bg-gray-500 hover:bg-gray-600",
-      primary: `
-        bg-[#040A2A]
-        text-white
-        border border-[#040A2A]
-        hover:bg-red-600
-        hover:text-white
-        hover:border-red-600
-        transition
-        duration-200`,
+  const colores = {
+    blue: "bg-blue-700 hover:bg-blue-800",
+    red: "bg-red-600 hover:bg-red-800",
+    green: "bg-green-600 hover:bg-green-700",
+    gray: "bg-gray-500 hover:bg-gray-600",
+    primary: `
+      bg-[#040A2A]
+      text-white
+      border border-[#040A2A]
+      hover:bg-red-600
+      hover:text-white
+      hover:border-red-600
+      transition
+      duration-200`,
   };
 
   const tamaños = {
@@ -43,11 +42,18 @@ export default function Boton({
   // Agregar clases para botones absolutos
   const clasesBase = `text-white font-semibold rounded-md shadow transition ${colores[color]} ${tamaños[tamaño]} disabled:opacity-50 ${className} ${absolute ? `absolute ${posicion}` : ""}`;
 
-  // Si el botón tiene un `href`, renderizar como `<Link>` de Inertia.js
+  const contenido = (
+    <span className={icono && texto ? "flex items-center justify-center gap-2" : ""}>
+      {texto}
+      {icono}
+    </span>
+  );
+
+  // Si el botón tiene un `href`, renderizar como `<Link>`
   if (href) {
     return (
       <Link href={href} className={clasesBase}>
-        {icono ? icono : texto}
+        {contenido}
       </Link>
     );
   }
@@ -60,7 +66,7 @@ export default function Boton({
       disabled={disabled || enProceso}
       className={clasesBase}
     >
-      {enProceso && cargandoTexto ? cargandoTexto : icono ? icono : texto}
+      {enProceso && cargandoTexto ? cargandoTexto : contenido}
     </button>
   );
 }

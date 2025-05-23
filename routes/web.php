@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CitaTallerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\FacturaController;
@@ -11,7 +12,9 @@ use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\ValoracionController;
+use App\Http\Controllers\VehiculoController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -38,8 +41,11 @@ require __DIR__.'/auth.php';
 
 /* ADMIN: PANEL DE ADMINISTRACIÓN */
 Route::get('/admin', function () {
+    if (!Auth::user()->is_admin) {
+        abort(403, 'No tienes permisos para acceder');
+    }
     return Inertia::render('PanelAdmin');
-})->middleware(['auth', 'verified'])->name('admin.panel');
+})->middleware(['auth'])->name('admin.panel');
 
 /*ADMIN: Productos*/
 Route::resource('productos', ProductoController::class)->middleware('auth');
@@ -102,4 +108,22 @@ Route::middleware(['auth'])->group(function () {
     /* ADMIN */
     Route::get('/devoluciones/admin', [DevolucionController::class, 'indexAdmin'])->name('admin.devoluciones.index');
     Route::put('/devoluciones//admin/{devolucion}', [DevolucionController::class, 'actualizarEstado'])->name('admin.devoluciones.update');
+});
+
+/* CITA TALLER */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/citas-taller', [CitaTallerController::class, 'indexAdmin'])->name('admin.citas.index');
+    Route::post('/citas-taller', [CitaTallerController::class, 'store'])->name('citas.store');
+    Route::put('/citas/{citaTaller}', [CitaTallerController::class, 'update'])->name('admin.citas.update');
+    Route::delete('/citas/{citaTaller}', [CitaTallerController::class, 'destroy'])->name('admin.citas.destroy');
+});
+
+/* VEHICULO */
+Route::middleware(['auth'])->group(function () {
+    Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
+    Route::get('/vehiculos/crear', [VehiculoController::class, 'create'])->name('vehiculos.create');
+    Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+    Route::get('/vehiculos/{vehiculo}/editar', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
+    Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])->name('vehiculos.update');
+    Route::delete('/vehiculos/{vehiculo}/eliminar', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
 });
