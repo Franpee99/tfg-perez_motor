@@ -78,7 +78,6 @@ export default function Index({ vehiculos }) {
             className="bg-[#040A2A] text-white p-6 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col items-center"
             onClick={e => e.stopPropagation()}
             >
-            {/* Icono papelera */}
             <FaTrashAlt className="text-4xl text-red-400 mb-3" />
 
             <h2 className="text-xl font-bold mb-2 text-center">¿Eliminar vehículo?</h2>

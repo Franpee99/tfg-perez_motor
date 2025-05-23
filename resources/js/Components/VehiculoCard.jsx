@@ -34,14 +34,12 @@ export default function VehiculoCard({ vehiculo, onEditar, onEliminar }) {
       </div>
       <div className="flex justify-end gap-3 mt-auto">
         <Boton
-          texto="Editar"
           onClick={onEditar}
           color="blue"
           tamaño="md"
           icono={<FaEdit />}
         />
         <Boton
-          texto="Eliminar"
           onClick={onEliminar}
           color="red"
           tamaño="sm"

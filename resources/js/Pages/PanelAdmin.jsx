@@ -1,6 +1,6 @@
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import { useEffect, useState } from "react";
-import { FaTruck, FaUndoAlt, FaBoxOpen, FaUserShield, FaPlus, FaList } from "react-icons/fa";
+import { FaTruck, FaUndoAlt, FaPlus, FaList, FaTools } from "react-icons/fa";
 import { Link } from '@inertiajs/react';
 
 const PanelAdmin = () => {
@@ -31,6 +31,11 @@ const PanelAdmin = () => {
       nombre: 'Solicitudes de Devolución',
       ruta: route('admin.devoluciones.index'),
       icono: FaUndoAlt,
+    },
+    {
+      nombre: 'Gestión del taller',
+      ruta: route('admin.citas.index'),
+      icono: FaTools,
     },
   ];
 

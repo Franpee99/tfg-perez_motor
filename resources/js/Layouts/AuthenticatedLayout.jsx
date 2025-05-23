@@ -6,7 +6,7 @@ import Footer            from '@/Components/Footer';
 import { Link, usePage } from '@inertiajs/react';
 import { useState }      from 'react';
 import { ShoppingCart } from 'lucide-react';
-import { FaUserShield, FaBoxOpen, FaPlus, FaTruck, FaUndoAlt, FaList, FaUser, FaSignOutAlt, FaClipboardList, FaMotorcycle } from "react-icons/fa";
+import { FaUserShield, FaPlus, FaTruck, FaUndoAlt, FaList, FaUser, FaSignOutAlt, FaClipboardList, FaMotorcycle, FaTools } from "react-icons/fa";
 
 
 export default function AuthenticatedLayout({ header, children }) {
@@ -138,6 +138,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                             </Dropdown.Link>
                                             )}
 
+                                            {user?.can?.viewAny_citasTaller && (
+                                            <Dropdown.Link href={route('admin.citas.index')}>
+                                                <span className="inline-flex items-center gap-2">
+                                                <FaTools className="text-[#040A2A]" />
+                                                Gestión del taller
+                                                </span>
+                                            </Dropdown.Link>
+                                            )}
+
                                             {/* PEDIDOS */}
                                             <Dropdown.Link href={route('pedidos.index')}>
                                             <span className="inline-flex items-center gap-2">
@@ -256,6 +265,17 @@ export default function AuthenticatedLayout({ header, children }) {
                                         >
                                         <FaUndoAlt className="text-white" />
                                         Solicitudes de devolución
+                                        </Link>
+                                    )}
+
+                                    {user?.can?.viewAny_citasTaller && (
+                                        <Link
+                                        href={route('admin.citas.index')}
+                                        onClick={() => setMenuAbierto(false)}
+                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                        >
+                                        <FaTools className="text-white" />
+                                        Gestión del taller
                                         </Link>
                                     )}
 

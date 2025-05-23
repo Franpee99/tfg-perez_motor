@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCitaTallerRequest;
 use App\Http\Requests\UpdateCitaTallerRequest;
 use App\Models\CitaTaller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
 
 class CitaTallerController extends Controller
 {
+
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -17,20 +21,26 @@ class CitaTallerController extends Controller
         //
     }
 
+    public function indexAdmin()
+    {
+        $this->authorize('viewAny', CitaTaller::class);
+
+        $citas = CitaTaller::with(['user', 'vehiculo'])
+        ->orderBy('fecha', 'desc')
+        ->orderBy('hora')
+        ->get();
+
+        return Inertia::render('CitasTaller/IndexAdmin', [
+            'citas' => $citas,
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $citas = CitaTaller::where('fecha', '>=', now()->startOfWeek())
-            ->where('fecha', '<=', now()->endOfWeek())
-            ->orderBy('fecha')
-            ->orderBy('hora')
-            ->get();
-
-        return Inertia::render('CitasTaller/Create', [
-            'citas' => $citas,
-        ]);
+        // ya está integrado en el indexAdmin
     }
 
     /**

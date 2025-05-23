@@ -17,9 +17,7 @@ class CitaTaller extends Model
         'hora',
         'estado',
         'user_id',
-        'marca',
-        'modelo',
-        'matricula',
+        'vehiculo_id',
         'motivo',
         'mensaje',
     ];

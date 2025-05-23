@@ -41,8 +41,8 @@ class VehiculoController extends Controller
     {
         Vehiculo::create([
             'user_id' => Auth::id(),
-            'marca' => $request->marca,
-            'modelo' => $request->modelo,
+            'marca' => ucfirst(strtolower($request->marca)),
+            'modelo' => ucfirst(strtolower($request->modelo)),
             'cilindrada' => $request->cilindrada,
             'matricula' => strtoupper($request->matricula),
             'anio' => $request->anio,
@@ -80,8 +80,8 @@ class VehiculoController extends Controller
         $this->authorize('update', $vehiculo);
 
         $vehiculo->update([
-            'marca' => $request->marca,
-            'modelo' => $request->modelo,
+            'marca' => ucfirst(strtolower($request->marca)),
+            'modelo' => ucfirst(strtolower($request->modelo)),
             'cilindrada' => $request->cilindrada,
             'matricula' => strtoupper($request->matricula),
             'anio' => $request->anio,

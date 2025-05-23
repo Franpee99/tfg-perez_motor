@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateCitaTallerRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateCitaTallerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->is_admin;
     }
 
     /**
@@ -22,7 +23,8 @@ class UpdateCitaTallerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'fecha'   => ['required', 'date'],
+            'hora'    => ['required', 'date_format:H:i'],
         ];
     }
 }

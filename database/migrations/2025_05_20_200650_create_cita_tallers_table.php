@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('citas_taller', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained();
-            $table->foreignId('vehiculo_id')->constrained();
+            $table->foreignId('vehiculo_id')->nullable()->constrained();
             $table->date('fecha');
             $table->time('hora');
             $table->enum('estado', ['disponible', 'reservada', 'finalizada', 'cancelada'])->default('disponible');
