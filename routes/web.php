@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\ValoracionController;
 use App\Http\Controllers\VehiculoController;
+use App\Models\CitaTaller;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -112,10 +113,18 @@ Route::middleware(['auth'])->group(function () {
 
 /* CITA TALLER */
 Route::middleware(['auth'])->group(function () {
+    /* ADMIN */
     Route::get('/citas-taller', [CitaTallerController::class, 'indexAdmin'])->name('admin.citas.index');
     Route::post('/citas-taller', [CitaTallerController::class, 'store'])->name('citas.store');
     Route::put('/citas/{citaTaller}', [CitaTallerController::class, 'update'])->name('admin.citas.update');
     Route::delete('/citas/{citaTaller}', [CitaTallerController::class, 'destroy'])->name('admin.citas.destroy');
+
+    /* USER */
+    Route::get('/citas-taller/reservar', [CitaTallerController::class, 'reservarCita'])->name('user.reservar');
+    Route::post('/citas-taller/reservar', [CitaTallerController::class, 'storeReservarCita'])->name('user.reservar.store');
+    Route::get('/mis-citas', [CitaTallerController::class, 'misCitas'])->name('citas.misCitas');
+    Route::put('/citas/{cita}/cancelar', [CitaTallerController::class, 'cancelarCita'])->name('user.citas.cancelar');
+
 });
 
 /* VEHICULO */

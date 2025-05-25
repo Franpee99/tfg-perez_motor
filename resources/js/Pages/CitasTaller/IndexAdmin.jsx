@@ -9,6 +9,12 @@ import AgendaCreate from "@/Components/AgendaCreate";
 import ModalEditarCita from "@/Components/ModalEditarCita";
 import ModalEliminar from "@/Components/ModalEliminar";
 
+// Función para capitalizar strings
+function capitalize(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export default function IndexAdmin({ citas }) {
 
   const { flash = {} } = usePage().props;
@@ -47,15 +53,18 @@ export default function IndexAdmin({ citas }) {
   };
 
   // Filtros
-  const [filtroFecha, setFiltroFecha] = useState("");
+  const [filtroFechaDesde, setFiltroFechaDesde] = useState("");
+  const [filtroFechaHasta, setFiltroFechaHasta] = useState("");
   const [filtroHora, setFiltroHora] = useState("");
   const [filtroUsuario, setFiltroUsuario] = useState("");
   const [filtroVehiculo, setFiltroVehiculo] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroMotivo, setFiltroMotivo] = useState("");
 
+  // Limpiar todos los filtros
   const limpiarFiltros = () => {
-    setFiltroFecha("");
+    setFiltroFechaDesde("");
+    setFiltroFechaHasta("");
     setFiltroHora("");
     setFiltroUsuario("");
     setFiltroVehiculo("");
@@ -64,18 +73,22 @@ export default function IndexAdmin({ citas }) {
   };
 
   const citasFiltradas = citas.filter((c) => {
-    const fechaFormateada = c.fecha
-      ? new Date(c.fecha).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "2-digit" })
-      : "";
-    const fechaOk = fechaFormateada.toLowerCase().includes(filtroFecha.toLowerCase());
+    const fechaCita = c.fecha ? new Date(c.fecha) : null;
+
+    const desde = filtroFechaDesde ? new Date(filtroFechaDesde) : null;
+    const hasta = filtroFechaHasta ? new Date(filtroFechaHasta) : null;
+
+    let fechaDentroRango = true;
+    if (desde && fechaCita && fechaCita < desde) fechaDentroRango = false;
+    if (hasta && fechaCita && fechaCita > hasta) fechaDentroRango = false;
+
     const horaOk = c.hora?.slice(0, 5).includes(filtroHora);
     const usuarioOk = (c.user?.name || "").toLowerCase().includes(filtroUsuario.toLowerCase());
     const vehiculoOk = (c.vehiculo?.matricula || "").toLowerCase().includes(filtroVehiculo.toLowerCase());
     const estadoOk = filtroEstado === "" || c.estado === filtroEstado;
     const motivoOk = filtroMotivo === "" || (c.motivo || "").toLowerCase().includes(filtroMotivo.toLowerCase());
-    return fechaOk && horaOk && usuarioOk && vehiculoOk && estadoOk && motivoOk;
+    return fechaDentroRango && horaOk && usuarioOk && vehiculoOk && estadoOk && motivoOk;
   });
-
 
   const columnas = [
     {
@@ -123,6 +136,9 @@ export default function IndexAdmin({ citas }) {
       name: "Motivo",
       selector: row => row.motivo || "—",
       sortable: true,
+      cell: row => (
+          <span>{capitalize(row.motivo)}</span>
+      ),
       width: "130px"
     },
     {
@@ -194,7 +210,7 @@ export default function IndexAdmin({ citas }) {
         descripcion="¿Seguro que quieres eliminar esta cita?"
       />
 
-      <section className="bg-[#040A2A] text-white py-10 px-6 pt-20 min-h-screen">
+      <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] text-white py-10 px-6 pt-20">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10">
             <h1 className="text-3xl font-bold relative w-fit z-10">GESTIÓN DE CITAS DE TALLER</h1>
@@ -244,31 +260,36 @@ export default function IndexAdmin({ citas }) {
 
           <div className="bg-white rounded-lg shadow-lg overflow-x-auto p-2">
             {/* Filtros */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4 text-sm">
-              <div className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
-                <label className="block mb-1 font-semibold text-[#040A2A]">Fecha:</label>
-                <input type="text" value={filtroFecha} onChange={e => setFiltroFecha(e.target.value)}
-                  className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="DD/MM/YY" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6 text-sm">
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+                <label className="block mb-1 font-semibold text-[#040A2A]">Desde fecha:</label>
+                <input type="date" value={filtroFechaDesde} onChange={e => setFiltroFechaDesde(e.target.value)}
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"/>
               </div>
-              <div className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+                <label className="block mb-1 font-semibold text-[#040A2A]">Hasta fecha:</label>
+                <input type="date" value={filtroFechaHasta} onChange={e => setFiltroFechaHasta(e.target.value)}
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"/>
+              </div>
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
                 <label className="block mb-1 font-semibold text-[#040A2A]">Hora:</label>
                 <input type="text" value={filtroHora} onChange={e => setFiltroHora(e.target.value)}
-                  className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="HH:MM" />
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="HH:MM"/>
               </div>
-              <div className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
                 <label className="block mb-1 font-semibold text-[#040A2A]">Usuario:</label>
                 <input type="text" value={filtroUsuario} onChange={e => setFiltroUsuario(e.target.value)}
-                  className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="Buscar usuario" />
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="Buscar usuario"/>
               </div>
-              <div className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
                 <label className="block mb-1 font-semibold text-[#040A2A]">Vehículo:</label>
                 <input type="text" value={filtroVehiculo} onChange={e => setFiltroVehiculo(e.target.value)}
-                  className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="Buscar matrícula" />
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="Buscar matrícula"/>
               </div>
-              <div className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
                 <label className="block mb-1 font-semibold text-[#040A2A]">Estado:</label>
                 <select value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}
-                  className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition">
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition">
                   <option value="">Todos</option>
                   <option value="disponible">Disponible</option>
                   <option value="reservada">Reservada</option>
@@ -276,16 +297,22 @@ export default function IndexAdmin({ citas }) {
                   <option value="cancelada">Cancelada</option>
                 </select>
               </div>
-              <div className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
+              <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
                 <label className="block mb-1 font-semibold text-[#040A2A]">Motivo:</label>
                 <input type="text" value={filtroMotivo} onChange={e => setFiltroMotivo(e.target.value)}
-                  className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="Buscar motivo" />
+                  className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition" placeholder="Buscar motivo"/>
               </div>
-              <div className="flex items-end justify-end col-span-1 lg:col-start-6">
-                <Boton texto="Limpiar filtros" onClick={limpiarFiltros} color="gray" tamaño="md"
-                  className="bg-red-700 hover:bg-red-600 text-white" />
+              <div className="flex items-end justify-end col-span-1">
+                <Boton
+                  texto="Limpiar filtros"
+                  onClick={limpiarFiltros}
+                  color="gray"
+                  tamaño="sm"
+                  className="bg-red-700 hover:bg-red-600 text-white w-28"
+                />
               </div>
             </div>
+
             <DataTable
               columns={columnas}
               data={citasFiltradas}

@@ -167,7 +167,7 @@ export default function Index({ productos }) {
 
   return (
     <AppLayout>
-      <section className="bg-[#040A2A] text-white py-10 px-6 pt-20 min-h-screen">
+      <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] text-white py-10 px-6 pt-20">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10">
             <h1 className="text-3xl font-bold relative w-fit z-10">LISTA DE PRODUCTOS</h1>

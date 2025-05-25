@@ -37,7 +37,7 @@ class CitaTallerPolicy
      */
     public function update(User $user, CitaTaller $citaTaller): bool
     {
-        return false;
+        return $user->id == $citaTaller->user->id || $user->is_admin;
     }
 
     /**

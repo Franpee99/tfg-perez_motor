@@ -174,14 +174,6 @@ export default function AgendaCreate({ onSubmit, onCancel }) {
           )}
         </div>
         <div className="flex gap-2 mt-4">
-          {onCancel && (
-            <Boton
-              tipo="button"
-              color="gray"
-              texto="Cerrar"
-              onClick={onCancel}
-            />
-          )}
           <Boton
             tipo="submit"
             color="blue"

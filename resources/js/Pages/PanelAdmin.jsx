@@ -13,7 +13,7 @@ const PanelAdmin = () => {
 
   const secciones = [
     {
-    nombre: 'Ver productos',
+    nombre: 'Lista de productos',
     ruta: route('productos.index'),
     icono: FaList,
     },
@@ -41,7 +41,7 @@ const PanelAdmin = () => {
 
   return (
     <AppLayout>
-      <section className="bg-[#040A2A] min-h-screen py-16 px-4 text-white">
+      <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] py-16 px-4 text-white">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10">
             <h1 className="text-3xl font-bold relative w-fit z-10 uppercase tracking-wide">Panel de Administración</h1>
