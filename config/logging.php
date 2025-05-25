@@ -133,6 +133,12 @@ return [
             'level' => 'info',
         ],
 
+        'citas' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/citas.log'),
+            'level' => 'info',
+        ],
+
     ],
 
 ];

@@ -38,4 +38,16 @@ class CitaTaller extends Model
         return $this->hasOne(Mantenimiento::class);
     }
 
+    /*
+    public function actualizarEstado()
+    {
+        if($this->estado === 'finalizada' || $this->estado === 'cancelada') return;
+
+        if( $this->estado === 'reservada' && strtotime($this->fecha . ' ' . $this->hora) <= time()){
+            $this->estado = 'finalizada';
+            $this->save();
+        }
+    }
+    */
+
 }
