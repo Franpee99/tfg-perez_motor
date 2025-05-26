@@ -27,18 +27,32 @@ class ActualizarEstadosCitas extends Command
      */
     public function handle()
     {
+        $totalReservadas = 0;
+        $totalDisponibles = 0;
+
+        // Reservada
         $citas = CitaTaller::where('estado', 'reservada')
         ->whereRaw("CONCAT(fecha, ' ', hora) <= ?", [now()->format('Y-m-d H:i:s')])
         ->get();
 
-        $total = 0;
         foreach ($citas as $cita) {
             $cita->estado = 'finalizada';
             $cita->save();
-            $total++;
+            $totalReservadas++;
         }
 
-        $mensaje = ("Se han actualizado $total citas a estado 'finalizada'");
+        // Disponible
+        $citasDisponibles = CitaTaller::where('estado', 'disponible')
+        ->whereRaw("CONCAT(fecha, ' ', hora) <= ?", [now()->format('Y-m-d H:i:s')])
+        ->get();
+
+        foreach ($citasDisponibles as $cita) {
+            $cita->estado = 'finalizada';
+            $cita->save();
+            $totalDisponibles++;
+        }
+
+        $mensaje = ("Se han actualizado $totalReservadas citas reservadas y $totalDisponibles citas disponibles a estado 'finalizada'");
         $this->info($mensaje);
         Log::channel('citas')->info($mensaje);
 

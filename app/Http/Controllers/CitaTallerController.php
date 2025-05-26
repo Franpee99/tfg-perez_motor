@@ -36,6 +36,10 @@ class CitaTallerController extends Controller
     private function getFechasDisponible()
     {
         // Devuelve un array agrupado por fecha con las horas disponibles en cada una
+        $now = now();
+        $hoy = $now->toDateString();
+        $horaActual = $now->format('H:i');
+
         $citas = CitaTaller::where('estado', 'disponible')
             ->orderBy('fecha')
             ->orderBy('hora')
@@ -43,7 +47,13 @@ class CitaTallerController extends Controller
 
         $agenda = [];
         foreach ($citas as $cita) {
-            $agenda[$cita->fecha][] = $cita->hora;
+            if ($cita->fecha === $hoy) {
+                if ($cita->hora > $horaActual) {
+                    $agenda[$cita->fecha][] = $cita->hora;
+                }
+            } elseif ($cita->fecha > $hoy) {
+                $agenda[$cita->fecha][] = $cita->hora;
+            }
         }
         return $agenda;
     }
@@ -64,7 +74,7 @@ class CitaTallerController extends Controller
     {
         $request->validate([
             'vehiculo_id' => 'required|exists:vehiculos,id',
-            'fecha' => 'required|date|after:today',
+            'fecha' => 'required|date|after_or_equal:today',
             'hora' => 'required',
             'motivo' => 'required|in:mantenimiento,reparacion,otro',
             'mensaje' => 'nullable|string|max:500',

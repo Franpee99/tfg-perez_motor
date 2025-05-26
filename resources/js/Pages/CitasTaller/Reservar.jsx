@@ -161,9 +161,20 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
             {/* Paso 1: Vehículo */}
             {paso === 1 && (
               <div className="bg-gray-50 rounded-xl shadow px-4 py-6">
-                <label className="block font-bold text-[#040A2A] mb-2">
-                  <Car className="inline-block mr-1 text-red-600" /> Elige tu vehículo*
-                </label>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                  <label className="font-bold text-[#040A2A]">
+                    <Car className="inline-block mr-1 text-red-600" /> Elige tu vehículo*
+                  </label>
+                  <span className="text-sm mt-2 sm:mt-0 sm:ml-4 text-gray-600 font-medium">
+                    ¿No tienes tu vehículo registrado?{" "}
+                    <a
+                      href={route("vehiculos.create")}
+                      className="text-blue-600 underline hover:text-blue-800 font-semibold"
+                    >
+                      Regístralo aquí
+                    </a>
+                  </span>
+                </div>
                 <select
                   name="vehiculo_id"
                   value={datos.vehiculo_id}
