@@ -52,9 +52,11 @@ class ActualizarEstadosCitas extends Command
             $totalDisponibles++;
         }
 
-        $mensaje = ("Se han actualizado $totalReservadas citas reservadas y $totalDisponibles citas disponibles a estado 'finalizada'");
-        $this->info($mensaje);
-        Log::channel('citas')->info($mensaje);
+        if($totalReservadas >= 1 || $totalDisponibles >= 1){
+            $mensaje = ("Se han actualizado $totalReservadas citas reservadas y $totalDisponibles citas disponibles a estado 'finalizada'");
+            $this->info($mensaje);
+            Log::channel('citas')->info($mensaje);
+        }
 
         return Command::SUCCESS;
     }

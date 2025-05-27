@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCitaTallerRequest;
 use App\Http\Requests\UpdateCitaTallerRequest;
+use App\Mail\CitaReservadaMail;
 use App\Models\CitaTaller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FacturaPedidoMail;
 
 class CitaTallerController extends Controller
 {
@@ -96,6 +100,14 @@ class CitaTallerController extends Controller
             'mensaje' => $request->mensaje,
             'estado' => 'reservada',
         ]);
+
+        // Enviar por correo cita confirmada
+        try {
+            Mail::to($cita->user->email)->send(new CitaReservadaMail($cita));
+
+        } catch (\Exception $e) {
+            Log::error("Error al enviar la cita confirmada" . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Cita reservada');
     }

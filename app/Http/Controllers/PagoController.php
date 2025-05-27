@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\FacturaPedidoMail;
 use App\Models\DetallePedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\LineaCarrito;
 use App\Models\Pedido;
+use App\Services\JasperService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PagoController extends Controller
 {
@@ -81,6 +85,21 @@ class PagoController extends Controller
                 'cantidad'    => $linea->cantidad,
                 'precio'      => $linea->producto->precio,
             ]);
+        }
+
+        // Generar y enviar factura por correo
+        try {
+            $jasperService = app(JasperService::class);
+            $rutaPdf = $jasperService->generarFactura([
+                'ID_PEDIDO' => $pedido->id,
+            ]);
+            $pdf = file_get_contents($rutaPdf);
+
+            Mail::to($pedido->user->email)->send(new FacturaPedidoMail($pedido, $pdf));
+            @unlink($rutaPdf); // lo borro del /temp
+
+        } catch (\Exception $e) {
+            Log::error("Error al generar la factura PDF: " . $e->getMessage());
         }
 
         // Vacia el carrito

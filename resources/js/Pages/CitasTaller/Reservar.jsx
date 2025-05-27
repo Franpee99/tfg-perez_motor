@@ -2,7 +2,7 @@ import AppLayout from '@/Layouts/AuthenticatedLayout';
 import { useEffect, useState, useMemo } from "react";
 import { router, usePage } from '@inertiajs/react';
 import Boton from "@/Components/Boton";
-import { CalendarDays, Clock, Car, ClipboardList, SendHorizonal, ChevronRight } from "lucide-react";
+import { CalendarDays, Clock, Bike, ClipboardList, SendHorizonal, ChevronRight } from "lucide-react";
 
 export default function Reservar({ vehiculos, fechasDisponibles }) {
   vehiculos = vehiculos ?? [];
@@ -148,7 +148,7 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
 
           {/* PASOS */}
           <div className="flex items-center justify-center gap-3 mb-8">
-            <StepIcon activo={paso === 1} icono={<Car />} label="Vehículo" />
+            <StepIcon activo={paso === 1} icono={<Bike />} label="Vehículo" />
             <ChevronRight className="w-6 h-6 text-red-500" />
             <StepIcon activo={paso === 2} icono={<CalendarDays />} label="Fecha y hora" />
             <ChevronRight className="w-6 h-6 text-red-500" />
@@ -163,7 +163,7 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
               <div className="bg-gray-50 rounded-xl shadow px-4 py-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                   <label className="font-bold text-[#040A2A]">
-                    <Car className="inline-block mr-1 text-red-600" /> Elige tu vehículo*
+                    <Bike className="inline-block mr-1 text-red-600" /> Elige tu vehículo*
                   </label>
                   <span className="text-sm mt-2 sm:mt-0 sm:ml-4 text-gray-600 font-medium">
                     ¿No tienes tu vehículo registrado?{" "}
@@ -334,7 +334,7 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
               <div className="bg-white rounded-xl shadow px-4 py-8 flex flex-col gap-4">
                 <div className="flex flex-col gap-3 text-[#040A2A] text-lg font-bold">
                   <div className="flex items-center gap-2">
-                    <Car className="text-red-500" />
+                    <Bike className="text-red-500" />
                     Vehículo: <span className="font-normal">{vehiculoSeleccionado ? `${vehiculoSeleccionado.marca} ${vehiculoSeleccionado.modelo} (${vehiculoSeleccionado.matricula})` : "—"}</span>
                   </div>
                   <div className="flex items-center gap-2">
