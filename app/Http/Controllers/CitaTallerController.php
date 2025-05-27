@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\FacturaPedidoMail;
+use App\Models\EstadoCita;
+use App\Models\MotivoCita;
 
 class CitaTallerController extends Controller
 {
@@ -26,7 +28,7 @@ class CitaTallerController extends Controller
      */
     public function misCitas()
     {
-        $citas = CitaTaller::with('vehiculo')
+        $citas = CitaTaller::with('vehiculo', 'estado_cita', 'motivo_cita')
             ->where('user_id', Auth::user()->id)
             ->orderBy('fecha', 'asc')
             ->orderBy('hora', 'asc')
@@ -44,7 +46,9 @@ class CitaTallerController extends Controller
         $hoy = $now->toDateString();
         $horaActual = $now->format('H:i');
 
-        $citas = CitaTaller::where('estado', 'disponible')
+        $estadoDisponibleId = EstadoCita::where('nombre', 'disponible')->value('id');
+
+        $citas = CitaTaller::where('estado_cita_id', $estadoDisponibleId)
             ->orderBy('fecha')
             ->orderBy('hora')
             ->get(['fecha', 'hora']);
@@ -68,9 +72,12 @@ class CitaTallerController extends Controller
 
         $fechasDisponibles = $this->getFechasDisponible();
 
+        $motivos = MotivoCita::all(['id', 'nombre']);
+
         return Inertia::render('CitasTaller/Reservar', [
             'vehiculos' => $vehiculos,
             'fechasDisponibles' => $fechasDisponibles,
+            'motivos' => $motivos,
         ]);
     }
 
@@ -80,13 +87,16 @@ class CitaTallerController extends Controller
             'vehiculo_id' => 'required|exists:vehiculos,id',
             'fecha' => 'required|date|after_or_equal:today',
             'hora' => 'required',
-            'motivo' => 'required|in:mantenimiento,reparacion,otro',
+            'motivo_cita_id' => 'required|exists:motivo_citas,id',
             'mensaje' => 'nullable|string|max:500',
         ]);
 
+        $estadoDisponibleId = EstadoCita::where('nombre', 'disponible')->value('id');
+        $estadoReservadaId = EstadoCita::where('nombre', 'reservada')->value('id');
+
         $cita = CitaTaller::where('fecha', $request->fecha)
             ->where('hora', $request->hora)
-            ->where('estado', 'disponible')
+            ->where('estado_cita_id', $estadoDisponibleId)
             ->first();
 
         if (!$cita) {
@@ -96,9 +106,9 @@ class CitaTallerController extends Controller
         $cita->update([
             'user_id' => Auth::id(),
             'vehiculo_id' => $request->vehiculo_id,
-            'motivo' => $request->motivo,
+            'motivo_cita_id' => $request->motivo_cita_id,
             'mensaje' => $request->mensaje,
-            'estado' => 'reservada',
+            'estado_cita_id' => $estadoReservadaId,
         ]);
 
         // Enviar por correo cita confirmada
@@ -114,11 +124,11 @@ class CitaTallerController extends Controller
 
     public function cancelarCita(CitaTaller $cita)
     {
-        if ($cita->user_id !== Auth::id() || $cita->estado !== 'reservada') {
+        if ($cita->user_id !== Auth::id() || $cita->estado_cita->nombre !== 'reservada') {
             abort(403);
         }
-
-        $cita->update(['estado' => 'cancelada']);
+        $estadoCanceladaId = EstadoCita::where('nombre', 'cancelada')->value('id');
+        $cita->update(['estado_cita_id' => $estadoCanceladaId]);
         return back()->with('success', 'Cita cancelada');
     }
 
@@ -129,13 +139,16 @@ class CitaTallerController extends Controller
     {
         $this->authorize('viewAny', CitaTaller::class);
 
-        $citas = CitaTaller::with(['user', 'vehiculo'])
+        $citas = CitaTaller::with(['user', 'vehiculo', 'estado_cita', 'motivo_cita'])
         ->orderBy('fecha', 'desc')
         ->orderBy('hora')
         ->get();
 
+        $estados = EstadoCita::all(['id', 'nombre']);
+
         return Inertia::render('CitasTaller/IndexAdmin', [
             'citas' => $citas,
+            'estados' => $estados,
         ]);
     }
 
@@ -152,18 +165,20 @@ class CitaTallerController extends Controller
      */
     public function store(StoreCitaTallerRequest $request)
     {
+        $estadoDisponibleId = EstadoCita::where('nombre', 'disponible')->value('id');
+
         foreach ($request->fechas as $fecha) {
             foreach ($request->horas as $hora) {
                 CitaTaller::firstOrCreate([
                     'fecha' => $fecha,
                     'hora' => $hora,
                 ], [
-                    'estado' => 'disponible',
+                    'estado_cita_id' => $estadoDisponibleId,
                     'user_id' => null,
                     'marca' => null,
                     'modelo' => null,
                     'matricula' => null,
-                    'motivo' => null,
+                    'motivo_cita_id' => null,
                     'mensaje' => null,
                 ]);
             }

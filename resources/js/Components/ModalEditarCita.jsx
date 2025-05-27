@@ -1,6 +1,6 @@
 import Boton from "@/Components/Boton";
 
-export default function ModalEditarCita({ abierta, cita, onClose, onSubmit }) {
+export default function ModalEditarCita({ abierta, cita, estados, onClose, onSubmit }) {
   if (!abierta || !cita) return null;
 
   return (
@@ -24,7 +24,7 @@ export default function ModalEditarCita({ abierta, cita, onClose, onSubmit }) {
             onSubmit({
               fecha: e.target.fecha.value,
               hora: e.target.hora.value,
-              estado: e.target.estado.value,
+              estado_cita_id: e.target.estado_cita_id.value,
             });
           }}
         >
@@ -51,15 +51,16 @@ export default function ModalEditarCita({ abierta, cita, onClose, onSubmit }) {
           <div className="mb-4">
             <label className="block font-semibold mb-1">Estado:</label>
             <select
-              name="estado"
-              defaultValue={cita.estado}
+              name="estado_cita_id"
+              defaultValue={cita.estado_cita_id || cita.estado_cita?.id}
               className="w-full border rounded px-2 py-1"
               required
             >
-              <option value="disponible">Disponible</option>
-              <option value="reservada">Reservada</option>
-              <option value="finalizada">Finalizada</option>
-              <option value="cancelada">Cancelada</option>
+              {estados.map(estado => (
+                <option key={estado.id} value={estado.id}>
+                  {estado.nombre.charAt(0).toUpperCase() + estado.nombre.slice(1)}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex gap-4 justify-end mt-8">

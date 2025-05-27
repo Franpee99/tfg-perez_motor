@@ -4,26 +4,22 @@ import { router, usePage } from '@inertiajs/react';
 import Boton from "@/Components/Boton";
 import { CalendarDays, Clock, Bike, ClipboardList, SendHorizonal, ChevronRight } from "lucide-react";
 
-export default function Reservar({ vehiculos, fechasDisponibles }) {
+export default function Reservar({ vehiculos, fechasDisponibles, motivos }) {
   vehiculos = vehiculos ?? [];
   fechasDisponibles = fechasDisponibles ?? {};
-
-  const motivos = [
-    { valor: "mantenimiento", label: "Mantenimiento" },
-    { valor: "reparacion", label: "Reparación" },
-    { valor: "otro", label: "Otro" },
-  ];
+  motivos = motivos ?? [];
 
   const [datos, setDatos] = useState({
     vehiculo_id: "",
     fecha: "",
     hora: "",
-    motivo: "",
+    motivo_cita_id: "",
     mensaje: ""
   });
   const [errores, setErrores] = useState({});
   const [paso, setPaso] = useState(1);
 
+  // Fechas y horas disponibles
   const fechasHabilitadas = useMemo(() => Object.keys(fechasDisponibles), [fechasDisponibles]);
   const minDate = fechasHabilitadas.length > 0 ? fechasHabilitadas[0] : "";
   const maxDate = fechasHabilitadas.length > 0 ? fechasHabilitadas[fechasHabilitadas.length - 1] : "";
@@ -55,7 +51,7 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
     if (!fechaValida) nuevosErrores.fecha = "";
     if (!datos.fecha) nuevosErrores.fecha = "La fecha es obligatoria.";
     if (!datos.hora) nuevosErrores.hora = "Selecciona una hora.";
-    if (!datos.motivo) nuevosErrores.motivo = "Selecciona un motivo.";
+    if (!datos.motivo_cita_id) nuevosErrores.motivo_cita_id = "Selecciona un motivo.";
     if (datos.mensaje && datos.mensaje.length > 500) nuevosErrores.mensaje = "El mensaje no puede tener más de 500 caracteres.";
     return nuevosErrores;
   };
@@ -73,7 +69,7 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
     if (
       (paso === 1 && !nuevosErrores.vehiculo_id) ||
       (paso === 2 && !nuevosErrores.fecha && !nuevosErrores.hora) ||
-      (paso === 3 && !nuevosErrores.motivo)
+      (paso === 3 && !nuevosErrores.motivo_cita_id)
     ) {
       setPaso(paso + 1);
     } else {
@@ -94,6 +90,8 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
       });
     }
   };
+
+  console.log(fechasDisponibles);
 
   const vehiculoSeleccionado = vehiculos.find(v => v.id == datos.vehiculo_id);
 
@@ -281,18 +279,18 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
                   <ClipboardList className="inline-block mr-1 text-red-600" /> Motivo*
                 </label>
                 <select
-                  name="motivo"
-                  value={datos.motivo}
+                  name="motivo_cita_id"
+                  value={datos.motivo_cita_id}
                   onChange={manejarCambio}
                   className="w-full h-12 px-3 mt-1 bg-gray-100 text-[#040A2A] rounded border-2 border-[#040A2A] font-semibold"
                   required
                 >
                   <option value="">Selecciona el motivo...</option>
                   {motivos.map(m => (
-                    <option key={m.valor} value={m.valor}>{m.label}</option>
+                    <option key={m.id} value={m.id}>{m.nombre}</option>
                   ))}
                 </select>
-                {errores.motivo && <p className="text-red-500 text-xs">{errores.motivo}</p>}
+                {errores.motivo_cita_id && <p className="text-red-500 text-xs">{errores.motivo_cita_id}</p>}
 
                 <label className="block font-bold text-[#040A2A] mt-6 mb-2">
                   Comentarios (opcional)
@@ -347,7 +345,7 @@ export default function Reservar({ vehiculos, fechasDisponibles }) {
                   </div>
                   <div className="flex items-center gap-2">
                     <ClipboardList className="text-red-500" />
-                    Motivo: <span className="font-normal">{motivos.find(m => m.valor === datos.motivo)?.label || "—"}</span>
+                    Motivo: <span className="font-normal">{motivos.find(m => m.id == datos.motivo_cita_id)?.nombre || "—"}</span>
                   </div>
                   {datos.mensaje && (
                     <div className="flex items-center gap-2">

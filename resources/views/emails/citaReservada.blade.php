@@ -12,20 +12,7 @@ Aquí tienes los detalles de tu reserva:
 **Matrícula:** {{ $cita->vehiculo->matricula ?? '-' }}
 **Marca:** {{ $cita->vehiculo->marca ?? '-' }}
 **Modelo:** {{ $cita->vehiculo->modelo ?? '-' }}
-**Motivo:**
-@switch($cita->motivo)
-    @case('mantenimiento')
-        Mantenimiento
-        @break
-    @case('reparacion')
-        Reparación
-        @break
-    @case('otro')
-        Otro
-        @break
-    @default
-        -
-@endswitch
+**Motivo:** {{ $cita->motivo_cita->nombre ? ucfirst($cita->motivo_cita->nombre) : '-' }}
 
 @if(!empty($cita->mensaje))
 **Mensaje:**

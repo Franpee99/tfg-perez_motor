@@ -15,7 +15,7 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export default function IndexAdmin({ citas }) {
+export default function IndexAdmin({ citas, estados }) {
 
   const { flash = {} } = usePage().props;
   const [mensaje, setMensaje] = useState(null);
@@ -85,7 +85,7 @@ export default function IndexAdmin({ citas }) {
     const horaOk = c.hora?.slice(0, 5).includes(filtroHora);
     const usuarioOk = (c.user?.name || "").toLowerCase().includes(filtroUsuario.toLowerCase());
     const vehiculoOk = (c.vehiculo?.matricula || "").toLowerCase().includes(filtroVehiculo.toLowerCase());
-    const estadoOk = filtroEstado === "" || c.estado === filtroEstado;
+    const estadoOk = filtroEstado === "" || (c.estado_cita?.nombre === filtroEstado);
     const motivoOk = filtroMotivo === "" || (c.motivo || "").toLowerCase().includes(filtroMotivo.toLowerCase());
     return fechaDentroRango && horaOk && usuarioOk && vehiculoOk && estadoOk && motivoOk;
   });
@@ -107,15 +107,15 @@ export default function IndexAdmin({ citas }) {
     },
     {
       name: "Estado",
-      selector: row => row.estado,
+      selector: row => row.estado_cita?.nombre,
       sortable: true,
       cell: row => (
         <span className="flex items-center gap-1 font-semibold">
-          {row.estado === "disponible" && <CheckCircle className="text-green-500 w-4 h-4" />}
-          {row.estado === "reservada" && <Clock className="text-yellow-400 w-4 h-4" />}
-          {row.estado === "finalizada" && <CheckCircle className="text-blue-500 w-4 h-4" />}
-          {row.estado === "cancelada" && <XCircle className="text-red-500 w-4 h-4" />}
-          <span className="capitalize">{row.estado}</span>
+          {row.estado_cita?.nombre === "disponible" && <CheckCircle className="text-green-500 w-4 h-4" />}
+          {row.estado_cita?.nombre === "reservada" && <Clock className="text-yellow-400 w-4 h-4" />}
+          {row.estado_cita?.nombre === "finalizada" && <CheckCircle className="text-blue-500 w-4 h-4" />}
+          {row.estado_cita?.nombre === "cancelada" && <XCircle className="text-red-500 w-4 h-4" />}
+          <span className="capitalize">{row.estado_cita?.nombre || "—"}</span>
         </span>
       ),
       width: "120px"
@@ -137,7 +137,7 @@ export default function IndexAdmin({ citas }) {
       selector: row => row.motivo || "—",
       sortable: true,
       cell: row => (
-          <span>{capitalize(row.motivo)}</span>
+        <span>{capitalize(row.motivo)}</span>
       ),
       width: "130px"
     },
@@ -186,11 +186,12 @@ export default function IndexAdmin({ citas }) {
       <ModalEditarCita
         abierta={mostrarModalEditar}
         cita={citaEditar}
+        estados={estados}
         onClose={cerrarModalEditar}
-        onSubmit={({ fecha, hora, estado }) => {
+        onSubmit={({ fecha, hora, estado_cita_id }) => {
           router.put(
             route("admin.citas.update", citaEditar.id),
-            { fecha, hora, estado },
+            { fecha, hora, estado_cita_id },
             { onSuccess: () => cerrarModalEditar() }
           );
         }}

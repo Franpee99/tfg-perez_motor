@@ -7,38 +7,49 @@ import { useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { MdEditNote } from "react-icons/md";
 
+// Función para capitalizar strings
 function capitalize(str) {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
-function mostrarMotivo(str) {
-  if (!str) return "";
-  if (str === "reparacion") return "Reparación";
-  if (str === "mantenimiento") return "Mantenimiento";
-  if (str === "otro") return "Otro";
-  return capitalize(str);
+// Función para mostrar motivo legible
+function mostrarMotivo(motivo, motivo_cita) {
+  if (motivo_cita && motivo_cita.nombre) return motivo_cita.nombre;
+  if (!motivo) return "";
+  if (motivo === "reparacion") return "Reparación";
+  if (motivo === "mantenimiento") return "Mantenimiento";
+  if (motivo === "otro") return "Otro";
+  return capitalize(motivo);
 }
 
-function EstadoCard({ estado }) {
-  if (estado === "reservada")
+// Componente para mostrar el estado
+function EstadoCard({ estado, estado_cita }) {
+  const nombre = estado_cita?.nombre || estado;
+  if (nombre === "reservada")
     return (
       <span className="flex items-center gap-2 font-bold text-green-600">
         <CheckCircle className="w-6 h-6" /> Reservada
       </span>
     );
-  if (estado === "finalizada")
+  if (nombre === "finalizada")
     return (
       <span className="flex items-center gap-2 font-bold text-blue-500">
         <CheckCircle className="w-6 h-6" /> Finalizada
       </span>
     );
-  if (estado === "cancelada")
+  if (nombre === "cancelada")
     return (
       <span className="flex items-center gap-2 font-bold text-red-600">
         <XCircle className="w-6 h-6" /> Cancelada
       </span>
     );
-  return <span className="font-bold text-gray-500">{capitalize(estado)}</span>;
+  if (nombre === "disponible")
+    return (
+      <span className="flex items-center gap-2 font-bold text-gray-400">
+        <CheckCircle className="w-6 h-6" /> Disponible
+      </span>
+    );
+  return <span className="font-bold text-gray-500">{capitalize(nombre)}</span>;
 }
 
 export default function MisCitas({ citas }) {
@@ -177,18 +188,18 @@ export default function MisCitas({ citas }) {
                   className="bg-white rounded-2xl shadow-lg p-5 flex flex-col gap-3 border-l-8"
                   style={{
                     borderColor:
-                      cita.estado === "reservada"
+                      (cita.estado_cita?.nombre || cita.estado) === "reservada"
                         ? "#22c55e"
-                        : cita.estado === "finalizada"
+                        : (cita.estado_cita?.nombre || cita.estado) === "finalizada"
                         ? "#3b82f6"
-                        : cita.estado === "cancelada"
+                        : (cita.estado_cita?.nombre || cita.estado) === "cancelada"
                         ? "#dc2626"
                         : "#d1d5db",
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <EstadoCard estado={cita.estado} />
-                    {cita.estado === "reservada" && (
+                    <EstadoCard estado={cita.estado} estado_cita={cita.estado_cita} />
+                    {(cita.estado_cita?.nombre || cita.estado) === "reservada" && (
                       <Boton
                         texto="Cancelar cita"
                         color="red"
@@ -199,13 +210,11 @@ export default function MisCitas({ citas }) {
                     )}
                   </div>
 
-                  {/* Motivo */}
                   <div className="flex items-center gap-3 text-[#040A2A]">
                     <ClipboardList className="w-5 h-5 text-red-600" />
-                    <span className="font-semibold">{mostrarMotivo(cita.motivo)}</span>
+                    <span className="font-semibold">{mostrarMotivo(cita.motivo, cita.motivo_cita)}</span>
                   </div>
 
-                  {/* Mensaje si hay */}
                   {cita.mensaje && (
                     <div className="flex items-center gap-3 text-gray-600">
                       <span className="font-semibold flex items-center gap-1">

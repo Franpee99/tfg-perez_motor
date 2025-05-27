@@ -16,10 +16,10 @@ class CitaTaller extends Model
     protected $fillable = [
         'fecha',
         'hora',
-        'estado',
+        'estado_cita_id',
         'user_id',
         'vehiculo_id',
-        'motivo',
+        'motivo_cita_id',
         'mensaje',
     ];
 
@@ -38,12 +38,12 @@ class CitaTaller extends Model
         return $this->hasOne(Mantenimiento::class);
     }
 
-    public function estado()
+    public function estado_cita()
     {
         return $this->belongsTo(EstadoCita::class);
     }
 
-    public function motivo()
+    public function motivo_cita()
     {
         return $this->belongsTo(MotivoCita::class);
     }
