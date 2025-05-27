@@ -38,6 +38,16 @@ class CitaTaller extends Model
         return $this->hasOne(Mantenimiento::class);
     }
 
+    public function estado()
+    {
+        return $this->belongsTo(EstadoCita::class);
+    }
+
+    public function motivo()
+    {
+        return $this->belongsTo(MotivoCita::class);
+    }
+
     /*
     public function actualizarEstado()
     {
