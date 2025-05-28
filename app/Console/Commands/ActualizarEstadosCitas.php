@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\CitaTaller;
+use App\Models\EstadoCita;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -27,33 +28,37 @@ class ActualizarEstadosCitas extends Command
      */
     public function handle()
     {
+        $idReservada = EstadoCita::where('nombre', 'reservada')->value('id');
+        $idDisponible = EstadoCita::where('nombre', 'disponible')->value('id');
+        $idFinalizada = EstadoCita::where('nombre', 'finalizada')->value('id');
+
         $totalReservadas = 0;
         $totalDisponibles = 0;
 
-        // Reservada
-        $citas = CitaTaller::where('estado', 'reservada')
-        ->whereRaw("CONCAT(fecha, ' ', hora) <= ?", [now()->format('Y-m-d H:i:s')])
-        ->get();
+        // reservadas a finalizadas
+        $citasReservadas = CitaTaller::where('estado_cita_id', $idReservada)
+            ->whereRaw("CONCAT(fecha, ' ', hora) <= ?", [now()->format('Y-m-d H:i:s')])
+            ->get();
 
-        foreach ($citas as $cita) {
-            $cita->estado = 'finalizada';
+        foreach ($citasReservadas as $cita) {
+            $cita->estado_cita_id = $idFinalizada;
             $cita->save();
             $totalReservadas++;
         }
 
-        // Disponible
-        $citasDisponibles = CitaTaller::where('estado', 'disponible')
-        ->whereRaw("CONCAT(fecha, ' ', hora) <= ?", [now()->format('Y-m-d H:i:s')])
-        ->get();
+        // disponibles a finalizadas
+        $citasDisponibles = CitaTaller::where('estado_cita_id', $idDisponible)
+            ->whereRaw("CONCAT(fecha, ' ', hora) <= ?", [now()->format('Y-m-d H:i:s')])
+            ->get();
 
         foreach ($citasDisponibles as $cita) {
-            $cita->estado = 'finalizada';
+            $cita->estado_cita_id = $idFinalizada;
             $cita->save();
             $totalDisponibles++;
         }
 
-        if($totalReservadas >= 1 || $totalDisponibles >= 1){
-            $mensaje = ("Se han actualizado $totalReservadas citas reservadas y $totalDisponibles citas disponibles a estado 'finalizada'");
+        if ($totalReservadas > 0 || $totalDisponibles > 0) {
+            $mensaje = "Se han actualizado $totalReservadas citas reservadas y $totalDisponibles citas disponibles a estado 'finalizada'";
             $this->info($mensaje);
             Log::channel('citas')->info($mensaje);
         }
