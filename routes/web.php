@@ -119,6 +119,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/citas/{citaTaller}', [CitaTallerController::class, 'update'])->name('admin.citas.update');
     Route::delete('/citas/{citaTaller}', [CitaTallerController::class, 'destroy'])->name('admin.citas.destroy');
 
+    // PANEL USER
+    Route::get('/taller', function () {
+    return Inertia::render('PanelUserTaller');
+    })->name('taller.panel.user');
+
     /* USER */
     Route::get('/citas-taller/reservar', [CitaTallerController::class, 'reservarCita'])->name('user.reservar');
     Route::post('/citas-taller/reservar', [CitaTallerController::class, 'storeReservarCita'])->name('user.reservar.store');

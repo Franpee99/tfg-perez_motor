@@ -5,6 +5,7 @@ import Boton from '@/Components/Boton';
 import { useForm, usePage, router } from '@inertiajs/react';
 import ReactStars from 'react-stars';
 import Paginacion from '@/Components/Paginacion';
+import { CheckCircle } from "lucide-react";
 
 export default function Show({ producto }) {
   const imagenes = producto.imagenes || [];
@@ -187,8 +188,16 @@ export default function Show({ producto }) {
                 </tr>
                 <tr>
                   <td className="border-t text-green-600 font-semibold py-2">
-                    <p>Envío GRATIS</p>
-                    <p>Precio mínimo garantizado</p>
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        Envío GRATIS
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        Precio mínimo garantizado
+                      </span>
+                    </div>
                   </td>
                 </tr>
               </tbody>

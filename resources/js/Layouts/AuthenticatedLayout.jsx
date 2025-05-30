@@ -60,20 +60,30 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink href={route('tienda.index', 'pantalones')} active={route().current('tienda.index', { categoria: 'pantalones' })}>Pantalones</NavLink>
                                 <NavLink href={route('tienda.index', 'guantes')} active={route().current('tienda.index', { categoria: 'guantes' })}>Guantes</NavLink>
                                 <NavLink href={route('tienda.index', 'botas')} active={route().current('tienda.index', { categoria: 'botas' })}>Botas</NavLink>
-                                <Link href={route('carrito.index')} className="relative inline-flex items-center">
-                                    <ShoppingCart className="h-8 w-8 text-white" />
-                                    {usePage().props.carritoCount > 0 && (
-                                        <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
-                                            {usePage().props.carritoCount}  {/*AppServiceProvider.php*/}
-                                        </span>
-                                    )}
-                                </Link>
                             </div>
 
                             {/* Dropdown usuario */}
                             {/* Si estas logeado */}
                             {user && (
-                                <div className="hidden xl:flex items-center">
+                                <div className="hidden xl:flex items-center gap-8">
+                                    <Link href={route('carrito.index')} className="relative inline-flex items-center">
+                                        <ShoppingCart className="h-8 w-8 text-white" />
+                                        {usePage().props.carritoCount > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                                                {usePage().props.carritoCount}  {/*AppServiceProvider.php*/}
+                                            </span>
+                                        )}
+                                    </Link>
+
+                                    <div className="hidden xl:flex items-center gap-5">
+                                        <Link
+                                            href={route('taller.panel.user')}
+                                            className="inline-flex items-center rounded-md border border-white bg-transparent px-3 py-2 text-sm font-medium text-white hover:bg-white hover:text-[#040A2A] transition"
+                                        >
+                                            Taller
+                                        </Link>
+                                    </div>
+
                                     <Dropdown>
                                         <Dropdown.Trigger>
                                             <span className="inline-flex rounded-md">
@@ -180,7 +190,23 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             {/* Si NO estas logeado */}
                             {!user && (
-                                <div className="hidden xl:flex items-center">
+                                <div className="hidden xl:flex items-center gap-5">
+                                    <Link href={route('carrito.index')} className="relative inline-flex items-center">
+                                        <ShoppingCart className="h-8 w-8 text-white" />
+                                        {usePage().props.carritoCount > 0 && (
+                                            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-1.5">
+                                                {usePage().props.carritoCount}  {/*AppServiceProvider.php*/}
+                                            </span>
+                                        )}
+                                    </Link>
+
+                                    <Link
+                                        href={route('taller.panel.user')}
+                                        className="inline-flex items-center rounded-md border border-white bg-transparent px-3 py-2 text-sm font-medium text-white hover:bg-white hover:text-[#040A2A] transition"
+                                    >
+                                        Taller
+                                    </Link>
+
                                     <Link
                                         href={route('login')}
                                         className="inline-flex items-center rounded-md border border-white bg-transparent px-3 py-2 text-sm font-medium text-white hover:bg-white hover:text-[#040A2A] transition"
@@ -207,126 +233,138 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                 {/* Perfil / Usuario */}
                                 <nav className="flex flex-col space-y-3 text-base font-medium sm:w-1/2">
-                                {user ? (
-                                    <>
-                                    {/* Panel de Administración */}
-                                    {(user?.can?.viewAny_productos ||
-                                        user?.can?.create_productos ||
-                                        user?.can?.viewAny_pedidos ||
-                                        user?.can?.viewAny_devoluciones) && (
-                                        <Link
-                                        href={route('admin.panel')}
+                                    <Link
+                                        href={route('taller.panel.user')}
                                         onClick={() => setMenuAbierto(false)}
                                         className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                        >
-                                        <FaUserShield className="text-white" />
-                                        Panel de Administración
-                                        </Link>
-                                    )}
-
-                                    {user?.can?.viewAny_productos && (
-                                        <Link
-                                        href={route('productos.index')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                        >
-                                        <FaList className="text-white" />
-                                        Ver lista de productos
-                                        </Link>
-                                    )}
-
-                                    {user?.can?.create_productos && (
-                                        <Link
-                                        href={route('productos.create')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                        >
-                                        <FaPlus className="text-white" />
-                                        Crear producto
-                                        </Link>
-                                    )}
-
-                                    {user?.can?.viewAny_pedidos && (
-                                        <Link
-                                        href={route('admin.pedidos.index')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                        >
-                                        <FaTruck className="text-white" />
-                                        Gestión de pedidos
-                                        </Link>
-                                    )}
-
-                                    {user?.can?.viewAny_devoluciones && (
-                                        <Link
-                                        href={route('admin.devoluciones.index')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                        >
-                                        <FaUndoAlt className="text-white" />
-                                        Solicitudes de devolución
-                                        </Link>
-                                    )}
-
-                                    {user?.can?.viewAny_citasTaller && (
-                                        <Link
-                                        href={route('admin.citas.index')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                        >
+                                    >
                                         <FaTools className="text-white" />
-                                        Gestión del taller
-                                        </Link>
+                                        Taller
+                                    </Link>
+
+                                    {user ? (
+                                        <>
+                                            {/* Panel de Administración */}
+                                            {(user?.can?.viewAny_productos ||
+                                                user?.can?.create_productos ||
+                                                user?.can?.viewAny_pedidos ||
+                                                user?.can?.viewAny_devoluciones) && (
+                                                <Link
+                                                    href={route('admin.panel')}
+                                                    onClick={() => setMenuAbierto(false)}
+                                                    className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                                >
+                                                    <FaUserShield className="text-white" />
+                                                    Panel de Administración
+                                                </Link>
+                                            )}
+
+                                            {user?.can?.viewAny_productos && (
+                                                <Link
+                                                    href={route('productos.index')}
+                                                    onClick={() => setMenuAbierto(false)}
+                                                    className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                                >
+                                                    <FaList className="text-white" />
+                                                    Ver lista de productos
+                                                </Link>
+                                            )}
+
+                                            {user?.can?.create_productos && (
+                                                <Link
+                                                    href={route('productos.create')}
+                                                    onClick={() => setMenuAbierto(false)}
+                                                    className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                                >
+                                                    <FaPlus className="text-white" />
+                                                    Crear producto
+                                                </Link>
+                                            )}
+
+                                            {user?.can?.viewAny_pedidos && (
+                                                <Link
+                                                    href={route('admin.pedidos.index')}
+                                                    onClick={() => setMenuAbierto(false)}
+                                                    className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                                >
+                                                    <FaTruck className="text-white" />
+                                                    Gestión de pedidos
+                                                </Link>
+                                            )}
+
+                                            {user?.can?.viewAny_devoluciones && (
+                                                <Link
+                                                    href={route('admin.devoluciones.index')}
+                                                    onClick={() => setMenuAbierto(false)}
+                                                    className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                                >
+                                                    <FaUndoAlt className="text-white" />
+                                                    Solicitudes de devolución
+                                                </Link>
+                                            )}
+
+                                            {user?.can?.viewAny_citasTaller && (
+                                                <Link
+                                                    href={route('admin.citas.index')}
+                                                    onClick={() => setMenuAbierto(false)}
+                                                    className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                                >
+                                                    <FaTools className="text-white" />
+                                                    Gestión del taller
+                                                </Link>
+                                            )}
+
+                                            <Link
+                                                href={route('pedidos.index')}
+                                                onClick={() => setMenuAbierto(false)}
+                                                className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                            >
+                                                <FaClipboardList className="text-white" />
+                                                Mis pedidos
+                                            </Link>
+
+                                            <Link
+                                                href={route('vehiculos.index')}
+                                                onClick={() => setMenuAbierto(false)}
+                                                className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                            >
+                                                <FaMotorcycle className="text-white" />
+                                                Mis vehículos
+                                            </Link>
+
+                                            <Link
+                                                href={route('profile.edit')}
+                                                onClick={() => setMenuAbierto(false)}
+                                                className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
+                                            >
+                                                <FaUser className="text-white" />
+                                                Perfil
+                                            </Link>
+
+                                            <Link
+                                                href={route('logout')}
+                                                method="post"
+                                                as="button"
+                                                onClick={() => setMenuAbierto(false)}
+                                                className="flex items-center gap-2 hover:text-red-500"
+                                            >
+                                                <FaSignOutAlt className="text-[#C42424]" />
+                                                Cerrar sesión
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {/* Si NO está logueado*/}
+                                            <Link
+                                                href={route('login')}
+                                                onClick={() => setMenuAbierto(false)}
+                                                className="flex items-center gap-2 hover:text-red-500"
+                                            >
+                                                <FaUser className="text-white" />
+                                                Iniciar sesión
+                                            </Link>
+                                        </>
                                     )}
-
-                                    <Link
-                                        href={route('pedidos.index')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                    >
-                                        <FaClipboardList className="text-white" />
-                                        Mis pedidos
-                                    </Link>
-
-                                    <Link
-                                        href={route('vehiculos.index')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                    >
-                                        <FaMotorcycle className="text-white" />
-                                        Mis vehículos
-                                    </Link>
-
-                                    <Link
-                                        href={route('profile.edit')}
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500 border-b border-white/10 pb-2"
-                                    >
-                                        <FaUser className="text-white" />
-                                        Perfil
-                                    </Link>
-
-                                    <Link
-                                        href={route('logout')}
-                                        method="post"
-                                        as="button"
-                                        onClick={() => setMenuAbierto(false)}
-                                        className="flex items-center gap-2 hover:text-red-500"
-                                    >
-                                        <FaSignOutAlt className="text-[#C42424]" />
-                                        Cerrar sesión
-                                    </Link>
-                                    </>
-                                ) : (
-                                    <Link
-                                    href={route('login')}
-                                    onClick={() => setMenuAbierto(false)}
-                                    className="flex items-center gap-2 hover:text-red-500"
-                                    >
-                                    <FaUser className="text-white" />
-                                    Iniciar sesión
-                                    </Link>
-                                )}
                                 </nav>
                             </div>
                         </div>

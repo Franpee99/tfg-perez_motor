@@ -182,7 +182,12 @@ export default function MisCitas({ citas }) {
             </div>
           ) : (
             <div className="grid gap-7 grid-cols-1 md:grid-cols-2">
-              {citas.map((cita) => (
+               {citas
+                .filter(
+                  cita =>
+                    (cita.estado_cita?.nombre || cita.estado) !== "disponible"
+                )
+                .map((cita) => (
                 <div
                   key={cita.id}
                   className="bg-white rounded-2xl shadow-lg p-5 flex flex-col gap-3 border-l-8"
