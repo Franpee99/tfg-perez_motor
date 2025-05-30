@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('vehiculo_id')->constrained();
             $table->foreignId('cita_taller_id')->nullable()->constrained('citas_taller');
-            $table->foreignId('tipo_mantenimiento_id')->constrained('tipos_mantenimiento');
-            $table->date('fecha');
             $table->integer('kilometros')->nullable();
             $table->text('observaciones')->nullable();
-            $table->string('factura')->nullable();
+            $table->string('prox_revision');
+            $table->decimal('mano_obra', 8, 2);
             $table->timestamps();
         });
     }

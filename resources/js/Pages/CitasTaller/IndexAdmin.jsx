@@ -148,6 +148,31 @@ export default function IndexAdmin({ citas, estados }) {
       grow: 2,
     },
     {
+      name: "Mantenimiento",
+      cell: row => (
+        row.estado_cita?.nombre === "finalizada" && !row.mantenimiento && row.user ? (
+          <Boton
+            texto="Registrar"
+            tamaño="xs"
+            color="green"
+            onClick={() => router.get(route("admin.mantenimientos.create", {
+              vehiculo_id: row.vehiculo?.id,
+              cita_taller_id: row.id
+            }))}
+            className="font-bold"
+          />
+        ) : (
+          row.mantenimiento ?
+            <span className="text-green-700 font-bold">Registrado</span>
+            : <span className="text-gray-400">—</span>
+        )
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      width: "140px"
+    },
+    {
       name: "Acciones",
       cell: row => (
         <div className="flex gap-2">

@@ -20,9 +20,8 @@ class Mantenimiento extends Model
         return $this->belongsTo(CitaTaller::class);
     }
 
-    public function tipoMantenimiento()
+    public function mantenimientoDetalles()
     {
-        return $this->belongsTo(TiposMantenimiento::class);
+        return $this->hasMany(MantenimientoDetalle::class);
     }
-
 }

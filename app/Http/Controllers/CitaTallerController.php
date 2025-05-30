@@ -139,7 +139,7 @@ class CitaTallerController extends Controller
     {
         $this->authorize('viewAny', CitaTaller::class);
 
-        $citas = CitaTaller::with(['user', 'vehiculo', 'estado_cita', 'motivo_cita'])
+        $citas = CitaTaller::with(['user', 'vehiculo', 'estado_cita', 'motivo_cita', 'mantenimiento'])
         ->orderBy('fecha', 'desc')
         ->orderBy('hora')
         ->get();

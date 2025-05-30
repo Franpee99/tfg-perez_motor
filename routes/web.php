@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\LineaCarritoController;
+use App\Http\Controllers\MantenimientoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
@@ -141,3 +142,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])->name('vehiculos.update');
     Route::delete('/vehiculos/{vehiculo}/eliminar', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
 });
+
+/* MANTENIMIENTO */
+Route::get('/admin/mantenimientos/create', [MantenimientoController::class, 'create'])->name('admin.mantenimientos.create');
+Route::post('/admin/mantenimientos', [MantenimientoController::class, 'store'])->name('admin.mantenimientos.store');
