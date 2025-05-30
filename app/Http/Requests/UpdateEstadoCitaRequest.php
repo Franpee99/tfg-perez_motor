@@ -3,16 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class UpdateCitaTallerRequest extends FormRequest
+class UpdateEstadoCitaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::user()->is_admin;
+        return false;
     }
 
     /**
@@ -23,9 +22,7 @@ class UpdateCitaTallerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fecha'   => ['required', 'date'],
-            'hora'    => ['required', 'date_format:H:i'],
-            'estado_cita_id' => ['required', 'exists:estado_citas,id'],
+            //
         ];
     }
 }

@@ -60,7 +60,7 @@ export default function AgendaCreate({ onSubmit, onCancel }) {
 
   const quitarTodas = () => setHorasSeleccionadas([]);
 
-  const handleSubmit = (e) => {
+  const manejarEnvio = (e) => {
     e.preventDefault();
     if (fechaInicio && fechaFin && horasSeleccionadas.length) {
       const fechas = [];
@@ -89,7 +89,7 @@ export default function AgendaCreate({ onSubmit, onCancel }) {
 
   return (
     <div className="bg-white text-[#040A2A] rounded-lg shadow-lg p-6 mt-2 animate-fadeIn">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={manejarEnvio}>
         <div className="mb-4 flex gap-4 flex-wrap">
           <div>
             <label>Desde:</label>
@@ -174,14 +174,6 @@ export default function AgendaCreate({ onSubmit, onCancel }) {
           )}
         </div>
         <div className="flex gap-2 mt-4">
-          {onCancel && (
-            <Boton
-              tipo="button"
-              color="gray"
-              texto="Cerrar"
-              onClick={onCancel}
-            />
-          )}
           <Boton
             tipo="submit"
             color="blue"

@@ -2,24 +2,24 @@
 
 namespace App\Policies;
 
-use App\Models\CitaTaller;
+use App\Models\EstadoCita;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class CitaTallerPolicy
+class EstadoCitaPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->is_admin;
+        return false;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, CitaTaller $citaTaller): bool
+    public function view(User $user, EstadoCita $estadoCita): bool
     {
         return false;
     }
@@ -29,21 +29,21 @@ class CitaTallerPolicy
      */
     public function create(User $user): bool
     {
-        return $user->is_admin;
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, CitaTaller $citaTaller): bool
+    public function update(User $user, EstadoCita $estadoCita): bool
     {
-        return $user->id == $citaTaller->user->id || $user->is_admin;
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, CitaTaller $citaTaller): bool
+    public function delete(User $user, EstadoCita $estadoCita): bool
     {
         return false;
     }
@@ -51,7 +51,7 @@ class CitaTallerPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, CitaTaller $citaTaller): bool
+    public function restore(User $user, EstadoCita $estadoCita): bool
     {
         return false;
     }
@@ -59,7 +59,7 @@ class CitaTallerPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, CitaTaller $citaTaller): bool
+    public function forceDelete(User $user, EstadoCita $estadoCita): bool
     {
         return false;
     }

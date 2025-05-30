@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             TallaSeeder::class,
             CaracteristicaSeeder::class,
             ProductoSeeder::class,
+            MotivoCitaSeeder::class,
+            EstadoCitaSeeder::class,
         ]);
     }
 }

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('vehiculo_id')->nullable()->constrained();
             $table->date('fecha');
             $table->time('hora');
-            $table->enum('estado', ['disponible', 'reservada', 'finalizada', 'cancelada'])->default('disponible');
-            $table->enum('motivo', ['mantenimiento', 'reparacion', 'otro'])->nullable();
+            $table->foreignId('estado_cita_id')->constrained()->default(1);
+            $table->foreignId('motivo_cita_id')->nullable()->constrained();
             $table->text('mensaje')->nullable();
             $table->softDeletes();
             $table->timestamps();

@@ -53,7 +53,8 @@ export default function IndexAdmin({ pedidos }) {
   };
 
   // Filtros
-  const [filtroFecha, setFiltroFecha] = useState("");
+  const [filtroFechaDesde, setFiltroFechaDesde] = useState("");
+  const [filtroFechaHasta, setFiltroFechaHasta] = useState("");
   const [filtroUsuario, setFiltroUsuario] = useState("");
   const [filtroCorreo, setFiltroCorreo] = useState("");
   const [filtroTelefono, setFiltroTelefono] = useState("");
@@ -62,7 +63,8 @@ export default function IndexAdmin({ pedidos }) {
   const [filtroDevolucion, setFiltroDevolucion] = useState("");
 
   const limpiarFiltros = () => {
-    setFiltroFecha("");
+    setFiltroFechaDesde("");
+    setFiltroFechaHasta("");
     setFiltroUsuario("");
     setFiltroCorreo("");
     setFiltroTelefono("");
@@ -79,15 +81,14 @@ export default function IndexAdmin({ pedidos }) {
     return "Denegada";
   };
 
-  // Filtrado de pedidos
   const pedidosFiltrados = pedidos.filter((p) => {
-    const fechaOk = new Date(p.created_at).toLocaleString("es-ES", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).toLowerCase().includes(filtroFecha.toLowerCase());
+    let fechaOk = true;
+    const fechaPedido = p.created_at ? new Date(p.created_at) : null;
+    const desde = filtroFechaDesde ? new Date(filtroFechaDesde) : null;
+    const hasta = filtroFechaHasta ? new Date(filtroFechaHasta) : null;
+
+    if (desde && fechaPedido && fechaPedido < desde) fechaOk = false;
+    if (hasta && fechaPedido && fechaPedido > hasta) fechaOk = false;
 
     const usuarioOk = (p.user?.name || "").toLowerCase().includes(filtroUsuario.toLowerCase());
     const correoOk = (p.user?.email || "").toLowerCase().includes(filtroCorreo.toLowerCase());
@@ -196,7 +197,7 @@ export default function IndexAdmin({ pedidos }) {
             {estado === "Pendiente" && (
               <Link
                 href={route("admin.devoluciones.index")}
-                className="text-xs text-blue-300 hover:underline"
+                className="text-xs text-blue-700 hover:underline"
               >
                 Ver solicitudes
               </Link>
@@ -217,7 +218,7 @@ export default function IndexAdmin({ pedidos }) {
 
   return (
     <AppLayout>
-      <section className="bg-[#040A2A] text-white py-10 px-6 pt-20 min-h-screen">
+      <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] text-white py-10 px-6 pt-20">
         <div className="max-w-7xl mx-auto">
           {/* Título y barra animada */}
           <div className="mb-10">
@@ -252,51 +253,104 @@ export default function IndexAdmin({ pedidos }) {
           )}
 
           {/* Filtros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 text-sm">
-  {[
-    ["Fecha de compra", filtroFecha, setFiltroFecha, "text", "Buscar por Fecha"],
-    ["Usuario", filtroUsuario, setFiltroUsuario, "text", "Buscar por Usuario"],
-    ["Correo", filtroCorreo, setFiltroCorreo, "text", "Buscar por correo"],
-    ["Teléfono", filtroTelefono, setFiltroTelefono, "text", "Buscar por teléfono"],
-    ["Pedido", filtroPedido, setFiltroPedido, "text", "Buscar por pedido"],
-    ["Estado de envío", filtroEstado, setFiltroEstado, "select", ["pendiente", "procesado", "enviado", "entregado", "cancelado"]],
-    ["Estado de devolución", filtroDevolucion, setFiltroDevolucion, "select", ["Aprobada", "Pendiente", "Denegada", "Sin solicitud"]],
-  ].map(([label, value, setter, type, extra], i) => (
-    <div key={i} className="bg-white/90 border-2 border-red-200 rounded px-3 py-2 shadow-md">
-      <label className="block mb-1 font-semibold text-[#040A2A]">{label}:</label>
-      {type === "select" ? (
-        <select
-          value={value}
-          onChange={(e) => setter(e.target.value)}
-          className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
-        >
-          <option value="">Todos</option>
-          {extra.map((op) => (
-            <option key={op} value={op}>{op}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => setter(e.target.value)}
-          className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
-          placeholder={extra}
-        />
-      )}
-    </div>
-  ))}
-  <div className="flex items-end justify-end col-span-1 lg:col-start-5">
-    <Boton
-      texto="Limpiar filtros"
-      onClick={limpiarFiltros}
-      color="gray"
-      tamaño="md"
-      className="bg-red-700 hover:bg-red-600 text-white"
-    />
-  </div>
-</div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-6 text-sm">
+          <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Desde fecha:</label>
+              <input
+                type="date"
+                value={filtroFechaDesde}
+                onChange={e => setFiltroFechaDesde(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Hasta fecha:</label>
+              <input
+                type="date"
+                value={filtroFechaHasta}
+                onChange={e => setFiltroFechaHasta(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Usuario:</label>
+              <input
+                type="text"
+                value={filtroUsuario}
+                onChange={e => setFiltroUsuario(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por usuario"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Correo:</label>
+              <input
+                type="text"
+                value={filtroCorreo}
+                onChange={e => setFiltroCorreo(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por correo"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Teléfono:</label>
+              <input
+                type="text"
+                value={filtroTelefono}
+                onChange={e => setFiltroTelefono(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por teléfono"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Pedido:</label>
+              <input
+                type="text"
+                value={filtroPedido}
+                onChange={e => setFiltroPedido(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por pedido"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Estado de envío:</label>
+              <select
+                value={filtroEstado}
+                onChange={e => setFiltroEstado(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              >
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="procesado">Procesado</option>
+                <option value="enviado">Enviado</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+            <div className="bg-white/90 border-2 border-gray-200 rounded px-3 py-3 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Estado de devolución:</label>
+              <select
+                value={filtroDevolucion}
+                onChange={e => setFiltroDevolucion(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              >
+                <option value="">Todos</option>
+                <option value="Aprobada">Aprobada</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Denegada">Denegada</option>
+                <option value="Sin solicitud">Sin solicitud</option>
+              </select>
+            </div>
+            <div className="flex items-end justify-end lg:col-start-5">
+            <Boton
+                texto="Limpiar filtros"
+                onClick={limpiarFiltros}
+                color="gray"
+                tamaño="sm"
+                className="bg-red-700 hover:bg-red-600 text-white w-28"
+              />
+            </div>
+          </div>
 
           {/* Tabla pedidos */}
           <div className="bg-white rounded-lg shadow-lg overflow-x-auto p-2">
@@ -322,7 +376,7 @@ export default function IndexAdmin({ pedidos }) {
                   style: {
                     fontSize: "15px",
                     fontWeight: "bold",
-                    backgroundColor: "#f3f4f6",
+                    backgroundColor: '#f3f4f6',
                     color: "#040A2A",
                     borderBottom: "2px solid #e5e7eb",
                   },

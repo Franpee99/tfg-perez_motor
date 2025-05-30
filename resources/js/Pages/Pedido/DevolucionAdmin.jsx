@@ -23,7 +23,8 @@ export default function DevolucionAdmin({ devoluciones }) {
     }
   }, [mensaje]);
 
-  const [filtroFecha, setFiltroFecha] = useState("");
+  const [filtroFechaDesde, setFiltroFechaDesde] = useState("");
+  const [filtroFechaHasta, setFiltroFechaHasta] = useState("");
   const [filtroUsuario, setFiltroUsuario] = useState("");
   const [filtroCorreo, setFiltroCorreo] = useState("");
   const [filtroTelefono, setFiltroTelefono] = useState("");
@@ -31,7 +32,8 @@ export default function DevolucionAdmin({ devoluciones }) {
   const [filtroEstado, setFiltroEstado] = useState("pendiente");
 
   const limpiarFiltros = () => {
-    setFiltroFecha("");
+    setFiltroFechaDesde("");
+    setFiltroFechaHasta("");
     setFiltroUsuario("");
     setFiltroCorreo("");
     setFiltroTelefono("");
@@ -40,17 +42,12 @@ export default function DevolucionAdmin({ devoluciones }) {
   };
 
   const devolucionesFiltradas = devoluciones.filter((d) => {
-    const fechaOk = new Date(d.created_at)
-      .toLocaleString("es-ES", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      })
-      .toLowerCase()
-      .includes(filtroFecha.toLowerCase());
+    const fechaDevolucion = d.created_at ? new Date(d.created_at) : null;
+    const desde = filtroFechaDesde ? new Date(filtroFechaDesde) : null;
+    const hasta = filtroFechaHasta ? new Date(filtroFechaHasta) : null;
+    let fechaOk = true;
+    if (desde && fechaDevolucion && fechaDevolucion < desde) fechaOk = false;
+    if (hasta && fechaDevolucion && fechaDevolucion > hasta) fechaOk = false;
 
     const usuarioOk = (d.nombre || "").toLowerCase().includes(filtroUsuario.toLowerCase());
     const correoOk = (d.correo || "").toLowerCase().includes(filtroCorreo.toLowerCase());
@@ -183,7 +180,7 @@ export default function DevolucionAdmin({ devoluciones }) {
 
   return (
     <AppLayout>
-      <section className="bg-[#040A2A] text-white py-10 px-6 pt-20 min-h-screen">
+      <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] text-white py-10 px-6 pt-20">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10">
             <h1 className="text-3xl font-bold relative w-fit z-10">SOLICITUDES DE DEVOLUCIÓN</h1>
@@ -218,38 +215,77 @@ export default function DevolucionAdmin({ devoluciones }) {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4 text-sm">
-            {[
-              ["Fecha de devolución", filtroFecha, setFiltroFecha, "text", "Buscar por Fecha"],
-              ["Usuario", filtroUsuario, setFiltroUsuario, "text", "Buscar por Usuario"],
-              ["Correo", filtroCorreo, setFiltroCorreo, "text", "Buscar por correo"],
-              ["Teléfono", filtroTelefono, setFiltroTelefono, "text", "Buscar por teléfono"],
-              ["Pedido", filtroPedido, setFiltroPedido, "text", "Buscar por pedido"],
-              ["Estado", filtroEstado, setFiltroEstado, "select", ["pendiente", "aprobada", "denegada"]],
-            ].map(([label, value, setter, type, extra], i) => (
-              <div key={i} className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
-                <label className="block mb-1 font-semibold text-[#040A2A]">{label}:</label>
-                {type === "select" ? (
-                  <select
-                    value={value}
-                    onChange={e => setter(e.target.value)}
-                    className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
-                  >
-                    <option value="">Todos</option>
-                    {extra.map(op => (
-                      <option key={op} value={op}>{op.charAt(0).toUpperCase() + op.slice(1)}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type={type}
-                    value={value}
-                    onChange={e => setter(e.target.value)}
-                    className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
-                    placeholder={extra}
-                  />
-                )}
-              </div>
-            ))}
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Desde fecha:</label>
+              <input
+                type="date"
+                value={filtroFechaDesde}
+                onChange={e => setFiltroFechaDesde(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Hasta fecha:</label>
+              <input
+                type="date"
+                value={filtroFechaHasta}
+                onChange={e => setFiltroFechaHasta(e.target.value)}
+                className="w-full h-10 px-3 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Usuario:</label>
+              <input
+                type="text"
+                value={filtroUsuario}
+                onChange={e => setFiltroUsuario(e.target.value)}
+                className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por Usuario"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Correo:</label>
+              <input
+                type="text"
+                value={filtroCorreo}
+                onChange={e => setFiltroCorreo(e.target.value)}
+                className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por correo"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Teléfono:</label>
+              <input
+                type="text"
+                value={filtroTelefono}
+                onChange={e => setFiltroTelefono(e.target.value)}
+                className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por teléfono"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Pedido:</label>
+              <input
+                type="text"
+                value={filtroPedido}
+                onChange={e => setFiltroPedido(e.target.value)}
+                className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+                placeholder="Buscar por pedido"
+              />
+            </div>
+            <div className="bg-white/90 border-2 border-blue-200 rounded px-3 py-2 shadow-md">
+              <label className="block mb-1 font-semibold text-[#040A2A]">Estado:</label>
+              <select
+                value={filtroEstado}
+                onChange={e => setFiltroEstado(e.target.value)}
+                className="w-full h-10 px-3 mt-1 bg-white text-[#040A2A] rounded border-2 border-blue-400 focus:border-blue-600 shadow-sm transition"
+              >
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="aprobada">Aprobada</option>
+                <option value="denegada">Denegada</option>
+              </select>
+            </div>
             <div className="flex items-end justify-end col-span-1 lg:col-start-5">
               <Boton
                 texto="Limpiar filtros"

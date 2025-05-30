@@ -15,7 +15,7 @@ class JasperService
 
     public function generarFactura(array $params = [])
     {
-        // Establecer Java 8 como entorno temporal para este proceso (ya que solo funciona con versiones de java anteriores)
+        // Java 8 como entorno temporal para este proceso (ya que solo funciona con versiones de java anteriores)
         putenv('JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64');
         putenv('PATH=' . getenv('JAVA_HOME') . '/bin:' . getenv('PATH'));
 

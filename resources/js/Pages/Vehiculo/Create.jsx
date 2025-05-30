@@ -3,16 +3,6 @@ import { useEffect, useState } from "react";
 import { router, usePage } from '@inertiajs/react';
 import Boton from "@/Components/Boton";
 
-const campos = [
-  { nombre: 'marca', label: 'Marca*', requerido: true },
-  { nombre: 'modelo', label: 'Modelo*', requerido: true },
-  { nombre: 'cilindrada', label: 'Cilindrada', requerido: false },
-  { nombre: 'matricula', label: 'Matrícula*', requerido: true },
-  { nombre: 'anio', label: 'Año', requerido: false },
-  { nombre: 'color', label: 'Color', requerido: false },
-  { nombre: 'vin', label: 'VIN (Nº bastidor)', requerido: false }
-];
-
 export default function Create() {
   const [datos, setDatos] = useState({
     marca: '',
