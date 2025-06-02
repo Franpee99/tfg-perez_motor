@@ -8,6 +8,12 @@ use Illuminate\Auth\Access\Response;
 
 class MantenimientoPolicy
 {
+
+    public function verFacturaTaller(User $user, Mantenimiento $mantenimiento): bool
+    {
+        return $mantenimiento->vehiculo->user_id === $user->id || $user->is_admin;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
@@ -21,7 +27,7 @@ class MantenimientoPolicy
      */
     public function view(User $user, Mantenimiento $mantenimiento): bool
     {
-        return false;
+        return $user->id == $mantenimiento->vehiculo->user->id || $user->is_admin;
     }
 
     /**
@@ -29,7 +35,7 @@ class MantenimientoPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->is_admin;
     }
 
     /**
@@ -37,7 +43,7 @@ class MantenimientoPolicy
      */
     public function update(User $user, Mantenimiento $mantenimiento): bool
     {
-        return false;
+        return $user->is_admin;
     }
 
     /**

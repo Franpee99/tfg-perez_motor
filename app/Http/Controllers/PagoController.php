@@ -90,7 +90,7 @@ class PagoController extends Controller
         // Generar y enviar factura por correo
         try {
             $jasperService = app(JasperService::class);
-            $rutaPdf = $jasperService->generarFactura([
+            $rutaPdf = $jasperService->generarFacturaVenta([
                 'ID_PEDIDO' => $pedido->id,
             ]);
             $pdf = file_get_contents($rutaPdf);

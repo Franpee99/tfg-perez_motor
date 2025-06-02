@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\TiposMantenimiento;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -21,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ProductoSeeder::class,
             MotivoCitaSeeder::class,
             EstadoCitaSeeder::class,
+            TiposMantenimientoSeeder::class,
         ]);
     }
 }

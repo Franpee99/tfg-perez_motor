@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('codigo_postal')->nullable();
             $table->string('telefono')->nullable();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
 

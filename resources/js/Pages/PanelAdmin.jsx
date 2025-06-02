@@ -1,6 +1,6 @@
 import AppLayout from '@/Layouts/AuthenticatedLayout';
 import { useEffect, useState } from "react";
-import { FaTruck, FaUndoAlt, FaPlus, FaList, FaTools } from "react-icons/fa";
+import { FaTruck, FaUndoAlt, FaPlus, FaList, FaTools, FaSearch } from "react-icons/fa";
 import { Link } from '@inertiajs/react';
 
 const PanelAdmin = () => {
@@ -36,6 +36,11 @@ const PanelAdmin = () => {
       nombre: 'Gestión del taller',
       ruta: route('admin.citas.index'),
       icono: FaTools,
+    },
+    {
+      nombre: 'Buscar vehículo',
+      ruta: route('admin.vehiculos'),
+      icono: FaSearch,
     },
   ];
 

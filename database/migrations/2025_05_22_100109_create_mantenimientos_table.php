@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('vehiculo_id')->constrained();
             $table->foreignId('cita_taller_id')->nullable()->constrained('citas_taller');
-            $table->integer('kilometros')->nullable();
+            $table->integer('kilometros');
             $table->text('observaciones')->nullable();
             $table->string('prox_revision');
             $table->decimal('mano_obra', 8, 2);

@@ -375,34 +375,35 @@ export default function Show({ producto }) {
 
               <ul className="space-y-8">
                 {valoraciones
-                .filter(v => v.user.id !== auth?.user?.id)
-                .map((v, index) => (
-                  <li key={index} className="bg-white shadow-md p-6 rounded-lg border">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold">
-                        {v.user.name}
-                        {v.user.id === auth?.user?.id && <span> (Tú)</span>}
-                      </span>
-                      <span className="text-sm text-gray-400">
-                        {new Date(v.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center mb-2">
-                      <ReactStars
-                        count={5}
-                        value={v.estrella}
-                        size={24}
-                        color2="#FACC15"
-                        edit={false}
-                      />
-                    </div>
-
-                    {v.comentario && (
-                      <p className="text-gray-700">{v.comentario}</p>
-                    )}
-                  </li>
-                ))}
+                  .filter(v => v.user && v.user.id !== auth?.user?.id)
+                  .map((v, index) => (
+                    <li key={index} className="bg-white shadow-md p-6 rounded-lg border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold">
+                          {v.user
+                            ? v.user.name
+                            : <span className="text-gray-400 italic">Usuario eliminado</span>
+                          }
+                          {v.user && v.user.id === auth?.user?.id && <span> (Tú)</span>}
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          {new Date(v.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center mb-2">
+                        <ReactStars
+                          count={5}
+                          value={v.estrella}
+                          size={24}
+                          color2="#FACC15"
+                          edit={false}
+                        />
+                      </div>
+                      {v.comentario && (
+                        <p className="text-gray-700">{v.comentario}</p>
+                      )}
+                    </li>
+                  ))}
               </ul>
 
               <Paginacion links={valoracionesPublicas.links} />

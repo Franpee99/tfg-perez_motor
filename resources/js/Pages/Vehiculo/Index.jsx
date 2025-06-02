@@ -78,9 +78,8 @@ export default function Index({ vehiculos }) {
         descripcion="¿Seguro que quieres eliminar este vehículo?"
       />
 
-
-      <section className="py-10 px-4 min-h-screen bg-[#f6f7fb]">
-        <div className="max-w-6xl mx-auto">
+      <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] text-white py-12 px-2 flex flex-col items-center">
+        <div className="max-w-6xl w-full mx-auto bg-white/95 rounded-xl shadow-lg p-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <h1 className="text-4xl font-extrabold text-[#040A2A] tracking-tight whitespace-nowrap">
               Mis vehículos

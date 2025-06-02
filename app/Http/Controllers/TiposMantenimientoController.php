@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTipos_mantenimientoRequest;
 use App\Http\Requests\UpdateTipos_mantenimientoRequest;
-use App\Models\Tipos_mantenimiento;
+use App\Models\TiposMantenimiento;
 
 class TiposMantenimientoController extends Controller
 {
@@ -29,13 +29,21 @@ class TiposMantenimientoController extends Controller
      */
     public function store(StoreTipos_mantenimientoRequest $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:tipos_mantenimiento,nombre',
+            'descripcion' => 'nullable|string',
+        ]);
+
+        $tipo = TiposMantenimiento::create($validated);
+
+        // Devuelve el tipo nuevo como JSON
+        return response()->json($tipo);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Tipos_mantenimiento $tipos_mantenimiento)
+    public function show(TiposMantenimiento $tipos_mantenimiento)
     {
         //
     }
@@ -43,7 +51,7 @@ class TiposMantenimientoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tipos_mantenimiento $tipos_mantenimiento)
+    public function edit(TiposMantenimiento $tipos_mantenimiento)
     {
         //
     }
@@ -51,7 +59,7 @@ class TiposMantenimientoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTipos_mantenimientoRequest $request, Tipos_mantenimiento $tipos_mantenimiento)
+    public function update(UpdateTipos_mantenimientoRequest $request, TiposMantenimiento $tipos_mantenimiento)
     {
         //
     }
@@ -59,7 +67,7 @@ class TiposMantenimientoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tipos_mantenimiento $tipos_mantenimiento)
+    public function destroy(TiposMantenimiento $tipos_mantenimiento)
     {
         //
     }

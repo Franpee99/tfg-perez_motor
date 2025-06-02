@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePedidoRequest;
 use App\Http\Requests\UpdatePedidoRequest;
+use App\Mail\PedidoCanceladoMail;
 use App\Models\Pedido;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Inertia\Inertia;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PedidoController extends Controller
 {
@@ -100,7 +102,7 @@ class PedidoController extends Controller
         $pedido->estado = 'cancelado';
         $pedido->save();
 
-        // Aqui me falta por poner que devuelva el dinero
+        Mail::to($pedido->user->email)->send(new PedidoCanceladoMail($pedido));
 
         return redirect()->back()->with('success', 'Pedido cancelado y reembolso procesado');
     }

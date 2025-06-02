@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCitaTallerRequest;
 use App\Http\Requests\UpdateCitaTallerRequest;
 use App\Mail\CitaReservadaMail;
+use App\Mail\EstadoCitaTallerMail;
 use App\Models\CitaTaller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class CitaTallerController extends Controller
      */
     public function misCitas()
     {
-        $citas = CitaTaller::with('vehiculo', 'estado_cita', 'motivo_cita')
+        $citas = CitaTaller::with('vehiculo', 'estado_cita', 'motivo_cita', 'mantenimiento')
             ->where('user_id', Auth::user()->id)
             ->orderBy('fecha', 'asc')
             ->orderBy('hora', 'asc')
@@ -129,6 +130,9 @@ class CitaTallerController extends Controller
         }
         $estadoCanceladaId = EstadoCita::where('nombre', 'cancelada')->value('id');
         $cita->update(['estado_cita_id' => $estadoCanceladaId]);
+
+        Mail::to($cita->user->email)->send(new EstadoCitaTallerMail($cita, 'cancelada'));
+
         return back()->with('success', 'Cita cancelada');
     }
 
@@ -208,6 +212,10 @@ class CitaTallerController extends Controller
     public function update(UpdateCitaTallerRequest $request, CitaTaller $citaTaller)
     {
         $citaTaller->update($request->validated());
+
+        $nuevoEstado = $citaTaller->estado_cita->nombre;
+
+        Mail::to($citaTaller->user->email)->send(new EstadoCitaTallerMail($citaTaller, $nuevoEstado));
 
         return redirect()->route('admin.citas.index')
             ->with('success', 'Cita actualizada');

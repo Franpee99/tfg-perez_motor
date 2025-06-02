@@ -1,7 +1,8 @@
 import AppLayout from "@/Layouts/AuthenticatedLayout";
 import Boton from "@/Components/Boton";
 import ModalEliminar from "@/Components/ModalEliminar";
-import { CheckCircle, XCircle, ClipboardList } from "lucide-react";
+import EstadoCard from "@/Components/EstadoCard";
+import { XCircle, ClipboardList } from "lucide-react";
 import { FaMotorcycle } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
@@ -20,36 +21,6 @@ function mostrarMotivo(motivo, motivo_cita) {
   if (motivo === "mantenimiento") return "Mantenimiento";
   if (motivo === "otro") return "Otro";
   return capitalize(motivo);
-}
-
-// Componente para mostrar el estado
-function EstadoCard({ estado, estado_cita }) {
-  const nombre = estado_cita?.nombre || estado;
-  if (nombre === "reservada")
-    return (
-      <span className="flex items-center gap-2 font-bold text-green-600">
-        <CheckCircle className="w-6 h-6" /> Reservada
-      </span>
-    );
-  if (nombre === "finalizada")
-    return (
-      <span className="flex items-center gap-2 font-bold text-blue-500">
-        <CheckCircle className="w-6 h-6" /> Finalizada
-      </span>
-    );
-  if (nombre === "cancelada")
-    return (
-      <span className="flex items-center gap-2 font-bold text-red-600">
-        <XCircle className="w-6 h-6" /> Cancelada
-      </span>
-    );
-  if (nombre === "disponible")
-    return (
-      <span className="flex items-center gap-2 font-bold text-gray-400">
-        <CheckCircle className="w-6 h-6" /> Disponible
-      </span>
-    );
-  return <span className="font-bold text-gray-500">{capitalize(nombre)}</span>;
 }
 
 export default function MisCitas({ citas }) {
@@ -249,6 +220,19 @@ export default function MisCitas({ citas }) {
                       </span>
                     </div>
                   </div>
+
+                  {cita.mantenimiento && (
+                    <div className="mt-3 flex">
+                      <Boton
+                        texto="Ver mantenimiento"
+                        color="blue"
+                        tamaño="md"
+                        className="ml-auto"
+                        href={route("mantenimientos.show", cita.mantenimiento.id)}
+                        icono={<ClipboardList className="w-5 h-5" />}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

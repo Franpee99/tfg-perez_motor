@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EstadoDevolucionMail;
+use App\Mail\SolicitudDevolucionMail;
 use App\Models\Devolucion;
 use App\Models\Pedido;
 use Illuminate\Http\Request;
@@ -10,6 +12,7 @@ use Inertia\Inertia;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class DevolucionController extends Controller
 {
@@ -55,7 +58,7 @@ class DevolucionController extends Controller
             return back();
         }
 
-        Devolucion::create([
+        $devolucion =  Devolucion::create([
             'user_id'   => Auth::id(),
             'pedido_id' => $pedido->id,
             'nombre'    => $validados['nombre'],
@@ -65,6 +68,8 @@ class DevolucionController extends Controller
             'mensaje'   => $validados['mensaje'],
             'acepta'    => true,
         ]);
+
+        Mail::to($devolucion->user->email)->send(new SolicitudDevolucionMail($devolucion));
 
         return back()->with('success', 'Tu solicitud de devolución ha sido enviada correctamente');
     }
@@ -139,10 +144,15 @@ class DevolucionController extends Controller
                         return redirect()->back()->with('error', 'Error al procesar el reembolso con PayPal.');
                     }
                 }
+
+                Mail::to($devolucion->user->email)->send(new EstadoDevolucionMail($devolucion, 'aprobada')
+        );
         } else {
             // Si se deniega, solo se actualiza esta
             $devolucion->estado = 'denegada';
             $devolucion->save();
+
+            Mail::to($devolucion->user->email)->send(new EstadoDevolucionMail($devolucion, 'denegada'));
         }
 
         return back()->with('success', 'Estado de solicitud actualizado');

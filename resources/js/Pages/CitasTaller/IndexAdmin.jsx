@@ -4,7 +4,7 @@ import Boton from "@/Components/Boton";
 import { usePage, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle, Clock, ChevronDown, ChevronUp } from "lucide-react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaCalendarAlt, FaTools } from "react-icons/fa";
 import AgendaCreate from "@/Components/AgendaCreate";
 import ModalEditarCita from "@/Components/ModalEditarCita";
 import ModalEliminar from "@/Components/ModalEliminar";
@@ -86,13 +86,18 @@ export default function IndexAdmin({ citas, estados }) {
     const usuarioOk = (c.user?.name || "").toLowerCase().includes(filtroUsuario.toLowerCase());
     const vehiculoOk = (c.vehiculo?.matricula || "").toLowerCase().includes(filtroVehiculo.toLowerCase());
     const estadoOk = filtroEstado === "" || (c.estado_cita?.nombre === filtroEstado);
-    const motivoOk = filtroMotivo === "" || (c.motivo || "").toLowerCase().includes(filtroMotivo.toLowerCase());
+    const motivoOk = filtroMotivo === "" || (c.motivo_cita?.nombre || "").toLowerCase().includes(filtroMotivo.toLowerCase());
     return fechaDentroRango && horaOk && usuarioOk && vehiculoOk && estadoOk && motivoOk;
   });
 
   const columnas = [
     {
-      name: "Fecha",
+      name: (
+        <span className="flex items-center">
+          <FaCalendarAlt className="mr-1 text-blue-600" />
+          Fecha
+        </span>
+      ),
       selector: row => row.fecha,
       sortable: true,
       width: "100px",
@@ -130,14 +135,26 @@ export default function IndexAdmin({ citas, estados }) {
       name: "Vehículo",
       selector: row => row.vehiculo?.matricula || "—",
       sortable: true,
-      width: "120px"
+      width: "120px",
+      cell: row =>
+        row.vehiculo?.id ? (
+          <span
+            className="text-blue-700 underline font-bold cursor-pointer hover:text-red-600 transition"
+            onClick={() => router.get(route("vehiculos.show", row.vehiculo.id))}
+            title="Ver ficha del vehículo"
+          >
+            {row.vehiculo?.matricula}
+          </span>
+        ) : (
+          <span className="text-gray-400">—</span>
+        )
     },
     {
       name: "Motivo",
-      selector: row => row.motivo || "—",
+      selector: row => row.motivo_cita?.nombre || "—",
       sortable: true,
       cell: row => (
-        <span>{capitalize(row.motivo)}</span>
+        <span>{capitalize(row.motivo_cita?.nombre)}</span>
       ),
       width: "130px"
     },
@@ -148,7 +165,12 @@ export default function IndexAdmin({ citas, estados }) {
       grow: 2,
     },
     {
-      name: "Mantenimiento",
+      name: (
+        <span className="flex items-center">
+          <FaTools className="mr-1 text-blue-600"/>
+          Registros
+        </span>
+      ),
       cell: row => (
         row.estado_cita?.nombre === "finalizada" && !row.mantenimiento && row.user ? (
           <Boton
@@ -163,14 +185,20 @@ export default function IndexAdmin({ citas, estados }) {
           />
         ) : (
           row.mantenimiento ?
-            <span className="text-green-700 font-bold">Registrado</span>
+            <Boton
+              texto="Ver registro"
+              tamaño="xs"
+              color="blue"
+              onClick={() => router.get(route("mantenimientos.show", row.mantenimiento.id))}
+              className="font-bold"
+            />
             : <span className="text-gray-400">—</span>
         )
       ),
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      width: "140px"
+      width: "150px"
     },
     {
       name: "Acciones",
@@ -239,7 +267,10 @@ export default function IndexAdmin({ citas, estados }) {
       <section className="min-h-screen bg-gradient-to-br from-[#040A2A] to-[#232b4b] text-white py-10 px-6 pt-20">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10">
-            <h1 className="text-3xl font-bold relative w-fit z-10">GESTIÓN DE CITAS DE TALLER</h1>
+            <h1 className="text-3xl font-bold relative w-fit z-10">GESTIÓN DE TALLER</h1>
+            <div className="flex items-center text-gray-200/80 text-base mt-2 font-medium">
+              Gestiona tus citas <FaCalendarAlt className="mr-1 text-lg" /> y lleva el registro de los trabajos <FaTools className="mr-2 text-lg" /> realizados en el taller.
+            </div>
             <div className="relative mt-2">
               <div
                 className={`h-[4px] bg-red-600 rounded-full transition-all duration-1000 ease-out ${
@@ -263,11 +294,16 @@ export default function IndexAdmin({ citas, estados }) {
           <div className="mb-8">
             <Boton
               tipo="button"
-              color={mostrarFormulario ? "gray" : "blue"}
-              texto={mostrarFormulario ? "Cerrar agenda" : "Abrir agenda"}
+              color={mostrarFormulario ? "gray" : "blue" }
               onClick={() => setMostrarFormulario(v => !v)}
               className="mb-4"
               icono={mostrarFormulario ? <ChevronUp className="inline-block ml-2 w-5 h-5" /> : <ChevronDown className="inline-block ml-2 w-5 h-5" />}
+              texto={
+                <>
+                  <FaCalendarAlt className="inline-block mr-2 w-5 h-5" />
+                  {mostrarFormulario ? "Cerrar agenda" : "Abrir agenda"}
+                </>
+              }
             />
             {mostrarFormulario && (
               <AgendaCreate
