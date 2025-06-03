@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FacturaVenta" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="46edd980-d166-4dca-b72b-8cc0d809e53e">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Perez Motor"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="216"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="784"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<subDataset name="ResumenIVA" uuid="49e98f0d-f21e-4b38-8379-94a220094bd6">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="facturaDataBase"/>
+		<parameter name="Serie" class="java.lang.String"/>
+		<parameter name="Numero" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT 
+  M.iva AS tipo_iva,
+  SUM(M.total) AS base_imponible,
+  SUM(M.total * (M.iva / 100)) AS cuota_iva,
+  SUM(M.total * (1 + (M.iva / 100))) AS total_con_iva
+FROM esi_invoice_items M
+JOIN esi_invoices I ON M.invoice_id = I.id
+WHERE I.serie = $P{Serie}
+  AND I.numero = $P{Numero}
+  AND M.Deleted <> 1
+GROUP BY M.iva
+ORDER BY M.iva]]>
+		</queryString>
+		<field name="tipo_iva" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.label" value="tipo_iva"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="esi_invoice_items"/>
+		</field>
+		<field name="base_imponible" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.label" value="base_imponible"/>
+		</field>
+		<field name="cuota_iva" class="java.lang.Double">
+			<property name="com.jaspersoft.studio.field.label" value="cuota_iva"/>
+		</field>
+		<field name="total_con_iva" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="total_con_iva"/>
+		</field>
+		<variable name="total_con_iva_SUM" class="java.math.BigDecimal" calculation="Sum">
+			<variableExpression><![CDATA[new java.math.BigDecimal($F{total_con_iva}.toString())]]></variableExpression>
+		</variable>
+		<variable name="TotalFactura" class="java.lang.Double" calculation="Sum">
+			<variableExpression><![CDATA[$F{base_imponible} + $F{cuota_iva}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="mantenimiento_id" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+  m.id AS mantenimiento_id,
+  m.kilometros,
+  m.observaciones,
+  m.prox_revision,
+  m.mano_obra,
+  m.created_at AS fecha_mantenimiento,
+
+  -- Vehículo
+  v.matricula,
+  v.marca,
+  v.modelo,
+  v.anio,
+  v.color,
+  v.vin,
+  v.created_at AS created_at_vehiculo,
+
+  -- Cita taller
+  c.fecha AS fecha_cita,
+  c.hora AS hora_cita,
+
+  -- Usuario
+  u.name AS propietario_nombre,
+  u.email AS propietario_email,
+  u.direccion AS propietario_direccion,
+  u.provincia AS propietario_provinicia,
+  u.codigo_postal AS propietario_CP,
+  u.telefono AS propietario_telefono,
+
+  -- Detalles de mantenimiento
+  md.id AS detalle_id,
+  md.limpiar,
+  md.revisar,
+  md.sustituir,
+  md.precio,
+
+  -- Tipo de mantenimiento
+  tm.nombre AS tipo_mantenimiento,
+  tm.descripcion AS tipo_descripcion
+
+FROM mantenimientos m
+JOIN vehiculos v ON m.vehiculo_id = v.id
+LEFT JOIN citas_taller c ON m.cita_taller_id = c.id
+JOIN users u ON v.user_id = u.id
+JOIN mantenimiento_detalles md ON md.mantenimiento_id = m.id
+JOIN tipos_mantenimiento tm ON md.tipo_mantenimiento_id = tm.id
+
+WHERE m.id = $P{mantenimiento_id}
+ORDER BY md.id]]>
+	</queryString>
+	<field name="mantenimiento_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="mantenimiento_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="mantenimiento_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimientos"/>
+	</field>
+	<field name="kilometros" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="kilometros"/>
+		<property name="com.jaspersoft.studio.field.label" value="kilometros"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimientos"/>
+	</field>
+	<field name="observaciones" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="observaciones"/>
+		<property name="com.jaspersoft.studio.field.label" value="observaciones"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimientos"/>
+	</field>
+	<field name="prox_revision" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prox_revision"/>
+		<property name="com.jaspersoft.studio.field.label" value="prox_revision"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimientos"/>
+	</field>
+	<field name="mano_obra" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="mano_obra"/>
+		<property name="com.jaspersoft.studio.field.label" value="mano_obra"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimientos"/>
+	</field>
+	<field name="fecha_mantenimiento" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_mantenimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_mantenimiento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimientos"/>
+	</field>
+	<field name="matricula" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="matricula"/>
+		<property name="com.jaspersoft.studio.field.label" value="matricula"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="marca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="marca"/>
+		<property name="com.jaspersoft.studio.field.label" value="marca"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="modelo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="modelo"/>
+		<property name="com.jaspersoft.studio.field.label" value="modelo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="anio" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="anio"/>
+		<property name="com.jaspersoft.studio.field.label" value="anio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="color" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="color"/>
+		<property name="com.jaspersoft.studio.field.label" value="color"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="vin" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vin"/>
+		<property name="com.jaspersoft.studio.field.label" value="vin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="created_at_vehiculo" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="created_at_vehiculo"/>
+		<property name="com.jaspersoft.studio.field.label" value="created_at_vehiculo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="vehiculos"/>
+	</field>
+	<field name="fecha_cita" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_cita"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_cita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="citas_taller"/>
+	</field>
+	<field name="hora_cita" class="java.sql.Time">
+		<property name="com.jaspersoft.studio.field.name" value="hora_cita"/>
+		<property name="com.jaspersoft.studio.field.label" value="hora_cita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="citas_taller"/>
+	</field>
+	<field name="propietario_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propietario_nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="propietario_nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="propietario_email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propietario_email"/>
+		<property name="com.jaspersoft.studio.field.label" value="propietario_email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="propietario_direccion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propietario_direccion"/>
+		<property name="com.jaspersoft.studio.field.label" value="propietario_direccion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="propietario_provinicia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propietario_provinicia"/>
+		<property name="com.jaspersoft.studio.field.label" value="propietario_provinicia"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="propietario_cp" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propietario_cp"/>
+		<property name="com.jaspersoft.studio.field.label" value="propietario_cp"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="propietario_telefono" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propietario_telefono"/>
+		<property name="com.jaspersoft.studio.field.label" value="propietario_telefono"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="detalle_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="detalle_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="detalle_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimiento_detalles"/>
+	</field>
+	<field name="limpiar" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="limpiar"/>
+		<property name="com.jaspersoft.studio.field.label" value="limpiar"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimiento_detalles"/>
+	</field>
+	<field name="revisar" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="revisar"/>
+		<property name="com.jaspersoft.studio.field.label" value="revisar"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimiento_detalles"/>
+	</field>
+	<field name="sustituir" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="sustituir"/>
+		<property name="com.jaspersoft.studio.field.label" value="sustituir"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimiento_detalles"/>
+	</field>
+	<field name="precio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="precio"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="mantenimiento_detalles"/>
+	</field>
+	<field name="tipo_mantenimiento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_mantenimiento"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_mantenimiento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipos_mantenimiento"/>
+	</field>
+	<field name="tipo_descripcion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_descripcion"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_descripcion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipos_mantenimiento"/>
+	</field>
+	<variable name="SumaYSigue" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{precio}]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{SumaYSigue} + $F{mano_obra}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="252">
+			<rectangle>
+				<reportElement x="-20" y="-20" width="595" height="110" backcolor="#040A2A" uuid="ecfd4d64-a00f-4ec0-ba8b-ffc2d106b4df"/>
+			</rectangle>
+			<rectangle radius="5">
+				<reportElement mode="Transparent" x="0" y="107" width="287" height="93" forecolor="#040A2A" uuid="fa588927-4453-4769-9649-692fb49c5ce9"/>
+				<graphicElement>
+					<pen lineWidth="1.25"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle radius="5">
+				<reportElement x="304" y="107" width="240" height="55" forecolor="#040A2A" uuid="113548f7-1999-44da-adae-17add4f2cb67"/>
+				<graphicElement>
+					<pen lineWidth="1.25"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="140" y="10" width="300" height="60" forecolor="#FF0905" backcolor="#FFFFFF" uuid="30510e47-f6af-4482-8ca4-efc62e8fd8e7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="30" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PÉREZ MOTOR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="128" width="76" height="30" uuid="6a7594f1-2b46-4302-8aef-7aae186d66a4"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vin}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="314" y="113" width="146" height="10" uuid="ca668b38-7962-446b-b59d-f5ec94240704"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario_nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="314" y="123" width="156" height="10" uuid="c3a0950b-023f-4d99-90e0-01ea15d04210"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario_email}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="113" width="56" height="15" uuid="efa19913-5328-416d-a655-33e954ce1420"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº Bastidor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="113" width="65" height="15" uuid="51d95290-0fd5-4886-b276-a9b51e5d0508"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modelo]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="140" y="128" width="65" height="30" uuid="4e53c100-ed54-45b5-ad7a-65eb5c02cb88"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{modelo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="210" y="162" width="65" height="15" uuid="49419b89-3a64-4e87-aaac-20590a8dcaeb"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Num. Pág.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="219" y="177" width="23" height="30" uuid="bc929b4f-0489-4524-96b1-2cbf91f0794d"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="242" y="177" width="24" height="30" uuid="14665c70-ef5e-4538-93eb-25300d78e6fa"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="40" y="-10" width="119" height="90" uuid="6a9f9bf8-262b-4a9e-bcac-03226ea7dbac"/>
+				<imageExpression><![CDATA["/home/fran/tfg-perez_motor/public/images/perez-motor/LOGO.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="83" y="113" width="50" height="15" uuid="7732f2bb-493d-4ee5-94b5-91b7356fb98e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Marca]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="83" y="128" width="50" height="30" uuid="f8c3d01f-9201-4463-b03b-098a52b5ff36"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{marca}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="480" y="-10" width="94" height="40" forecolor="#FF0D05" uuid="075e3c35-ef73-4fd3-89c5-687aaf3df212"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[C/ Tartaneros, 2
+11540 Sanlúcar de Bda, Cádiz
+info@perez-moto.com]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="314" y="133" width="221" height="10" uuid="58862734-1384-4722-87fc-72861205b257"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario_direccion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="314" y="143" width="221" height="10" uuid="fea59da7-08f9-435e-b42c-ad24f25608a5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario_provinicia}+ ",  "+ $F{propietario_cp}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="490" y="113" width="50" height="10" uuid="f98b5fa0-520c-4d47-8fff-4d96a497e22d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propietario_telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="230" width="550" height="20" forecolor="#FF0905" backcolor="#FFFFFF" uuid="e7f99069-0035-4d69-8cb1-ee5aafbbb168"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PARTE DE TRABAJO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="210" y="113" width="65" height="15" uuid="d15779b8-8446-4bea-965a-8c34f71ba82f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Color]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="162" width="80" height="15" uuid="b9f0f292-dd08-4407-9e0c-9e8c2c4559ad"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Registrada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="162" width="80" height="15" uuid="d7e68b6b-85de-40b6-8a8f-c561c1bcf585"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Km Registrados]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="210" y="128" width="65" height="30" uuid="2bb5f006-9e63-4ce1-b517-5a8373a9676e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{color}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="177" width="76" height="30" uuid="4a172e0e-1aa9-4290-9950-d1976b17af84"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{created_at_vehiculo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="90" y="177" width="76" height="30" uuid="f7de6d6d-db39-44bc-be76-87a8e32dacce"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kilometros}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="286" height="13" forecolor="#FF0905" backcolor="#040A2A" uuid="3b59e604-9d74-414a-aa03-2073c16736eb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cde753aa-737e-4f84-9586-c65f6ba0cfb3"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Especificación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="286" y="0" width="61" height="13" forecolor="#FF0905" backcolor="#040A2A" uuid="1d250db8-dc07-4a3c-b32f-248f403a17d5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5d7140d2-c8c8-410a-906e-87467dcf351d"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Limpiar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="346" y="0" width="74" height="13" forecolor="#FF0905" backcolor="#040A2A" uuid="623dbe8a-7d48-4685-a4c0-a1b3cde642c4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="565c3447-1515-4b8f-8c48-58b21de603f2"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Revisar]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="494" y="0" width="56" height="13" forecolor="#FF0905" backcolor="#040A2A" uuid="c6893235-2480-45bb-91f6-1a3534673a56">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0f0a071e-4a34-483a-a189-94e7f0a86c75"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="420" y="0" width="74" height="13" forecolor="#FF0905" backcolor="#040A2A" uuid="6fdf3e2c-2ee1-4797-a10a-bd152aef923b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="968ad8fb-4f29-4edb-9b54-9fa3423ad65a"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sustituir]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="31" splitType="Stretch">
+			<textField>
+				<reportElement x="3" y="0" width="280" height="10" uuid="f3e36b01-ac59-4b21-afb1-c93fc8d6adfb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cde753aa-737e-4f84-9586-c65f6ba0cfb3"/>
+				</reportElement>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_mantenimiento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="286" y="0" width="60" height="10" uuid="47623266-ed9a-43a7-8270-279ae6716ee5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5d7140d2-c8c8-410a-906e-87467dcf351d"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{limpiar} ? "✓" : ""]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="360" y="0" width="60" height="10" uuid="9fd43928-8682-4f49-b497-d6995cd7e9dd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="565c3447-1515-4b8f-8c48-58b21de603f2"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{revisar} ? "✓" : ""]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="494" y="0" width="55" height="10" uuid="1e810b24-9ba0-4405-a543-649799d06d96">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0f0a071e-4a34-483a-a189-94e7f0a86c75"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="20" y="12" width="230" height="18" isRemoveLineWhenBlank="true" uuid="534a8d3e-bcc8-446c-a078-d8ac7c2363ea">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cde753aa-737e-4f84-9586-c65f6ba0cfb3"/>
+				</reportElement>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="DejaVu Sans" size="6" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="434" y="0" width="60" height="10" uuid="c25f870c-fbe2-4cdc-8911-d776eebb7088">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="565c3447-1515-4b8f-8c48-58b21de603f2"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sustituir} ? "✓" : ""]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="30" width="549" height="1" uuid="fddf352d-5e3a-40a4-b00f-ad3a6b6c1866">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.2"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="77" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="470" y="10" width="81" height="10" uuid="f59cf283-46f5-40d7-8006-27b0f1770bb9"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SumaYSigue} + "€"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="402" y="10" width="68" height="10" uuid="8483eab6-18e3-4de4-83fe-a4018b81a27d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Suma y sigue ...]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="185">
+			<rectangle>
+				<reportElement x="0" y="54" width="551" height="46" uuid="f5594364-a251-43d4-8ad0-b8d718dd2243"/>
+				<graphicElement>
+					<pen lineWidth="0.3"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="3" y="80" width="98" height="15" uuid="e819ce9b-2367-40ca-8f83-803c36e6ab1c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRÓXIMA REVISION:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="101" y="80" width="100" height="15" uuid="7dd71536-f0d6-4fe4-91c1-307b4de1ca66"/>
+				<textElement textAlignment="Left">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prox_revision}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="60" width="542" height="15" uuid="d831477d-c442-4430-a99e-8470d3ea9237"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Según el art.15.2 del Real Decreto 1457/1986 y el art. 17.3 del Decreto 9/2003, si no recoger el vehículo tras tres dias desde la reparación del vehículo, estara obligado al pago de la estancia guarda y cuistodia del mismo por el importe de 3.00€ diarios.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="100" width="551" height="50" uuid="71c493fa-2dfe-4658-a5e6-b89bd8b4af2e"/>
+				<graphicElement>
+					<pen lineWidth="0.3"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="90" y="104" width="98" height="15" uuid="91f7711a-b928-42d1-ac3d-b97eb8c26caf"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firma del cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="346" y="104" width="98" height="15" uuid="36eefe0f-4593-4699-9e1d-4fd54eea42cc"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firma taller]]></text>
+			</staticText>
+			<image>
+				<reportElement x="360" y="95" width="83" height="70" uuid="4c5a9bc2-0729-4998-89cd-8dd3e4918fe3"/>
+				<imageExpression><![CDATA["/home/fran/tfg-perez_motor/public/images/perez-motor/firma.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="402" y="0" width="68" height="10" uuid="25f35421-5c05-4a1c-a48d-44898faca866"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[MANO DE OBRA]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="470" y="0" width="79" height="10" uuid="dc3031cc-2bda-48d2-bbeb-4aebe4127986"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mano_obra} + "€"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="402" y="10" width="68" height="20" uuid="e1616882-9ab8-4bfe-aa9e-3a7dacd70ef7"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="470" y="10" width="79" height="20" uuid="542e9e9e-01b4-4a7a-b605-fbf9f852dc25"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total} + "€"]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

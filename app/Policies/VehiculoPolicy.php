@@ -13,7 +13,7 @@ class VehiculoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->is_admin;
     }
 
     /**
@@ -21,7 +21,7 @@ class VehiculoPolicy
      */
     public function view(User $user, Vehiculo $vehiculo): bool
     {
-        return false;
+        return $user->id == $vehiculo->user->id || $user->is_admin;
     }
 
     /**

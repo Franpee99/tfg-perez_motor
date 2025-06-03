@@ -1,9 +1,13 @@
 import { FaMotorcycle, FaEdit, FaTrashAlt, FaRegIdCard } from "react-icons/fa";
 import Boton from "@/Components/Boton";
+import { Link } from "@inertiajs/react";
 
 export default function VehiculoCard({ vehiculo, onEditar, onEliminar }) {
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-200 p-6 relative flex flex-col gap-2">
+    <Link
+      href={route("vehiculos.show", vehiculo.id)}
+      className="block bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-200 p-6 relative flex flex-col gap-2"
+    >
       <span className="absolute top-0 right-0 bg-red-600 text-white rounded-bl-xl rounded-tr-2xl px-4 py-1 text-xs font-bold shadow">
         <FaRegIdCard className="inline mr-1" />
         {vehiculo.matricula}
@@ -32,20 +36,29 @@ export default function VehiculoCard({ vehiculo, onEditar, onEliminar }) {
           <span className="break-all">{vehiculo.vin || <span className="text-gray-400">-</span>}</span>
         </div>
       </div>
+
       <div className="flex justify-end gap-3 mt-auto">
         <Boton
-          onClick={onEditar}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onEditar();
+          }}
           color="blue"
           tamaño="md"
           icono={<FaEdit />}
         />
         <Boton
-          onClick={onEliminar}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onEliminar();
+          }}
           color="red"
           tamaño="sm"
           icono={<FaTrashAlt />}
         />
       </div>
-    </div>
+    </Link>
   );
 }

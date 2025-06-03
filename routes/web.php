@@ -5,15 +5,18 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\LineaCarritoController;
+use App\Http\Controllers\MantenimientoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPublicoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TiendaController;
+use App\Http\Controllers\TiposMantenimientoController;
 use App\Http\Controllers\ValoracionController;
 use App\Http\Controllers\VehiculoController;
 use App\Models\CitaTaller;
+use App\Models\Mantenimiento;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -91,9 +94,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /* PHPJASPER */
-Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])
-    ->middleware(['auth'])
-    ->name('factura.ver');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/factura/{pedido}', [FacturaController::class, 'generar'])->name('factura.ver');
+    Route::get('/factura-taller/{mantenimiento}', [FacturaController::class, 'generarFacturaTaller'])->name('factura.taller.ver');
+});
 
 /* VALORACIÓN */
 Route::middleware(['auth'])->group(function () {
@@ -134,10 +138,25 @@ Route::middleware(['auth'])->group(function () {
 
 /* VEHICULO */
 Route::middleware(['auth'])->group(function () {
+    /* ADMIN */
+    Route::get('/vehiculos/admin', [VehiculoController::class, 'adminVehiculo'])->name('admin.vehiculos');
+
+    /* USER */
     Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
     Route::get('/vehiculos/crear', [VehiculoController::class, 'create'])->name('vehiculos.create');
     Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+    Route::get('vehiculos/{vehiculo}', [VehiculoController::class, 'show'])->withTrashed()->name('vehiculos.show');
     Route::get('/vehiculos/{vehiculo}/editar', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
     Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])->name('vehiculos.update');
     Route::delete('/vehiculos/{vehiculo}/eliminar', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
 });
+
+/* MANTENIMIENTO */
+Route::get('/admin/mantenimientos/create', [MantenimientoController::class, 'create'])->name('admin.mantenimientos.create');
+Route::post('/admin/mantenimientos', [MantenimientoController::class, 'store'])->name('admin.mantenimientos.store');
+Route::get('/mantenimientos/{mantenimiento}', [MantenimientoController::class, 'show'])->name('mantenimientos.show');
+Route::get('/admin/mantenimientos/{mantenimiento}/edit', [MantenimientoController::class, 'edit'])->name('admin.mantenimientos.edit');
+Route::put('/admin/mantenimientos/{mantenimiento}', [MantenimientoController::class, 'update'])->name('admin.mantenimientos.update');
+
+/* TIPOS MANTENIMIENTO */
+Route::post('/admin/tipos-mantenimiento', [TiposMantenimientoController::class, 'store'])->name('admin.tipos-mantenimiento.store');

@@ -10,9 +10,16 @@ class TiposMantenimiento extends Model
     /** @use HasFactory<\Database\Factories\TiposMantenimientoFactory> */
     use HasFactory;
 
-    public function mantenimientos()
+    protected $table = 'tipos_mantenimiento';
+
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+    ];
+
+    public function mantenimientoDetalles()
     {
-        return $this->hasMany(Mantenimiento::class);
+        return $this->hasMany(MantenimientoDetalle::class, 'tipo_mantenimiento_id');
     }
 
 }

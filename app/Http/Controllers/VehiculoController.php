@@ -16,6 +16,18 @@ class VehiculoController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     public function adminVehiculo()
+    {
+        $this->authorize('viewAny', Vehiculo::class);
+
+        $vehiculos = Vehiculo::with('user')->withTrashed()->get();
+
+        return inertia('Vehiculo/AdminVehiculo', [
+            'vehiculos' => $vehiculos,
+        ]);
+    }
+
     public function index()
     {
         $vehiculos = Auth::user()->vehiculos()->get();
@@ -58,7 +70,13 @@ class VehiculoController extends Controller
      */
     public function show(Vehiculo $vehiculo)
     {
-        //
+        $this->authorize('view', $vehiculo);
+
+        $vehiculo->load(['citas.estado_cita', 'citas.mantenimiento']);
+
+        return Inertia::render('Vehiculo/Show', [
+            'vehiculo' => $vehiculo,
+        ]);
     }
 
     /**
