@@ -36,7 +36,6 @@ class TiposMantenimientoController extends Controller
 
         $tipo = TiposMantenimiento::create($validated);
 
-        // Devuelve el tipo nuevo como JSON
         return response()->json($tipo);
     }
 

@@ -3,13 +3,14 @@ import { useForm, usePage } from "@inertiajs/react";
 import FormularioTallas from "./FormularioTallas";
 import FormularioFichaTecnica from "./FormularioFichaTecnica";
 import Boton from "@/Components/Boton";
+import ErrorMsg from "@/Components/ErrorMsg";
 
 export default function FormularioCrearProducto({ categorias = [], marcas = [] }) {
   const {
     data: datos,
     setData: setDatos,
     processing: procesando,
-    errors: errores,
+    errors: erroresBackend,
     setError,
     clearErrors,
     post,
@@ -28,6 +29,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
 
   const [vistasPrevias, setVistasPrevias] = useState([]);
   const [subcategorias, setSubcategorias] = useState([]);
+  const [errores, setErrores] = useState({});
 
   useEffect(() => {
     if (datos.categoria_id) {
@@ -39,6 +41,10 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
       );
     }
   }, [datos.categoria_id, categorias]);
+
+  useEffect(() => {
+    setErrores(erroresBackend);
+  }, [erroresBackend]);
 
   const manejarCambioImagenes = (e) => {
     const nuevosArchivos = Array.from(e.target.files).slice(0, 3);
@@ -58,12 +64,12 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
   };
 
   const agregarTalla = () => {
-    setDatos("tallas", [...datos.tallas, { talla: "", stock: 0 }]);
+    setDatos("tallas", [...datos.tallas, { nombre: "", stock: 0 }]);
   };
 
-  const actualizarTalla = (indice, talla, stock) => {
+  const actualizarTalla = (indice, campo, valor) => {
     const nuevasTallas = [...datos.tallas];
-    nuevasTallas[indice][talla] = stock;
+    nuevasTallas[indice][campo] = valor;
     setDatos("tallas", nuevasTallas);
   };
 
@@ -77,9 +83,9 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setDatos("caracteristicas", [...datos.caracteristicas, { caracteristica: "", definicion: "" }]);
   };
 
-  const actualizarCaracteristica = (indice, caracteristica, definicion) => {
+  const actualizarCaracteristica = (indice, campo, valor) => {
     const nuevasFicha = [...datos.caracteristicas];
-    nuevasFicha[indice][caracteristica] = definicion;
+    nuevasFicha[indice][campo] = valor;
     setDatos("caracteristicas", nuevasFicha);
   };
 
@@ -89,8 +95,86 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
     setDatos("caracteristicas", nuevasFicha);
   };
 
+  // Validaciones frontend
+  const validar = () => {
+    const nuevosErrores = {};
+
+    if (!datos.nombre || !datos.nombre.trim()) {
+      nuevosErrores.nombre = "El nombre es obligatorio.";
+    } else if (datos.nombre.length > 255) {
+      nuevosErrores.nombre = "El nombre no puede superar 255 caracteres.";
+    }
+
+    if (!datos.precio || isNaN(Number(datos.precio))) {
+      nuevosErrores.precio = "El precio es obligatorio y debe ser un número.";
+    } else if (Number(datos.precio) < 0) {
+      nuevosErrores.precio = "El precio no puede ser negativo.";
+    }
+
+    if (!datos.subcategoria_id) {
+      nuevosErrores.subcategoria_id = "La subcategoría es obligatoria.";
+    }
+
+
+    if (datos.nueva_marca && datos.nueva_marca.length > 255) {
+      nuevosErrores.nueva_marca = "La nueva marca no puede superar 255 caracteres.";
+    }
+
+    if (datos.imagenes && datos.imagenes.length > 3) {
+      nuevosErrores.imagenes = "Solo se permiten hasta 3 imágenes.";
+    }
+    if (datos.imagenes) {
+      datos.imagenes.forEach((img, idx) => {
+        if (img.size > 2 * 1024 * 1024) {
+          nuevosErrores.imagenes = "Las imágenes no pueden superar 2MB.";
+        }
+        if (!["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"].includes(img.type)) {
+          nuevosErrores.imagenes = "Formato de imagen no permitido.";
+        }
+      });
+    }
+
+    // tallas: required|array|min:1
+    if (!datos.tallas || datos.tallas.length < 1) {
+      nuevosErrores.tallas = "Debes añadir al menos una talla.";
+    } else {
+      datos.tallas.forEach((talla, idx) => {
+        if (!talla.nombre || talla.nombre.trim() === "") {
+          nuevosErrores[`tallas.${idx}.nombre`] = "La talla es obligatoria.";
+        } else if (talla.nombre.length > 50) {
+          nuevosErrores[`tallas.${idx}.nombre`] = "La talla no puede superar 50 caracteres.";
+        }
+        if (
+          talla.stock === "" ||
+          talla.stock === null ||
+          talla.stock === undefined
+
+        ) {
+          nuevosErrores[`tallas.${idx}.stock`] = "El stock es obligatorio.";
+        } else if (Number(talla.stock) < 0) {
+          nuevosErrores[`tallas.${idx}.stock`] = "El stock no puede ser negativo.";
+        }
+      });
+    }
+
+    if (datos.caracteristicas && datos.caracteristicas.length) {
+      datos.caracteristicas.forEach((c, idx) => {
+        if (c.caracteristica && c.caracteristica.length > 255) {
+          nuevosErrores[`caracteristicas.${idx}.caracteristica`] = "Máx. 255 caracteres.";
+        }
+        if (c.definicion && c.definicion.length > 255) {
+          nuevosErrores[`caracteristicas.${idx}.definicion`] = "Máx. 255 caracteres.";
+        }
+      });
+    }
+
+    setErrores(nuevosErrores);
+    return Object.keys(nuevosErrores).length === 0;
+  };
+
   const manejarEnvio = (e) => {
     e.preventDefault();
+    if (!validar()) return;
 
     const formData = new FormData();
     formData.append("nombre", datos.nombre);
@@ -122,11 +206,8 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
       forceFormData: true,
       preserveScroll: true,
       onError: (erroresDelServidor) => {
-        console.log("Errores de validación:", erroresDelServidor);
         clearErrors();
-        Object.entries(erroresDelServidor).forEach(([campo, mensaje]) => {
-          setError(campo, mensaje);
-        });
+        setErrores(erroresDelServidor);
       },
     });
   };
@@ -148,21 +229,21 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
         <div>
           <label className="block text-white font-bold mb-1">Nombre*</label>
           <input type="text" name="nombre" value={datos.nombre} onChange={(e) => setDatos("nombre", e.target.value)} className={claseInput(errores.nombre)} />
-          {errores.nombre && <p className="text-red-400 text-xs mt-1">{errores.nombre}</p>}
+          {errores.nombre && <ErrorMsg>{errores.nombre}</ErrorMsg>}
         </div>
 
         {/* Descripción */}
         <div>
           <label className="block text-white font-bold mb-1">Descripción</label>
           <textarea name="descripcion" value={datos.descripcion} onChange={(e) => setDatos("descripcion", e.target.value)} className={claseInput(errores.descripcion)} />
-          {errores.descripcion && <p className="text-red-400 text-xs mt-1">{errores.descripcion}</p>}
+          {errores.descripcion && <ErrorMsg>{errores.descripcion}</ErrorMsg>}
         </div>
 
         {/* Precio */}
         <div>
           <label className="block text-white font-bold mb-1">Precio (€)*</label>
           <input type="number" name="precio" value={datos.precio} onChange={(e) => setDatos("precio", e.target.value)} className={claseInput(errores.precio)} />
-          {errores.precio && <p className="text-red-400 text-xs mt-1">{errores.precio}</p>}
+          {errores.precio && <ErrorMsg>{errores.precio}</ErrorMsg>}
         </div>
 
         {/* Categoría */}
@@ -174,7 +255,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
               <option key={cat.id} value={cat.id}>{cat.nombre}</option>
             ))}
           </select>
-          {errores.categoria_id && <p className="text-red-400 text-xs mt-1">{errores.categoria_id}</p>}
+          {errores.categoria_id && <ErrorMsg>{errores.categoria_id}</ErrorMsg>}
         </div>
 
         {/* Subcategoría */}
@@ -186,7 +267,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
               <option key={subcat.id} value={subcat.id}>{subcat.nombre}</option>
             ))}
           </select>
-          {errores.subcategoria_id && <p className="text-red-400 text-xs mt-1">{errores.subcategoria_id}</p>}
+          {errores.subcategoria_id && <ErrorMsg>{errores.subcategoria_id}</ErrorMsg>}
         </div>
 
         {/* Marca */}
@@ -198,21 +279,35 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
               <option key={marca.id} value={marca.id}>{marca.nombre}</option>
             ))}
           </select>
-          {errores.marca_id && <p className="text-red-400 text-xs mt-1">{errores.marca_id}</p>}
+          {errores.marca_id && <ErrorMsg>{errores.marca_id}</ErrorMsg>}
         </div>
 
         {/* Nueva Marca */}
         <div>
           <label className="block text-white font-bold mb-1">Nueva Marca (opcional)</label>
           <input type="text" name="nueva_marca" value={datos.nueva_marca} onChange={(e) => setDatos("nueva_marca", e.target.value)} className={claseInput(errores.nueva_marca)} />
-          {errores.nueva_marca && <p className="text-red-400 text-xs mt-1">{errores.nueva_marca}</p>}
+          {errores.nueva_marca && <ErrorMsg>{errores.nueva_marca}</ErrorMsg>}
         </div>
 
         {/* Sección de tallas */}
-        <FormularioTallas listaTallas={datos.tallas} agregarTalla={agregarTalla} actualizarTalla={actualizarTalla} eliminarTalla={eliminarTalla} errorTallas={errores.tallas} />
+        <FormularioTallas
+          listaTallas={datos.tallas}
+          agregarTalla={agregarTalla}
+          actualizarTalla={actualizarTalla}
+          eliminarTalla={eliminarTalla}
+          errorTallas={errores.tallas}
+          errores={errores}
+        />
 
         {/* Sección de ficha técnica */}
-        <FormularioFichaTecnica listaFichaTecnica={datos.caracteristicas} agregarCaracteristica={agregarCaracteristica} actualizarCaracteristica={actualizarCaracteristica} eliminarCaracteristica={eliminarCaracteristica} errorFichaTecnica={errores.caracteristicas} />
+        <FormularioFichaTecnica
+          listaFichaTecnica={datos.caracteristicas}
+          agregarCaracteristica={agregarCaracteristica}
+          actualizarCaracteristica={actualizarCaracteristica}
+          eliminarCaracteristica={eliminarCaracteristica}
+          errorFichaTecnica={errores.caracteristicas}
+          errores={errores}
+        />
 
         {/* Imágenes */}
         <div>
@@ -228,7 +323,7 @@ export default function FormularioCrearProducto({ categorias = [], marcas = [] }
               ))}
             </div>
           )}
-          {errores.imagenes && <p className="text-red-400 text-xs mt-1">{errores.imagenes}</p>}
+          {errores.imagenes && <ErrorMsg>{errores.imagenes}</ErrorMsg>}
         </div>
 
         {/* Botón de Guardar */}

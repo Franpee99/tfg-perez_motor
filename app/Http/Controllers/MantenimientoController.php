@@ -186,7 +186,6 @@ class MantenimientoController extends Controller
             ]);
         }
 
-        // Redirige al show actualizado
         return redirect()->route('mantenimientos.show', $mantenimiento->id)->with('success', 'Mantenimiento actualizado');
     }
 

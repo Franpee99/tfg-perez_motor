@@ -1,0 +1,5 @@
+Manualmente: php artisan pedidos:actualizar-estados
+
+crontab -e
+
+Para cuando se va actualizando: tail -f /home/fran/cron_test.txt

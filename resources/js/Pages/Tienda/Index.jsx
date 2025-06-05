@@ -185,7 +185,7 @@ export default function Index({ productosConFiltro, productosTodos, categoriaAct
         )}
 
         {/* DESKTOP: Filtros siempre visibles */}
-        <div className="lg:flex gap-8">
+        <div className="lg:flex gap-8 min-h-[700px]"> {/**/}
           <aside className="hidden lg:block w-1/4 space-y-6 text-sm text-gray-700">
             <div className="pt-2">
               <Boton

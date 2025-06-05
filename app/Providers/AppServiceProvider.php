@@ -26,12 +26,17 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        // Inyectar el contador del carrito en todas las vistas
-        Inertia::share('carritoCount', function () {
-            if (Auth::check()) {
-                return LineaCarrito::where('user_id', Auth::id())->sum('cantidad');
-            }
-            return 0;
-        });
+        Inertia::share([
+            'user' => function () {
+                return Auth::user();
+            },
+            // Contador de carrito
+            'carritoCount' => function () {
+                if (Auth::check()) {
+                    return LineaCarrito::where('user_id', Auth::id())->sum('cantidad');
+                }
+                return 0;
+            },
+        ]);
     }
 }

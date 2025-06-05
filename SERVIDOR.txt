@@ -1,0 +1,46 @@
+composer install
+npm install
+sudo apt update
+sudo apt install openjdk-8-jre -y
+
+
+Base de datos:
+acceder: sudo -u postgres psql perez_motor
+UPDATE users SET is_admin = true WHERE email = 'admin@admin';
+
+Jaspersoft:
+
+LOGO:
+sudo mkdir -p /home/fran/tfg-perez_motor/public/images/perez-motor
+sudo cp /var/www/perez_motor/public/images/perez-motor/LOGO.png /home/fran/tfg-perez_motor/public/images/perez-motor/LOGO.png
+
+SUBREPORT:
+sudo mkdir -p /home/fran/tfg-perez_motor/storage/informes
+sudo cp /var/www/perez_motor/storage/informes/FacturaResumenIVA.jasper /home/fran/tfg-perez_motor/storage/informes/FacturaResumenIVA.jasper
+sudo chmod 644 /home/fran/tfg-perez_motor/storage/informes/FacturaResumenIVA.jasper
+
+FIRMA:
+sudo mkdir -p /home/fran/tfg-perez_motor/public/images/perez-motor
+sudo cp /var/www/perez_motor/public/images/perez-motor/firma.png /home/fran/tfg-perez_motor/public/images/perez-motor/firma.png
+sudo chmod 644 /home/fran/tfg-perez_motor/public/images/perez-motor/firma.png
+
+IMAGENES:
+php artisan storage:link
+
+Automatizar estado de pedidos y citas:
+crontab -e -> * * * * * cd /var/www/perez_motor && /usr/bin/php artisan schedule:run >> /home/vagrant/cron.log 2>&1
+
+
+
+
+ENCENDER VAGRANT:
+vagrant up
+
+ENTRAR EN VAGRANT:
+vagrant ssh -> desde tfg-perez_motor
+
+APAGAR VAGRANT:
+vagrant halt
+
+Actualizar proyecto:
+npm run build -> fuera del vagrant (desde tfg-perez_motor)

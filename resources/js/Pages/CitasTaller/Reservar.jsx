@@ -26,7 +26,7 @@ export default function Reservar({ vehiculos, fechasDisponibles, motivos }) {
   const horasDisponibles = datos.fecha && fechasDisponibles[datos.fecha] ? fechasDisponibles[datos.fecha] : [];
   const fechaValida = fechasHabilitadas.includes(datos.fecha);
 
-  // FLASH MODAL CONTROL
+  // FLASH MODAL
   const { flash = {} } = usePage().props;
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mensaje, setMensaje] = useState(null);
