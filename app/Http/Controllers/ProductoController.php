@@ -115,6 +115,8 @@ class ProductoController extends Controller
      */
     public function show(Producto $producto)
     {
+        $this->authorize('view', $producto);
+
         $producto->load(['subcategoria.categoria', 'marca', 'tallas', 'caracteristicas', 'imagenes']);
 
         // Stock total (stock del pivot)

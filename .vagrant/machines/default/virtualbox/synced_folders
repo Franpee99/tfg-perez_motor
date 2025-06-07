@@ -1,1 +1,1 @@
-{"virtualbox":{},"nfs":{"/var/www/perez_motor":{"type":"nfs","nfs_version":4,"mount_options":["tcp","actimeo=2","nolock"],"guestpath":"/var/www/perez_motor","hostpath":"/home/fran/tfg-perez_motor","disabled":false,"__vagrantfile":true,"map_uid":1000,"map_gid":1000,"nfs_udp":false,"uuid":"3238691846","linux__nfs_options":["rw","no_subtree_check","all_squash","anonuid=1000","anongid=1000","fsid=3238691846"]}}}
+{"virtualbox":{"/var/www/perez_motor":{"guestpath":"/var/www/perez_motor","hostpath":"/home/fran/tfg-perez_motor","disabled":false,"__vagrantfile":true}},"nfs":{}}

@@ -6,10 +6,10 @@ Vagrant.configure("2") do |config|
   config.vm.network "public_network"
 
   # Sincronización de carpeta
-config.vm.synced_folder ".", "/var/www/perez_motor",
-  type: "nfs",
-  nfs_version: 4,
-  mount_options: ['tcp', 'actimeo=2', 'nolock']
+config.vm.synced_folder ".", "/var/www/perez_motor"#,
+  #type: "nfs",
+  #nfs_version: 4,
+  #mount_options: ['tcp', 'actimeo=2', 'nolock']
 
 
   config.vm.provider "virtualbox" do |vb|

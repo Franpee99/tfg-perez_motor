@@ -44,3 +44,13 @@ vagrant halt
 
 Actualizar proyecto:
 npm run build -> fuera del vagrant (desde tfg-perez_motor)
+
+
+
+USER PAYPAL:
+sb-ezamd40706346@personal.example.com
+5Muk!PFF
+
+NFS:
+sudo apt update
+sudo apt install nfs-kernel-server nfs-common

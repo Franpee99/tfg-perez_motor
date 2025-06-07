@@ -21,7 +21,7 @@ class ProductoPolicy
      */
     public function view(User $user, Producto $producto): bool
     {
-        return false;
+        return $user->is_admin;
     }
 
     /**
